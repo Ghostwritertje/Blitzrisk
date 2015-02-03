@@ -32,8 +32,23 @@
     </context-param>
 
     <welcome-file-list>
-        <welcome-file>/WEB-INF/index.jsp</welcome-file>
+        <welcome-file>/WEB-INF/login.jsp</welcome-file>
     </welcome-file-list>
+
+    <!-- contextLoadListener necessary for Spring security-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!--Spring security filters-->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 
 
