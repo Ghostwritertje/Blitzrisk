@@ -17,8 +17,10 @@ public class User {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
+    @Column(unique = true)
     private String name;
     private String password;
+    @Column(unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user")

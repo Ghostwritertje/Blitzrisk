@@ -21,5 +21,7 @@ public class App
         Transaction tx = session.beginTransaction();
         User user = new User("joran", "jorandeboever@gmail.com", "joran");
         session.save(user);
+        tx.commit();
+
     }
 }

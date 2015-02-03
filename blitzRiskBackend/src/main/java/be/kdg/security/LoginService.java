@@ -1,7 +1,7 @@
 package be.kdg.security;
 
 import be.kdg.model.User;
-import be.kdg.model.UserService;
+import be.kdg.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +18,8 @@ public class LoginService implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = userService.checkLogin(authentication.getName(), authentication.getCredentials().toString());
-        if(user==null) return null;
+        if (user == null) return null;
+
         return new UsernamePasswordAuthenticationToken(user, authentication.getCredentials(), null);
     }
 

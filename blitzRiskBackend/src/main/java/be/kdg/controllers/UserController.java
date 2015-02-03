@@ -1,4 +1,4 @@
-package be.kdg.controller;
+package be.kdg.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,4 +19,6 @@ public class UserController {
     public String loggedIn() {
         return "loginSucces";
     }
+
+
 }

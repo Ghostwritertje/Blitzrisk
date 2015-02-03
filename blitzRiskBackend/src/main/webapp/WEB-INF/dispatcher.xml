@@ -16,6 +16,8 @@
     <mvc:annotation-driven />
     <context:component-scan base-package="be.kdg"/>
 
+   <!-- <bean id="dataInitializer" class="be.kdg.services.TestDataInitialisationService"/> -->
+
     <!-- ativate annotations in beans already registered in the application context-->
     <context:annotation-config/>
 

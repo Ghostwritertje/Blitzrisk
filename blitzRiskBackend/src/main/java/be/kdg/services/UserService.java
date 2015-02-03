@@ -1,8 +1,10 @@
-package be.kdg.model;
+package be.kdg.services;
 
+import be.kdg.model.User;
 import be.kdg.persistence.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,4 +22,13 @@ public class UserService {
             session.close();
             return user;
     }
+
+    public void addUser(String username, String email, String password){
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        User user = new User(username, email, password);
+        session.save(user);
+        tx.commit();
+    }
+
 }
