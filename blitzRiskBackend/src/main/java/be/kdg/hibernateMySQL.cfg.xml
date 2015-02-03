@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/BlitzRisk</property>
+        <property name="connection.username">blitzrisk</property>
+        <property name="connection.password">blitzrisk</property>
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+        <property name="format_sql">false</property>
+        <property name="use_sql_comments">false</property>
+
+        <property name="hbm2ddl.auto">create</property>
+
+        <!-- Reference to all the mapping files used -->
+        <mapping class="be.kdg.model.User"/>
+        <mapping class="be.kdg.model.Game"/>
+        <mapping class="be.kdg.model.Player"/>
+        <mapping class="be.kdg.model.Territory"/>
+        <mapping class="be.kdg.model.Turn"/>
+        <mapping class="be.kdg.model.Move"/>
+
+
+    </session-factory>
+</hibernate-configuration>
