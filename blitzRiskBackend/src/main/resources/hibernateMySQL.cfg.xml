@@ -21,7 +21,7 @@
         <property name="format_sql">false</property>
         <property name="use_sql_comments">false</property>
 
-        <property name="hbm2ddl.auto">create</property>
+        <!--<property name="hbm2ddl.auto">create</property>-->
 
         <!-- Reference to all the mapping files used -->
         <mapping class="be.kdg.model.User"/>
