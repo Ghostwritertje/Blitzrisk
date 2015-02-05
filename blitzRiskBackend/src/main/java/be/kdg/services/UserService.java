@@ -16,16 +16,16 @@ import java.util.List;
 @Service("userService")
 public class UserService {
     public be.kdg.model.User checkLogin(String username, String password) {
-            Session session = HibernateUtil.getSessionFactory().openSession();
-            Query query = session.createQuery("from be.kdg.model.User u where u.name=:username and u.password=:password");
-            query.setParameter("username", username);
-            query.setParameter("password", password);
-            User user = (User) query.uniqueResult();
-            session.close();
-            return user;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from be.kdg.model.User u where u.name=:username and u.password=:password");
+        query.setParameter("username", username);
+        query.setParameter("password", password);
+        User user = (User) query.uniqueResult();
+        session.close();
+        return user;
     }
 
-    public void addUser(String username, String email, String password){
+    public void addUser(String username, String email, String password) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         User user = new User();
@@ -34,6 +34,15 @@ public class UserService {
         user.setPassword(password);
         session.save(user);
         tx.commit();
+    }
+
+    public User getUser(String username) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createQuery("select u.name, u.email, u.password from be.kdg.model.User u where u.name=:username");
+        User user = (User) query.uniqueResult();
+        tx.commit();
+        return user;
     }
 
     public List<User> findall() {

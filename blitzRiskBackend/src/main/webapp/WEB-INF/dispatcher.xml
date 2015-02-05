@@ -28,17 +28,34 @@
 
     <!-- for Spring Security-->
 
-    <bean id="customAuthenticationProvider" class="be.kdg.security.LoginService"/>
-
-    <security:http auto-config="true" use-expressions="true">
-        <security:intercept-url pattern="/api/secured/*" access="isAuthenticated()"/>
-        <security:form-login login-page="/"
-                             default-target-url="/loginSucces"
-                             authentication-failure-url="/?message=invalid_credentials"/>
-        <security:logout logout-success-url="/"/>
+  <!--  <bean id="customAuthenticationProvider" class="be.kdg.security.LoginService"/> -->
+<!-- create-session="stateless-->
+    <security:http
+            realm="Protected API"
+            use-expressions="true"
+            auto-config="false"
+            create-session="stateless"
+            entry-point-ref="unauthorizedEntryPoint"
+            authentication-manager-ref="authenticationManager">
+        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
+        <security:intercept-url pattern="/api/*" access="permitAll" />
+        <security:intercept-url method="GET" pattern="/api/secured/**" access="hasRole('user')" />
+        <security:intercept-url method="PUT" pattern="/api/secured/**" access="hasRole('user')" />
+        <security:intercept-url method="POST" pattern="/api/secured/**" access="hasRole('user')" />
+        <security:intercept-url method="DELETE" pattern="/api/secured/**" access="hasRole('admin')" />
     </security:http>
 
-    <security:authentication-manager>
-        <security:authentication-provider ref="customAuthenticationProvider"/>
+    <security:authentication-manager  id="authenticationManager">
+        <security:authentication-provider user-service-ref="userDao">
+        </security:authentication-provider>
     </security:authentication-manager>
+
+    <bean id="userDao" class="be.kdg.security.MyUserDetailsService">
+    </bean>
+
+    <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
+        <constructor-arg ref="userDao" />
+    </bean>
+    <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint" />
+
 </beans>
