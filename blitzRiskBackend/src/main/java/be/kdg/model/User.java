@@ -3,6 +3,7 @@ package be.kdg.model;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name= "t_user")
 @Component("user")
-public class User {
+public class User implements Serializable {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
@@ -33,5 +34,9 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
     }
 }

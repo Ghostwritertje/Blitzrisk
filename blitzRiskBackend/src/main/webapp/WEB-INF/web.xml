@@ -35,7 +35,6 @@
         <welcome-file>/WEB-INF/login.jsp</welcome-file>
     </welcome-file-list>
 
-    <!-- contextLoadListener necessary for Spring security-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

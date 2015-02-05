@@ -7,6 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by Marlies on 4/01/2015.
  */
@@ -29,6 +31,14 @@ public class UserService {
         User user = new User(username, email, password);
         session.save(user);
         tx.commit();
+    }
+
+    public List<User> findall() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from be.kdg.model.User");
+        List<User> users = query.list();
+        session.close();
+        return users;
     }
 
 }
