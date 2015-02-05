@@ -19,7 +19,10 @@ public class App
     {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        User user = new User("joran", "jorandeboever@gmail.com", "joran");
+        User user = new User();
+        user.setName("Joran");
+        user.setEmail("jorandeboever@gmail.com");
+        user.setPassword("joran");
         session.save(user);
         tx.commit();
 

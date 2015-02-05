@@ -28,14 +28,17 @@ public class UserService {
     public void addUser(String username, String email, String password){
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        User user = new User(username, email, password);
+        User user = new User();
+        user.setName(username);
+        user.setEmail(email);
+        user.setPassword(password);
         session.save(user);
         tx.commit();
     }
 
     public List<User> findall() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Query query = session.createQuery("from be.kdg.model.User");
+        Query query = session.createQuery("select u.name, u.email from be.kdg.model.User u");
         List<User> users = query.list();
         session.close();
         return users;

@@ -17,13 +17,21 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/rest/users")
 public class UserInfoController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(method= RequestMethod.GET, produces = "application/json")
-        public @ResponseBody List<User> users() {
-            return this.userService.findall();
-        }
+    @RequestMapping(value="/api/users", method = RequestMethod.GET, produces = "application/json")
+    public
+    @ResponseBody
+    List<User> getUsers() {
+        return this.userService.findall();
+    }
+
+    @RequestMapping(value="/api/secured/users",method = RequestMethod.GET, produces = "application/json")
+    public
+    @ResponseBody
+    List<User> getSecuredUsers() {
+        return this.userService.findall();
+    }
 }
