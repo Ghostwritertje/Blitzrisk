@@ -1,6 +1,6 @@
 package be.kdg.security;
 
-import be.kdg.services.UserService;
+import be.kdg.dao.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

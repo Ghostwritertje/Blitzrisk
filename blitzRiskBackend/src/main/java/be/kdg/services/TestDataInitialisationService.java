@@ -1,11 +1,8 @@
 package be.kdg.services;
 
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
+import be.kdg.dao.UserService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Service;
 
 /**
