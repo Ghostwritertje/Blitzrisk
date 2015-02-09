@@ -137,6 +137,10 @@ public class TerritorieService {
         ////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        /////////////
+        //    NORTH AMERICA
+        ////////////
+
         alaska.addNeighbour(alberta);
         alaska.addNeighbour(northwestTerritory);
         alaska.addNeighbour(kamchatka);
@@ -161,6 +165,41 @@ public class TerritorieService {
         ontario.addNeighbour(quebec);
         ontario.addNeighbour(easternUnitedStates);
         ontario.addNeighbour(westernUnitedStates);
+        ontario.addNeighbour(alberta);
+
+        quebec.addNeighbour(greenland);
+        quebec.addNeighbour(ontario);
+        quebec.addNeighbour(easternUnitedStates);
+
+        westernUnitedStates.addNeighbour(easternUnitedStates);
+        westernUnitedStates.addNeighbour(alberta);
+        westernUnitedStates.addNeighbour(ontario);
+        westernUnitedStates.addNeighbour(centralAmerica);
+
+        easternUnitedStates.addNeighbour(westernUnitedStates);
+        easternUnitedStates.addNeighbour(ontario);
+        easternUnitedStates.addNeighbour(quebec);
+        easternUnitedStates.addNeighbour(centralAmerica);
+
+        centralAmerica.addNeighbour(venezuela);
+        centralAmerica.addNeighbour(easternUnitedStates);
+        centralAmerica.addNeighbour(westernUnitedStates);
+
+        /////////////
+        //    SOUTH AMERICA
+        ////////////
+
+        venezuela.addNeighbour(centralAmerica);
+        venezuela.addNeighbour(peru);
+        venezuela.addNeighbour(brazil);
+
+        peru.addNeighbour(venezuela);
+        peru.addNeighbour(brazil);
+        peru.addNeighbour(argentina);
+
+        brazil.addNeighbour(argentina);
+        brazil.addNeighbour(venezuela);
+        brazil.addNeighbour();
 
         return territories;
     }
