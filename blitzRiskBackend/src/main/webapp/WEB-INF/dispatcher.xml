@@ -16,7 +16,6 @@
     <mvc:annotation-driven />
     <context:component-scan base-package="be.kdg"/>
 
-    <!-- <bean id="dataInitializer" class="be.kdg.services.TestDataInitialisationService"/> -->
 
     <!-- ativate annotations in beans already registered in the application context-->
     <context:annotation-config/>
@@ -50,7 +49,7 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
-    <bean id="userDao" class="be.kdg.security.MyUserDetailsService">
+    <bean id="userDao" class="be.kdg.dao.UserService">
     </bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">

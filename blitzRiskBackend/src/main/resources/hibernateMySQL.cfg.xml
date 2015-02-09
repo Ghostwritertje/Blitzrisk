@@ -21,15 +21,17 @@
         <property name="format_sql">false</property>
         <property name="use_sql_comments">false</property>
 
-        <!--<property name="hbm2ddl.auto">create</property>-->
+
+        <property name="hbm2ddl.auto">create</property>
+
 
         <!-- Reference to all the mapping files used -->
-        <mapping class="be.kdg.model.User"/>
         <mapping class="be.kdg.model.Game"/>
         <mapping class="be.kdg.model.Player"/>
         <mapping class="be.kdg.model.Territory"/>
         <mapping class="be.kdg.model.Turn"/>
         <mapping class="be.kdg.model.Move"/>
+        <mapping class="be.kdg.model.User"/>
 
 
     </session-factory>
