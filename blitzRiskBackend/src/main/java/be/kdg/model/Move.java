@@ -31,4 +31,36 @@ public class Move {
     @ManyToOne
     @JoinColumn(name = "originTerritoryId")
     private Territory originTerritory;
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Turn getTurn() {
+        return turn;
+    }
+
+    public void setTurn(Turn turn) {
+        this.turn = turn;
+    }
+
+    public Territory getDestinationTerritory() {
+        return destinationTerritory;
+    }
+
+    public void setDestinationTerritory(Territory destinationTerritory) {
+        this.destinationTerritory = destinationTerritory;
+    }
+
+    public Territory getOriginTerritory() {
+        return originTerritory;
+    }
+
+    public void setOriginTerritory(Territory originTerritory) {
+        this.originTerritory = originTerritory;
+    }
 }
