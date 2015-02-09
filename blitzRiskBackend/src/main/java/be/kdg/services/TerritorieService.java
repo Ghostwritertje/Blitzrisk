@@ -199,7 +199,11 @@ public class TerritorieService {
 
         brazil.addNeighbour(argentina);
         brazil.addNeighbour(venezuela);
-        brazil.addNeighbour();
+        brazil.addNeighbour(argentina);
+        brazil.addNeighbour(northAfrica);
+
+        argentina.addNeighbour(peru);
+        argentina.addNeighbour(brazil);
 
         return territories;
     }
