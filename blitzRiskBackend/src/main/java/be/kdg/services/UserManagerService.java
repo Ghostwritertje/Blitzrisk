@@ -24,7 +24,7 @@ public class UserManagerService {
 
     @Transactional
     public void addUser(String username, String password, String email) {
-        userService.addUser(username, password, email);
+        userService.addUser(username, email, password);
     }
 
     @Transactional

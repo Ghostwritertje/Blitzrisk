@@ -51,6 +51,8 @@
     <!--nahoren-->
     <bean id="userDao" class="be.kdg.security.MyUserDetailsService">
     </bean>
+    <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService">
+    </bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userDao" />
@@ -72,6 +74,7 @@
                 <prop
                         key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
             </props>
         </property>
         <property name="packagesToScan" value="be.kdg.model" />
