@@ -133,6 +133,34 @@ public class TerritorieService {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////
+        //////// SET BORDER TERRITORIES
+        ////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        alaska.addNeighbour(alberta);
+        alaska.addNeighbour(northwestTerritory);
+        alaska.addNeighbour(kamchatka);
+
+        northwestTerritory.addNeighbour(alaska);
+        northwestTerritory.addNeighbour(alberta);
+        northwestTerritory.addNeighbour(ontario);
+        northwestTerritory.addNeighbour(greenland);
+
+        greenland.addNeighbour(iceland);
+        greenland.addNeighbour(quebec);
+        greenland.addNeighbour(ontario);
+        greenland.addNeighbour(northwestTerritory);
+
+        alberta.addNeighbour(alaska);
+        alberta.addNeighbour(northwestTerritory);
+        alberta.addNeighbour(ontario);
+        alberta.addNeighbour(westernUnitedStates);
+
+        ontario.addNeighbour(northwestTerritory);
+        ontario.addNeighbour(greenland);
+        ontario.addNeighbour(quebec);
+        ontario.addNeighbour(easternUnitedStates);
+        ontario.addNeighbour(westernUnitedStates);
 
         return territories;
     }
