@@ -16,16 +16,16 @@ import java.util.Set;
  * Date:2/02/15.
  */
 @Entity
-@Table(name= "t_user")
-@Component("user")
-public class User implements Serializable, UserDetails {
-    @javax.persistence.Id
+@Table(name = "t_user")
+public class User implements UserDetails {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
     private String password;
-    @Column(unique = true)
+
+   @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user")
@@ -35,14 +35,6 @@ public class User implements Serializable, UserDetails {
 
     public String getName() {
         return name;
-    }
-
-    public Integer getId() {
-        return Id;
-    }
-
-    public void setId(Integer id) {
-        Id = id;
     }
 
     public void setName(String name) {

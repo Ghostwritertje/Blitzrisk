@@ -10,9 +10,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "t_move")
-@Component("move")
 public class Move {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 

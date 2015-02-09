@@ -5,54 +5,82 @@ import be.kdg.persistence.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- *
  * Created by Marlies on 4/01/2015.
  */
 
 @Service("userService")
-public class UserService {
+public class UserService implements UserDetailsService {
     public User checkLogin(String username, String password) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+
+
         Query query = session.createQuery("from User u where u.name = :username and u.password = :password");
         query.setParameter("username", username);
         query.setParameter("password", password);
         User user = (User) query.uniqueResult();
-        session.close();
+
+        tx.commit();
         return user;
     }
 
     public void addUser(String username, String password, String email) {
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        User user = new User();
-        user.setName(username);
-        user.setEmail(email);
-        user.setPassword(password);
-        session.save(user);
-        tx.commit();
+
+            User user = new User();
+            user.setName(username);
+            user.setEmail(email);
+            user.setPassword(password);
+            session.saveOrUpdate(user);
+
+            tx.commit();
+
     }
 
-    public User getUser(String username) {
+    public User loadUserByUsername(String username) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
+
         Query query = session.createQuery("from User user where user.name = :username");
         query.setParameter("username", username);
         User user = (User) query.uniqueResult();
+
         tx.commit();
         return user;
     }
 
     public List<User> findall() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+
         Query query = session.createQuery("from User");
         List<User> users = query.list();
-        session.close();
+
+        tx.commit();
         return users;
+    }
+
+    public void removeUser(String username) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        try {
+
+            Query query = session.createQuery("delete from User user where user.name = :username");
+            query.setParameter("username", username);
+            query.executeUpdate();
+
+        } catch (Exception e) {
+            session.close();
+        }
+        tx.commit();
     }
 
 }

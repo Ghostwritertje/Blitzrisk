@@ -15,6 +15,9 @@ public class TokenUtils
 
 	public static String createToken(UserDetails userDetails)
 	{
+        if(userDetails == null){
+            return "";
+        }
 		/* Expires in one hour */
 		long expires = System.currentTimeMillis() + 1000L * 60 * 60;
 
@@ -64,14 +67,19 @@ public class TokenUtils
 
 	public static boolean validateToken(String authToken, UserDetails userDetails)
 	{
-		String[] parts = authToken.split(":");
-		long expires = Long.parseLong(parts[1]);
-		String signature = parts[2];
+        try {
+            String[] parts = authToken.split(":");
+            long expires = Long.parseLong(parts[1]);
+            String signature = parts[2];
+
 
 		if (expires < System.currentTimeMillis()) {
 			return false;
 		}
 
 		return signature.equals(TokenUtils.computeSignature(userDetails, expires));
-	}
+        }catch (ArrayIndexOutOfBoundsException e){
+            return false;
+        }
+        }
 }
