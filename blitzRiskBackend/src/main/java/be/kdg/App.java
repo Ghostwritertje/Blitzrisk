@@ -1,7 +1,7 @@
 package be.kdg;
 
 import be.kdg.model.User;
-import be.kdg.dao.UserService;
+import be.kdg.dao.UserDao;
 
 /**
  * Hello world!
@@ -20,9 +20,9 @@ public class App
         session.save(user);
         tx.commit();*/
 
-        UserService userService = new UserService();
+        UserDao userDao = new UserDao();
 
-        User user = userService.getUser("Joran");
+        User user = userDao.getUser("Joran");
         System.out.println("User: " + user.getUsername() + ", Password: " + user.getPassword());
 
     }

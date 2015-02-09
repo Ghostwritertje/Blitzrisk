@@ -1,6 +1,6 @@
 package be.kdg.security;
 
-import be.kdg.dao.UserService;
+import be.kdg.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,10 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class MyUserDetailsService implements UserDetailsService {
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.getUser(username);
+        return userDao.getUser(username);
     }
 }

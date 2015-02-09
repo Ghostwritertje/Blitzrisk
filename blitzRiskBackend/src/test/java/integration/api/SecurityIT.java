@@ -1,10 +1,8 @@
 package integration.api;
 
-import be.kdg.dao.UserService;
-import org.junit.Before;
+import be.kdg.dao.UserDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import static com.jayway.restassured.RestAssured.get;
@@ -21,13 +19,13 @@ public class SecurityIT {
     private final String URL = "http://localhost:8181/BlitzRisk/api";
     private final String SECURE_PAGE = URL + "/secured/users";
 
-    private static UserService userService = new UserService();
+    private static UserDao userDao = new UserDao();
 
     @BeforeClass
     public static void configure() {
-        userService.removeUser("testuser");
-        userService.removeUser("testuser2");
-        userService.addUser("testuser", "testuserpass", "testuser@test.be");
+        userDao.removeUser("testuser");
+        userDao.removeUser("testuser2");
+        userDao.addUser("testuser", "testuserpass", "testuser@test.be");
     }
 
     @Test
