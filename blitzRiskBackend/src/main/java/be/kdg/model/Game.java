@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name= "t_game")
-@Component("game")
 public class Game {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 

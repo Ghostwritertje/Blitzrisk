@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "t_territory")
-@Component("territory")
 public class Territory {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private Integer numberOfUnits;

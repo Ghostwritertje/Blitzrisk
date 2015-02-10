@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name= "t_turn")
-@Component("turn")
 public class Turn {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 

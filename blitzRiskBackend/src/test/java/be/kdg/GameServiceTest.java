@@ -22,8 +22,8 @@ import java.util.Set;
  * Created by Alexander on 10/2/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/dispatcher.xml"})
-public class MyTest {
+@ContextConfiguration(locations={"/testcontext.xml"})
+public class GameServiceTest {
 
     @Autowired
     private ApplicationContext applicationContext;

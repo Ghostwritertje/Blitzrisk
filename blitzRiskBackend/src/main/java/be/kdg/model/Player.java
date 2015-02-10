@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "t_player")
-@Component("player")
 public class Player {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private String color;
