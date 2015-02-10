@@ -1,19 +1,26 @@
 package be.kdg.dao;
 
 import be.kdg.model.User;
+<<<<<<< HEAD
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
+=======
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.security.core.userdetails.UserDetailsService;
+>>>>>>> master
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- *
  * Created by Marlies on 4/01/2015.
  */
 
 
 @Service("userService")
+
 public class UserService {
 
     @Autowired
@@ -24,6 +31,7 @@ public class UserService {
         query.setParameter("username", username);
         query.setParameter("password", password);
         User user = (User) query.uniqueResult();
+
         return user;
     }
 
@@ -44,6 +52,6 @@ public class UserService {
     public List<User> findall() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         return criteria.list();
-    }
 
+    }
 }

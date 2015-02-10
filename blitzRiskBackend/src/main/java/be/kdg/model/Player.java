@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "t_player")
-@Component("player")
 public class Player {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private String color;
@@ -29,4 +28,36 @@ public class Player {
 
     @OneToMany(mappedBy = "player")
     private Set<Territory> territories = new HashSet<Territory>();
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Set<Territory> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Set<Territory> territories) {
+        this.territories = territories;
+    }
 }

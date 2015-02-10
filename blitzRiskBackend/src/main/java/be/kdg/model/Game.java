@@ -12,9 +12,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name= "t_game")
-@Component("game")
 public class Game {
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
@@ -23,4 +22,33 @@ public class Game {
 
     @OneToMany(mappedBy = "game")
     private Set<Turn> turns = new HashSet<Turn>();
+
+    @OneToMany(mappedBy = "game")
+    private Set<Territory> territories = new HashSet<Territory>();
+
+    public Set<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
+    }
+
+    public Set<Turn> getTurns() {
+        return turns;
+    }
+
+    public void setTurns(Set<Turn> turns) {
+        this.turns = turns;
+    }
+
+    public Set<Territory> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Set<Territory> territories) {
+        this.territories = territories;
+    }
+
+
 }

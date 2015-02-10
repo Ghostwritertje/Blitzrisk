@@ -18,18 +18,17 @@ public class UserInfoController {
     @Autowired
     private UserManagerService userService;
 
-    @RequestMapping(value = "/api/user/{username}/{password}/{email}", method = RequestMethod.PUT)
-    public void register(@PathVariable("username") String username,
-                         @PathVariable("password") String password,
-                         @PathVariable("email") String email) {
+    @RequestMapping(value = "/api/user/{username}", method = RequestMethod.PUT)
+    public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
+
         userService.addUser(username, password, email);
 
     }
 
-    @RequestMapping(value = "/api/token/{username}/{password}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/api/token/{username}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String getToken(@PathVariable("username") String username,
-                           @PathVariable("password") String password) {
+                           @RequestHeader("password") String password) {
         User user = userService.checkLogin(username, password);
         return TokenUtils.createToken(user);
     }
