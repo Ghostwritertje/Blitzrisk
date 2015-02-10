@@ -2,7 +2,7 @@ package be.kdg.controllers;
 
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
-import be.kdg.dao.UserService;
+import be.kdg.services.UserManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +14,9 @@ import java.util.List;
 
 @RestController
 public class UserInfoController {
+
     @Autowired
-    private UserService userService;
+    private UserManagerService userService;
 
     @RequestMapping(value = "/api/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {

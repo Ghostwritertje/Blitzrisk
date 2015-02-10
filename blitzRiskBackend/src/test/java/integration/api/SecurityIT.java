@@ -1,11 +1,14 @@
 package integration.api;
 
+<<<<<<< HEAD
+=======
 import be.kdg.dao.UserService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+>>>>>>> master
 
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
@@ -14,6 +17,7 @@ import static com.jayway.restassured.RestAssured.put;
 /**
  * Created by user jorandeboever
  * Date:5/02/15.
+
  */
 @ContextConfiguration(locations = {"/testcontext.xml"})
 public class SecurityIT {
@@ -28,6 +32,7 @@ public class SecurityIT {
         userService.removeUser("testuser");
         userService.removeUser("testuser2");
         userService.addUser("testuser", "testuserpass", "testuser@test.be");
+
     }
 
     @Test
@@ -39,8 +44,10 @@ public class SecurityIT {
     @Test
     public void testCorrectUser() {
         String token = given().header("password", "testuserpass").get(URL + "/token/testuser").getBody().asString();
+
       // TODO: wrong error
       //  given().header("X-Auth-Token", token).when().get(SECURE_PAGE).then().assertThat().statusCode(200);
+
 
     }
 
@@ -56,18 +63,24 @@ public class SecurityIT {
         given().header("X-Auth-Token", token).when().get(SECURE_PAGE).then().assertThat().statusCode(401);
     }
 
+
     @Test
     public void registerNewUser() {
         given().header("password", "testuser2pass").header("email", "testuser2@test.be").put(URL + "/user/testuser2").then().assertThat().statusCode(200);
         String token = given().header("password", "testuser2pass").get(URL + "/token/testuser2").getBody().asString();
+
         given().header("X-Auth-Token", token).when().get(SECURE_PAGE).then().assertThat().statusCode(200);
 
     }
     @Test
     public void registerExistingUser() {
+
         given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "/user/testuser").then().assertThat().statusCode(200);
+
         String token = given().header("password", "testuserpass").get(URL + "/token/testuser").getBody().asString();
         given().header("X-Auth-Token", token).when().get(SECURE_PAGE).then().assertThat().statusCode(200);
     }
 
+
 }
+

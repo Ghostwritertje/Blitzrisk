@@ -9,11 +9,10 @@ import org.springframework.stereotype.Service;
  * Created by user jorandeboever
  * Date:3/02/15.
  */
-@Service
+
 public class TestDataInitialisationService  implements InitializingBean {
     @Autowired
-    private UserService userService;
-
+    private UserManagerService userService;
 
 
     @Override

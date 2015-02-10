@@ -4,6 +4,8 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/mvc
@@ -11,13 +13,16 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security
-       http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+       http://www.springframework.org/schema/security/spring-security-3.2.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <mvc:annotation-driven />
+    <tx:annotation-driven/>
     <context:component-scan base-package="be.kdg"/>
 
-
     <!-- ativate annotations in beans already registered in the application context-->
+
     <context:annotation-config/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -25,10 +30,6 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <!-- for Spring Security-->
-
-  <!--  <bean id="customAuthenticationProvider" class="be.kdg.security.LoginService"/> -->
-<!-- create-session="stateless-->
     <security:http
             realm="Protected API"
             use-expressions="true"
@@ -50,11 +51,40 @@
     </security:authentication-manager>
 
     <bean id="userDao" class="be.kdg.dao.UserService">
+
+    </bean>
+    <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService">
     </bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userDao" />
     </bean>
     <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint" />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/BlitzRisk" />
+        <property name="username" value="blitzrisk" />
+        <property name="password" value="blitzrisk" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="hibernateProperties">
+            <props>
+                <prop
+                        key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+            </props>
+        </property>
+        <property name="packagesToScan" value="be.kdg.model" />
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+          p:sessionFactory-ref="sessionFactory">
+    </bean>
 
 </beans>
