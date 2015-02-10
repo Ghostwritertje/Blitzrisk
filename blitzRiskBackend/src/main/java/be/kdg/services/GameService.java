@@ -37,33 +37,23 @@ public class GameService {
     }
 
     public Game assignRandomTerritories(Game game) {
-        Random random = new Random();
 
-        ArrayList<Integer> allocatedTerritories = new ArrayList<Integer>();
-        int playerCounter = 0;
-        Player[] playersArray = game.getPlayers().toArray(new Player[game.getPlayers().size()]);
-        int randomInt = 0;
 
-        for (Territory territory : game.getTerritories()) {
-            if (((42 - allocatedTerritories.size())/playersArray.length)<1) {
-                break;
+        List<Territory> territoryList = new ArrayList<>(game.getTerritories());
+        Collections.shuffle(territoryList);
+
+        while(territoryList.size()%game.getPlayers().size() != 0) {
+            territoryList.remove(territoryList.size()-1);
+        }
+
+        List<Player> playerList = new ArrayList<>(game.getPlayers());
+        int i = 0;
+        for (Territory territory : territoryList) {
+            territory.setPlayer(playerList.get(i++));
+
+            if (i == playerList.size()) {
+                i = 0;
             }
-            do {
-                randomInt = random.nextInt(42);
-                System.out.println(allocatedTerritories.size());
-            } while (allocatedTerritories.contains(randomInt));
-
-            Territory[] territoriesArray = game.getTerritories().toArray(new Territory[game.getTerritories().size()]);
-
-            Territory randomTerritory = territoriesArray[randomInt];
-            randomTerritory.setPlayer(playersArray[playerCounter++]);
-            randomTerritory.setNumberOfUnits(1);
-            allocatedTerritories.add(randomInt);
-
-            if (playerCounter+1 > playersArray.length) {
-                playerCounter=0;
-            }
-
         }
         return game;
 
