@@ -1,14 +1,15 @@
 package integration.api;
 
-<<<<<<< HEAD
-=======
+import org.springframework.test.context.ContextConfiguration;
+
+
 import be.kdg.dao.UserService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
->>>>>>> master
+
 
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
@@ -29,8 +30,8 @@ public class SecurityIT {
 
     @BeforeClass
     public static void configure() {
-        userService.removeUser("testuser");
-        userService.removeUser("testuser2");
+       /* userService.removeUser("testuser");
+        userService.removeUser("testuser2");*/
         userService.addUser("testuser", "testuserpass", "testuser@test.be");
 
     }

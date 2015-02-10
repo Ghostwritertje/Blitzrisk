@@ -1,15 +1,12 @@
 package be.kdg.dao;
 
 import be.kdg.model.User;
-<<<<<<< HEAD
+
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
-=======
+
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.security.core.userdetails.UserDetailsService;
->>>>>>> master
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

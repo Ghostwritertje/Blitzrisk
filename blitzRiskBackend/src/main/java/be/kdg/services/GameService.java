@@ -39,7 +39,7 @@ public class GameService {
     public Game assignRandomTerritories(Game game) {
 
 
-        List<Territory> territoryList = new ArrayList<>(game.getTerritories());
+        List<Territory> territoryList = new ArrayList<Territory>(game.getTerritories());
         Collections.shuffle(territoryList);
 
         while(territoryList.size()%game.getPlayers().size() != 0) {
