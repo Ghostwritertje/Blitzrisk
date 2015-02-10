@@ -50,6 +50,7 @@ public class GameService {
         int i = 0;
         for (Territory territory : territoryList) {
             territory.setPlayer(playerList.get(i++));
+            territory.setNumberOfUnits(1);
 
             if (i == playerList.size()) {
                 i = 0;
