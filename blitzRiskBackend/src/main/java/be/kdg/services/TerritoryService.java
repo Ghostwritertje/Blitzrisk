@@ -1,7 +1,6 @@
 package be.kdg.services;
 
 import be.kdg.model.Territory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -11,6 +10,7 @@ import java.util.Set;
  * Created by Alexander on 6/2/2015.
  */
 
+@Service("territoryService")
 public class TerritoryService {
 
     public Set<Territory> getTerritories () {

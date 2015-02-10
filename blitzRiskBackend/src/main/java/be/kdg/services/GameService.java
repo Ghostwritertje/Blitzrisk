@@ -1,28 +1,26 @@
-package be.kdg.controllers;
+package be.kdg.services;
 
 import be.kdg.model.Game;
 import be.kdg.model.Player;
 import be.kdg.model.Territory;
 import be.kdg.model.User;
-import be.kdg.services.TerritoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.xpath.XPathException;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 /**
  * Created by Alexander on 6/2/2015.
  */
-public class GameController {
 
-    //TODO: autowired??
+@Service("gameService")
+public class GameService {
+
+    @Autowired
     private TerritoryService territoryService;
 
     public Game createNewGame(List<User> users) {
 
-
-        territoryService = new TerritoryService();
-        Random random = new Random();
         Game game = new Game();
         Set<Player> players =  new HashSet<Player>();
 
@@ -33,6 +31,13 @@ public class GameController {
         }
         game.setPlayers(players);
         game.setTerritories(territoryService.getTerritories());
+
+        assignRandomTerritories(game);
+    return game;
+    }
+
+    public Game assignRandomTerritories(Game game) {
+        Random random = new Random();
 
         ArrayList<Integer> allocatedTerritories = new ArrayList<Integer>();
         int playerCounter = 0;
@@ -45,7 +50,7 @@ public class GameController {
             }
             do {
                 randomInt = random.nextInt(42);
-                                                System.out.println(allocatedTerritories.size());
+                System.out.println(allocatedTerritories.size());
             } while (allocatedTerritories.contains(randomInt));
 
             Territory[] territoriesArray = game.getTerritories().toArray(new Territory[game.getTerritories().size()]);
@@ -60,6 +65,7 @@ public class GameController {
             }
 
         }
-    return game;
+        return game;
+
     }
 }

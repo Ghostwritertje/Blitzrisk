@@ -1,10 +1,10 @@
 package be.kdg;
 
-import be.kdg.controllers.GameController;
+import be.kdg.services.GameService;
 import be.kdg.model.Game;
 import be.kdg.model.Territory;
 import be.kdg.model.User;
-import be.kdg.dao.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Set;
  * Hello world!
  *
  */
+
 public class App 
 {
     public static void main( String[] args )
@@ -27,7 +28,10 @@ public class App
         session.save(user);
         tx.commit();*/
 
-        GameController controller = new GameController();
+
+       /*
+        GameService gameService;
+
         List<User> lijst = new ArrayList<User>();
         User user1 = new User();
         user1.setName("een");
@@ -46,7 +50,7 @@ public class App
         lijst.add(user4);
       //  lijst.add(user5);
 
-        Game game = controller.createNewGame(lijst);
+        Game game = gameService.createNewGame(lijst);
 
         Set<Territory> territories = game.getTerritories();
 
@@ -55,6 +59,6 @@ public class App
             System.out.println(terr.getPlayer());
 
         }
-
+*/
     }
 }
