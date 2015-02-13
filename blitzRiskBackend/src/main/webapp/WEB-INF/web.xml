@@ -21,7 +21,7 @@
 
     <servlet-mapping>
         <servlet-name>springservlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <context-param>

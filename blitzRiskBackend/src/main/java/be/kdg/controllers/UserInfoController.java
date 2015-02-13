@@ -24,12 +24,11 @@ public class UserInfoController {
 
     }
 
-    @RequestMapping(value = "/api/token/{username}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/api/login}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String getToken(@PathVariable("username") String username,
-                           @RequestHeader("password") String password) {
-        User user = userService.checkLogin(username, password);
-        return TokenUtils.createToken(user);
+    public String getToken(@RequestBody User user) {
+        User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
+        return TokenUtils.createToken(verifiedUser);
     }
 
 
