@@ -2,7 +2,7 @@
 
 angular.module('blitzrisk.services').factory('loginService', ['$http',
     function($http){
-        var hosturl = "http://localhost:8080/BlitzRisk/api/api/login";
+        var hosturl = "http://localhost:8080/BlitzRisk/api/login";
         var token= null;
         return {
             login: function(username, password){

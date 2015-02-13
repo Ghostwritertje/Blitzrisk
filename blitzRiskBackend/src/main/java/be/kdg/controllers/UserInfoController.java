@@ -1,5 +1,6 @@
 package be.kdg.controllers;
 
+import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.dao.UserService;
@@ -26,7 +27,7 @@ public class UserInfoController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String getToken(@RequestBody User user) {
+    public String getToken(@RequestBody UserBean user) {
         User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
         return TokenUtils.createToken(verifiedUser);
     }
