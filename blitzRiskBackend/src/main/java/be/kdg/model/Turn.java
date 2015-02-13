@@ -26,4 +26,27 @@ public class Turn {
     @OneToMany(mappedBy = "turn")
     private Set<Move> moves = new HashSet<Move>();
 
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Set<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(Set<Move> moves) {
+        this.moves = moves;
+    }
 }
