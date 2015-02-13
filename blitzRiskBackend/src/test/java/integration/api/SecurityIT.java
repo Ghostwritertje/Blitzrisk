@@ -18,7 +18,7 @@ import static com.jayway.restassured.RestAssured.put;
 @ContextConfiguration(locations = {"/testcontext.xml"})
 public class SecurityIT {
 
-    private final String URL = "http://localhost:9999/BlitzRisk/api";
+    private final String URL = "http://localhost:8080/BlitzRisk/api";
     private final String SECURE_PAGE = URL + "/secured/users";
 
     private static UserService userService = new UserService();
