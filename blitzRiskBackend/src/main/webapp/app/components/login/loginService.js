@@ -2,21 +2,13 @@
 
 angular.module('blitzrisk.services').factory('loginService', ['$http',
     function($http){
-        var hosturl = "http://localhost:8080/BlitzRisk/api/";
-        var token = null;
-
+        var hosturl = "http://localhost:8080/BlitzRisk/api/api/login";
+        var token= null;
         return {
-            login: function(calback, username, password){
-                var req = {
-                    method: 'GET',
-                    url: hosturl+'token/'+ username,
-                    headers: {
-                        'password': password
-                    }
-                };
-               return  $http.get(hosturl+'token/'+ username, { headers: {'password': password}});
+            login: function(username, password){
+               return  $http.post(hosturl,{name:username, password:password}).success(function(data){token = data.data;});
             },
             getToken: function(){
-                return "gunther";
+                return token;
             }
     }}]);
