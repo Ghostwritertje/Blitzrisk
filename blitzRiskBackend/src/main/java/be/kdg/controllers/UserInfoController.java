@@ -24,11 +24,7 @@ public class UserInfoController {
 
     }
 
-<<<<<<< HEAD
-    @RequestMapping(value = "/api/login", method = RequestMethod.POST, produces = "application/json")
-=======
     @RequestMapping(value = "/login}", method = RequestMethod.POST, produces = "application/json")
->>>>>>> f09ab0ccd227207f2dd78072d9c39b97c2bfb451
     @ResponseBody
     public String getToken(@RequestBody User user) {
         User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
