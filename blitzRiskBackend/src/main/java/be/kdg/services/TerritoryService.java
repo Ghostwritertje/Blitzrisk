@@ -22,23 +22,23 @@ public class TerritoryService {
         ////////////
 
         Territory alaska = new Territory();
-        alaska.setGameId(1);
+        alaska.setKey(1);
         Territory northwestTerritory = new Territory();
-        northwestTerritory.setGameId(2);
+        northwestTerritory.setKey(2);
         Territory greenland = new Territory();
-        greenland.setGameId(3);
+        greenland.setKey(3);
         Territory alberta = new Territory();
-        alberta.setGameId(4);
+        alberta.setKey(4);
         Territory ontario = new Territory();
-        ontario.setGameId(5);
+        ontario.setKey(5);
         Territory quebec = new Territory();
-        quebec.setGameId(6);
+        quebec.setKey(6);
         Territory westernUnitedStates = new Territory();
-        westernUnitedStates.setGameId(7);
+        westernUnitedStates.setKey(7);
         Territory easternUnitedStates = new Territory();
-        easternUnitedStates.setGameId(8);
+        easternUnitedStates.setKey(8);
         Territory centralAmerica = new Territory();
-        centralAmerica.setGameId(9);
+        centralAmerica.setKey(9);
 
 
         /////////////
@@ -46,49 +46,49 @@ public class TerritoryService {
         ////////////
 
         Territory venezuela = new Territory();
-        venezuela.setGameId(10);
+        venezuela.setKey(10);
         Territory peru = new Territory();
-        peru.setGameId(11);
+        peru.setKey(11);
         Territory brazil = new Territory();
-        brazil.setGameId(12);
+        brazil.setKey(12);
         Territory argentina = new Territory();
-        argentina.setGameId(13);
+        argentina.setKey(13);
 
         /////////////
         //    EUROPE
         ////////////
 
         Territory iceland = new Territory();
-        iceland.setGameId(14);
+        iceland.setKey(14);
         Territory greatBritain = new Territory();
-        greatBritain.setGameId(15);
+        greatBritain.setKey(15);
         Territory scandinavia = new Territory();
-        scandinavia.setGameId(16);
+        scandinavia.setKey(16);
         Territory ukraine = new Territory();
-        ukraine.setGameId(17);
+        ukraine.setKey(17);
         Territory northernEurope = new Territory();
-        northernEurope.setGameId(18);
+        northernEurope.setKey(18);
         Territory westernEurope = new Territory();
-        westernEurope.setGameId(19);
+        westernEurope.setKey(19);
         Territory southernEurope = new Territory();
-        southernEurope.setGameId(20);
+        southernEurope.setKey(20);
 
         /////////////
         //    AFRICA
         ////////////
 
         Territory northAfrica = new Territory();
-        northAfrica.setGameId(21);
+        northAfrica.setKey(21);
         Territory egypt = new Territory();
-        egypt.setGameId(22);
+        egypt.setKey(22);
         Territory congo = new Territory();
-        congo.setGameId(23);
+        congo.setKey(23);
         Territory eastAfrica = new Territory();
-        eastAfrica.setGameId(24);
+        eastAfrica.setKey(24);
         Territory southAfrica = new Territory();
-        southAfrica.setGameId(25);
+        southAfrica.setKey(25);
         Territory madagascar = new Territory();
-        madagascar.setGameId(26);
+        madagascar.setKey(26);
 
 
         /////////////
@@ -96,42 +96,42 @@ public class TerritoryService {
         ////////////
 
         Territory ural = new Territory();
-        ural.setGameId(27);
+        ural.setKey(27);
         Territory siberia = new Territory();
-        siberia.setGameId(28);
+        siberia.setKey(28);
         Territory yakutsk = new Territory();
-        yakutsk.setGameId(29);
+        yakutsk.setKey(29);
         Territory kamchatka = new Territory();
-        kamchatka.setGameId(30);
+        kamchatka.setKey(30);
         Territory irkutsk = new Territory();
-        irkutsk.setGameId(31);
+        irkutsk.setKey(31);
         Territory afghanistan = new Territory();
-        afghanistan.setGameId(32);
+        afghanistan.setKey(32);
         Territory mongolia = new Territory();
-        mongolia.setGameId(33);
+        mongolia.setKey(33);
         Territory japan = new Territory();
-        japan.setGameId(34);
+        japan.setKey(34);
         Territory china = new Territory();
-        china.setGameId(35);
+        china.setKey(35);
         Territory middleEast = new Territory();
-        middleEast.setGameId(36);
+        middleEast.setKey(36);
         Territory india = new Territory();
-        india.setGameId(37);
+        india.setKey(37);
         Territory siam = new Territory();
-        siam.setGameId(38);
+        siam.setKey(38);
 
         /////////////
         //    AUSTRALIA
         ////////////
 
         Territory indonesia = new Territory();
-        indonesia.setGameId(39);
+        indonesia.setKey(39);
         Territory newGuinea = new Territory();
-        newGuinea.setGameId(40);
+        newGuinea.setKey(40);
         Territory westernAustralia = new Territory();
-        westernAustralia.setGameId(41);
+        westernAustralia.setKey(41);
         Territory easternAustralia = new Territory();
-        easternAustralia.setGameId(42);
+        easternAustralia.setKey(42);
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
         ////////
