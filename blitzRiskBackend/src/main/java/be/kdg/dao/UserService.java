@@ -4,6 +4,7 @@ import be.kdg.model.User;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +16,12 @@ import java.util.List;
 @Service("userService")
 public class UserService implements UserDetailsService {
 
-    @Autowired
+    @Autowired(required=true)
     private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     public User checkLogin(String username, String password) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.name = :username and u.password = :password");

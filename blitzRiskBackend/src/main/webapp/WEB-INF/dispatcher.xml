@@ -18,9 +18,12 @@
        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <mvc:annotation-driven />
-    <tx:annotation-driven/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <context:component-scan base-package="be.kdg"/>
+    <context:component-scan base-package="be.kdg" use-default-filters="false">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
 
     <!-- ativate annotations in beans already registered in the application context-->
 
@@ -54,8 +57,7 @@
     <bean id="userDao" class="be.kdg.dao.UserService">
 
     </bean>
-    <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService">
-    </bean>
+    <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService"></bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userDao" />
@@ -74,8 +76,7 @@
         <property name="dataSource" ref="dataSource"></property>
         <property name="hibernateProperties">
             <props>
-                <prop
-                        key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
             </props>
@@ -84,6 +85,10 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="userService" class="be.kdg.dao.UserService">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

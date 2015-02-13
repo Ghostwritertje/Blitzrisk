@@ -29,7 +29,7 @@ public class GameServiceTest {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
+    @Autowired(required=true)
     private GameService gameService;
 
     @Test

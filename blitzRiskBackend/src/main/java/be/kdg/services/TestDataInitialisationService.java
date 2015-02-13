@@ -10,15 +10,14 @@ import org.springframework.stereotype.Service;
  * Date:3/02/15.
  */
 
+//@Service("testData")
 public class TestDataInitialisationService  implements InitializingBean {
-    @Autowired
+    //@Autowired
     private UserService userService;
-
-
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        try {
+        /*try {
             userService.addUser("Joran", "jorandeboever@gmail.com", "joran");
             userService.addUser("Marlies", "marlies@gmail.com", "marlies");
             userService.addUser("Alexander", "alexander@gmail.com", "alexander");
@@ -27,6 +26,6 @@ public class TestDataInitialisationService  implements InitializingBean {
             userService.addUser("Gunther", "gunther@gmail.com", "gunther");
         }catch (Exception e){
             //nothing
-        }
+        }*/
     }
 }
