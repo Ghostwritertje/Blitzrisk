@@ -17,14 +17,18 @@ public class UserInfoController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/api/user/{username}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
 
         userService.addUser(username, password, email);
 
     }
 
+<<<<<<< HEAD
     @RequestMapping(value = "/api/login", method = RequestMethod.POST, produces = "application/json")
+=======
+    @RequestMapping(value = "/login}", method = RequestMethod.POST, produces = "application/json")
+>>>>>>> f09ab0ccd227207f2dd78072d9c39b97c2bfb451
     @ResponseBody
     public String getToken(@RequestBody User user) {
         User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
@@ -33,13 +37,13 @@ public class UserInfoController {
 
 
 
-    @RequestMapping(value = "/api/users", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getUsers() {
         return this.userService.findall();
     }
 
-    @RequestMapping(value = "/api/secured/users", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getSecuredUsers() {
         return this.userService.findall();
