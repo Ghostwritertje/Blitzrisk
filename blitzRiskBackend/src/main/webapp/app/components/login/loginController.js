@@ -16,7 +16,7 @@ angular.module('blitzriskControllers').controller('LoginController', ['$scope', 
             promise.then(function(message) {
                 $location.path("/game");
             }, function(reason) {
-                alert('Failed: ' + reason);
+           //     alert('Failed: ' + reason);
             }, function(update) {
                 alert('Got notification: ' + update);
             });
