@@ -133,8 +133,16 @@
             <artifactId>jetty-maven-plugin</artifactId>
             <version>9.0.0.v20130308</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.44.0</version>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
@@ -246,7 +254,8 @@
                         <id>stop-jetty</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>stop</goal>
+                            <goal>stop</goal>  <!-- Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) -->
+
                         </goals>
                     </execution>
                 </executions>
