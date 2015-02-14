@@ -1,26 +1,36 @@
 'use strict';
-angular.module('blitzrisk.controllers').controller('loginCtrl', ['$scope','$http', '$location', 'loginService',
-    function ($scope, $http, $location, loginService) {
+angular.module('blitzrisk.controllers').controller('loginCtrl', ['$scope', '$http', '$location', 'loginService', '$q',
+    function ($scope, $http, $location, loginService, $q) {
 
-        //loginService.login(function(token){$scope.test = token;}, 'gunther', 'claessens');
-        /*$scope.config = JSON.parse("/assets/config.json");*/
-       /* var  req = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'password': 'claessens'
-            }
-        };*/
-            var promise =loginService.login('gunther', 'claessens');
-            promise.then(
-                function(data) {
-                    $scope.test = loginService.getToken();
-                },
-                function(data) {
-                    $scope.test= data;
+
+        function logIn(name, password) {
+            var deferred = $q.defer();
+
+            $http.get('http://localhost:8080/BlitzRisk/api/login', {headers: {'name': name, 'password': password}})
+                .success(function (data) {
+
+                    deferred.resolve(data);
+                    //token = data;
+                }).
+                error(function () {
+                    deferred.reject('Wrong log in details');
                 });
 
-        $scope.go = function(path){
+
+            return deferred.promise;
+        }
+
+        var promise = logIn('Joran', 'joran');
+
+        promise.then(function(message) {
+            alert('Success!\nToken:' + message);
+        }, function(reason) {
+            alert('Failed: ' + reason);
+        }, function(update) {
+            alert('Got notification: ' + update);
+        });
+
+        $scope.go = function (path) {
             $location.path(path);
         }
     }

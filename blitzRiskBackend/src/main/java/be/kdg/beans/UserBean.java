@@ -1,11 +1,13 @@
 package be.kdg.beans;
 
-import javax.persistence.Column;
+import org.springframework.stereotype.Component;
+
 
 /**
  * Created by user jorandeboever
  * Date:13/02/15.
  */
+@Component
 public class UserBean {
 
     private String name;

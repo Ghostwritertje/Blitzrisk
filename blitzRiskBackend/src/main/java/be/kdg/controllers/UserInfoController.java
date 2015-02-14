@@ -25,10 +25,11 @@ public class UserInfoController {
 
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
-    public String getToken(@RequestBody UserBean user) {
-        User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
+    public String getToken(@RequestHeader String name, @RequestHeader String password) {
+   
+        User verifiedUser = userService.checkLogin(name,password);
         return TokenUtils.createToken(verifiedUser);
     }
 
