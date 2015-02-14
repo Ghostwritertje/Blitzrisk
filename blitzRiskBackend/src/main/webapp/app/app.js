@@ -1,11 +1,11 @@
 'use strict';
-var app = angular.module('blitzrisk', [
-    'blitzrisk.controllers',
-    '' + 'blitzrisk.services',
+var blitzrisk = angular.module('blitzrisk', [
+    'blitzriskControllers',
+    'blitzriskServices',
     '$httpProvider',
     function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }]);
-var controllers = angular.module('blitzrisk.controllers',['blitzrisk.services']);
-var service = angular.module('blitzrisk.services', []);
+var blitzriskControllers = angular.module('blitzriskControllers',['blitzriskServices']);
+var blitzriskServices = angular.module('blitzriskServices', []);

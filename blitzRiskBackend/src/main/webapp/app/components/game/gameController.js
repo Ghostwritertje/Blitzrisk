@@ -1,5 +1,5 @@
 'use strict';
-angular.module('blitzrisk.controllers').controller('gameCtrl', ['$scope',
+angular.module('blitzriskControllers').controller('GameController', ['$scope',
     function ($scope) {
         alert('id');
         /*$scope.clickRegion = function(){

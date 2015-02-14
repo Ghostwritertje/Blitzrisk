@@ -1,32 +1,42 @@
 'use strict';
 
-angular.module('blitzrisk.services').factory('loginService', ['$http', '$q',
+angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
     function ($http, $q) {
         var hosturl = "http://localhost:8080/BlitzRisk/api/login";
         var token = null;
         var username;
         var password;
 
+        function logMeIn() {
+            var deferred = $q.defer();
 
+            $http.get('http://localhost:8080/BlitzRisk/api/login', {headers: {'name': username, 'password': password}})
+                .success(function (data) {
+                    token = data;
+                    deferred.resolve(data);
+
+                }).
+                error(function () {
+                    deferred.reject('Wrong log in details');
+                });
+            return deferred.promise;
+        }
 
         return {
-            login:  function () {
+            login: function logIn(name, pass) {
+                username = name;
+                password = pass;
 
-             /*   var delay = $q.defer();
-                $http.get('http://localhost:8080/BlitzRisk/api/login', {headers: {'name': 'Joran', 'password': 'joran'}})
-                    .success(function (data) {
-                        token = data;
-                        delay.resolve();
-                    }).
-                    error(function () {
-                        delay.reject();
-                    });
-                return delay.promise();*/
-
+                return logMeIn();
             },
             getToken: function () {
+                var deferred = $q.defer();
+                if(token!= null){
+                    deferred.resolve(token);
+                }else {
+                    return logMeIn();
+                }
 
-                return token;
             },
             getUsers: function () {
                 return $http.get('http://localhost:8080/BlitzRisk/api/users');
