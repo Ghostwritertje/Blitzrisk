@@ -25,7 +25,7 @@
     padding: 1em;
 }
 
-.login-custom input[type="text"],input[type="password"]{
+.login-custom input[type="text"],input[type="password"], input[type='email']{
     color: white;
     background-color: #3F9A53;
     border-style: none;
@@ -44,6 +44,8 @@
     padding-left: 2em;
     padding-right: 2em;
 }
+
+
 
 h1{
     margin: 0;

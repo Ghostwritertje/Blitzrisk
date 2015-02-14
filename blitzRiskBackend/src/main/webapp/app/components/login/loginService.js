@@ -8,7 +8,7 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
         var password;
 
         function logMeIn() {
-            var deferred = $q.defer();
+            var deferred = $q.defer();  //maak promise
 
             $http.get('http://localhost:8080/BlitzRisk/api/login', {headers: {'name': username, 'password': password}})
                 .success(function (data) {
@@ -41,6 +41,9 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             getUsers: function () {
                 return $http.get('http://localhost:8080/BlitzRisk/api/users');
 
+            },
+            register: function(name, pass, email){
+                return $http.post(hosturl + 'user/' + name, {headers: {'password' : pass, 'email': email}});
             }
         }
     }]);

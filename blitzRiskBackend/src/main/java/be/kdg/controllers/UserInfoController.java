@@ -35,6 +35,10 @@ public class UserInfoController {
         if (verifiedUser != null) {
             return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
         } else {
+            verifiedUser = userService.checkLoginByEmail(name, password);
+            if (verifiedUser != null) {
+                return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
+            }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

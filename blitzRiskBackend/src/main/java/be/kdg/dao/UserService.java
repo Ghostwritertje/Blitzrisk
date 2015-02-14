@@ -30,6 +30,20 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User checkLoginByEmail(String email, String password) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+
+
+        Query query = session.createQuery("from User u where u.email = :email and u.password = :password");
+        query.setParameter("email", email);
+        query.setParameter("password", password);
+        User user = (User) query.uniqueResult();
+
+        tx.commit();
+        return user;
+    }
+
     public void addUser(String username, String password, String email) {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
