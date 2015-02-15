@@ -17,43 +17,12 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <mvc:annotation-driven />
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+<!--    <mvc:annotation-driven />-->
+    <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
 
     <context:annotation-config/>
-
     <context:component-scan base-package="be.kdg"/>
-
-    <!--<security:http
-            realm="Protected API"
-            use-expressions="true"
-            auto-config="false"
-            create-session="stateless"
-            entry-point-ref="unauthorizedEntryPoint"
-            authentication-manager-ref="authenticationManager">
-        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
-        <security:intercept-url pattern="/api/*" access="permitAll" />
-        <security:intercept-url method="GET" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="PUT" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="POST" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="DELETE" pattern="/api/secured/**" access="hasRole('admin')" />
-    </security:http>
-
-    <security:authentication-manager  id="authenticationManager">
-        <security:authentication-provider user-service-ref="userDao">
-        </security:authentication-provider>
-    </security:authentication-manager>-->
-
-   <!-- <bean id="userDao" class="be.kdg.dao.UserService">
-
-    </bean>-->
-    <!--<bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService"></bean>
-
-    <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
-        <constructor-arg ref="userDao" />
-    </bean>
-    <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint" />-->
-
+    <!--test-->
     <!-- copied from dispatcher.xml -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
@@ -79,5 +48,8 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <!--<bean id="gameService" class="be.kdg.services.GameService"></bean>-->
+    <bean id="userService" class="be.kdg.dao.UserService">
+        <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+
 </beans>
