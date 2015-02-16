@@ -6,7 +6,7 @@ router.config(['$routeProvider',
         $routeProvider.when('/login',{
             templateUrl: 'app/components/login/login.html',
             controller: 'LoginController'
-        }).when('/game',{
+        }).when('/game', {
             templateUrl: 'app/components/game/game.html',
             controller: 'GameController'
         }).otherwise({redirectTo: '/login'});
