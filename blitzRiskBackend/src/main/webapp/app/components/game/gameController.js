@@ -10,9 +10,9 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
     return {
         restrict: 'E',
         replace: true,
-        template: "<object type='image/svg+xml' data='assets/img/status.svg'></object>",
-        link: function (scope, element, attrs) {
-
+        template: "<object type='image/svg+xml' data='assets/img/herwerkteRiskMapMini.svg'></object>",
+        link: function(scope, element, attrs) {
+            var init = function() {
                 var statusElm = angular.element(element[0]
                     .getSVGDocument().getElementById("status"));
                 statusElm.on("click", function(event) {
@@ -20,7 +20,12 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                         scope.currentStatus='alert';
                     });
                 });
-
+            };
+            if (element[0].getSVGDocument()) {
+                init();
+            } else {
+                element.on("load", init);
+            }
         }
     }
 }]);
