@@ -64,5 +64,7 @@ public class Player {
         this.territories = territories;
     }
 
-
+    public Integer getId() {
+        return Id;
+    }
 }

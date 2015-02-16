@@ -65,4 +65,8 @@ public class Game {
     public void addTurn(Turn turn) {
         turns.add(turn);
     }
+
+    public Integer getId() {
+        return Id;
+    }
 }

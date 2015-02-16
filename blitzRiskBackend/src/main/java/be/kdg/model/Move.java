@@ -33,6 +33,8 @@ public class Move {
 
     private Integer numberOfUnits;
 
+    private Integer resultingUnits;
+
     public Game getGame() {
         return game;
     }
