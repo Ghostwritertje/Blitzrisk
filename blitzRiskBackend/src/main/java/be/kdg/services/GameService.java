@@ -22,7 +22,7 @@ public class GameService {
     public Game createNewGame(List<User> users) {
 
         Game game = new Game();
-        Set<Player> players =  new HashSet<Player>();
+        List<Player> players =  new ArrayList<>();
 
         for (User user : users) {
             Player player = new Player();
@@ -30,6 +30,7 @@ public class GameService {
             players.add(player);
         }
         game.setPlayers(players);
+        game.setPlayerTurn(0);
         game.setTerritories(territoryService.getTerritories());
 
         assignRandomTerritories(game);
@@ -57,6 +58,11 @@ public class GameService {
             }
         }
         return game;
-
     }
+
+    public Player CurrentPlayerforTurn(Game game) {
+        return game.getPlayers().get(game.getPlayerTurn());
+    }
+
+
 }

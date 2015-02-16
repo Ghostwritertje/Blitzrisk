@@ -31,6 +31,8 @@ public class Move {
     @JoinColumn(name = "originTerritoryId")
     private Territory originTerritory;
 
+    private Integer numberOfUnits;
+
     public Game getGame() {
         return game;
     }
@@ -61,5 +63,13 @@ public class Move {
 
     public void setOriginTerritory(Territory originTerritory) {
         this.originTerritory = originTerritory;
+    }
+
+    public Integer getNumberOfUnits() {
+        return numberOfUnits;
+    }
+
+    public void setNumberOfUnits(Integer numberOfUnits) {
+        this.numberOfUnits = numberOfUnits;
     }
 }

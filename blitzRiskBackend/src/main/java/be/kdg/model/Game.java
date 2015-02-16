@@ -3,7 +3,9 @@ package be.kdg.model;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,28 +19,30 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
-    @OneToMany(mappedBy = "game")
-    private Set<Player> players = new HashSet<Player>();
+    private Integer playerTurn;
 
     @OneToMany(mappedBy = "game")
-    private Set<Turn> turns = new HashSet<Turn>();
+    private List<Player> players = new ArrayList<>();
+
+    @OneToMany(mappedBy = "game")
+    private List<Turn> turns = new ArrayList<>();
 
     @OneToMany(mappedBy = "game")
     private Set<Territory> territories = new HashSet<Territory>();
 
-    public Set<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(Set<Player> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
-    public Set<Turn> getTurns() {
+    public List<Turn> getTurns() {
         return turns;
     }
 
-    public void setTurns(Set<Turn> turns) {
+    public void setTurns(List<Turn> turns) {
         this.turns = turns;
     }
 
@@ -50,5 +54,15 @@ public class Game {
         this.territories = territories;
     }
 
+    public Integer getPlayerTurn() {
+        return playerTurn;
+    }
 
+    public void setPlayerTurn(Integer playerTurn) {
+        this.playerTurn = playerTurn;
+    }
+
+    public void addTurn(Turn turn) {
+        turns.add(turn);
+    }
 }
