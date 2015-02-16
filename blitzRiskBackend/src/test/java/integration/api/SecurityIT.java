@@ -21,13 +21,20 @@ public class SecurityIT {
     private final String URL = "http://localhost:8080/BlitzRisk/api";
     private final String SECURE_PAGE = URL + "/secured/users";
 
-    private static UserService userService = new UserService();
+   //private static UserService userService = new UserService();
+    //@Autowired
+    //public static UserService userService;
 
     @BeforeClass
     public static void configure() {
-        userService.removeUser("testuser");
+        /*userService.removeUser("testuser");
         userService.removeUser("testuser2");
-        userService.addUser("testuser", "testuserpass", "testuser@test.be");
+        userService.addUser("testuser", "testuserpass", "testuser@test.be");*/
+    }
+
+    @Test
+    public void testRegistration() {
+        given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "/user/testuser");
     }
 
     @Test
