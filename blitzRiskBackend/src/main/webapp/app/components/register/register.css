@@ -1,0 +1,28 @@
+/* Register page uses css from loginpage too */
+.register-panel {
+    display: inline-block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: #3F9A53;
+    width: 353px;
+    height: 300px;
+}
+
+.login-custom {
+    height: 300px;
+    padding: 1em;
+}
+
+
+
+.smallerMargin {
+    margin-bottom: 0.5em;
+}
+
+.biggerPanel {
+    height: 320px;
+}

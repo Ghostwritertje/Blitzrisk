@@ -5,6 +5,7 @@ import be.kdg.persistence.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ public class UserService implements UserDetailsService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
 
+        try {
             User user = new User();
             user.setName(username);
             user.setEmail(email);
@@ -56,6 +58,10 @@ public class UserService implements UserDetailsService {
             session.saveOrUpdate(user);
 
             tx.commit();
+        } catch (ConstraintViolationException e) {
+            session.close();
+            throw e;
+        }
 
     }
 

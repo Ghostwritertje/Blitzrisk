@@ -1,0 +1,44 @@
+<section class="login-wrapper">
+    <section class="register-panel"  ng-class="{'biggerPanel': registerError}">
+        <article class="login-custom">
+            <h1>Register</h1>
+            <form ng-show="!registering && !registerSuccess"  ng-submit="register()">
+                <div class="login-form-input">
+                    <img src="assets/img/loginUserIcon.png">
+                  <label> <input ng-model="username" id="username" type="text" ></label>
+                </div>
+                <div class="login-form-input">
+                    <img src="assets/img/loginLockIcon.png">
+                    <label><input ng-model="password" id="password" type="password"></label>
+                </div>
+                <div ng-class="{'smallerMargin': registerError}" class="login-form-input">
+                    <img src="assets/img/loginLockIcon.png">
+                    <label><input ng-model="email" id="email" type="email"></label>
+                </div>
+                <p ng-if="registerError" class="errorMessage">User already exists</p>
+                <input   type="submit" value="Register">
+                <p>Already have an account? <b><a href="" ng-click="go('/login')">Please, log in.</a></b></p>
+
+
+            </form>
+
+
+
+            <div ng-if="registering" >
+                <p>Registering</p>
+            </div>
+
+            <div ng-if="registerSuccess" >
+                <br/>
+                <p>You have been registered! Please <b><a href="" ng-click="go('/login')">Log In</a></b> </p>
+            </div>
+        </article>
+
+        <!--ng-click="go('/game')"<article class="login-social">
+            <div id="fb-root"></div>
+        </article>-->
+    </section>
+
+
+
+</section>

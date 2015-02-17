@@ -4,9 +4,8 @@ angular.module('blitzriskControllers').controller('LoginController', ['$scope', 
         $scope.username = '';
         $scope.password = '';
 
-        $scope.newUsername = '';
-        $scope.newPassword = '';
-        $scope.newEmail = '';
+        $scope.busy = false;
+        $scope.loginError = false;
 
 
         $scope.go = function (path) {
@@ -14,30 +13,22 @@ angular.module('blitzriskControllers').controller('LoginController', ['$scope', 
         };
 
         $scope.logIn = function login(){
-            alert('Username: ' + $scope.username);
+            $scope.busy = true;
             var promise = LoginService.login($scope.username, $scope.password);
 
             promise.then(function(message) {
                 $location.path("/game");
             }, function(reason) {
            //     alert('Failed: ' + reason);
-            }, function(update) {
-                //TODO: Proper errormessage
-                alert('Got notification: ' + update);
+                $scope.busy = false;
+                $scope.loginError = true;
+
             });
         };
 
 
 
-        $scope.register = function register(){
-            var promise = LoginService.register($scope.newUsername, $scope.newPassword, $scope.newEmail);
 
-            promise.then(function() {
-                $location.path("/login");
-            }, function() {
-                alert('Could not register');
-            });
-        };
 
 
     }
