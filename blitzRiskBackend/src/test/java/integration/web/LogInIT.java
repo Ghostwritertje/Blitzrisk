@@ -1,6 +1,7 @@
 package integration.web;
 
 import be.kdg.dao.UserService;
+import be.kdg.model.User;
 import integration.MyServerConfiguration;
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -9,6 +10,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.Random;
 
 
 /**
@@ -34,6 +37,13 @@ public class LogInIT {
     }
 
     @Test
+    public void testNotLoggedIn() {
+        driver.get(URL + "#/game");
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/login"));
+
+    }
+
+    @Test
     public void testCorrectLogin() {
         driver.get(URL);
         WebElement usernameElement = driver.findElement(By.id("username"));
@@ -41,7 +51,7 @@ public class LogInIT {
         WebElement passwordElement = driver.findElement(By.id("password"));
         passwordElement.sendKeys("seleniumpass");
         usernameElement.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 20)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
     }
 
     @Test
@@ -52,8 +62,47 @@ public class LogInIT {
         element = driver.findElement(By.id("password"));
         element.sendKeys("wrongpassword");
         element.sendKeys(Keys.ENTER);
-        // TODO: Find out that user couldnt login (errormessage)
-        //  (new WebDriverWait(driver, 20)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "/#/login"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
+    }
+
+
+    @Test
+    public void testRegisterNewUser() {
+        User user = new User();
+        Random random = new Random();
+        user.setName("Selenium" + random.nextInt(9999));
+        user.setPassword(user.getName());
+        user.setEmail(user.getName() + "@kdg.be");
+
+        driver.get(URL + "#/register");
+        WebElement element = driver.findElement(By.id("username"));
+        element.sendKeys(user.getName());
+        element = driver.findElement(By.id("password"));
+        element.sendKeys(user.getPassword());
+        element = driver.findElement(By.id("email"));
+        element.sendKeys(user.getEmail());
+        element.sendKeys(Keys.ENTER);
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("registerSuccess")));
+
+        driver.get(URL);
+        element = driver.findElement(By.id("username"));
+        element.sendKeys(user.getName());
+        element = driver.findElement(By.id("password"));
+        element.sendKeys(user.getPassword());
+        element.sendKeys(Keys.ENTER);
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
+
+        driver.get(URL + "#/register");
+         element = driver.findElement(By.id("username"));
+        element.sendKeys(user.getName());
+        element = driver.findElement(By.id("password"));
+        element.sendKeys(user.getPassword());
+        element = driver.findElement(By.id("email"));
+        element.sendKeys(user.getEmail());
+        element.sendKeys(Keys.ENTER);
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
+
+
     }
 
     @AfterClass
