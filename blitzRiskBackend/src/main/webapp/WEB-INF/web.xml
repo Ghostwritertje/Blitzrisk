@@ -18,11 +18,9 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-
-
     <servlet-mapping>
         <servlet-name>springservlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <context-param>
@@ -31,10 +29,6 @@
             /WEB-INF/dispatcher.xml
         </param-value>
     </context-param>
-
-    <welcome-file-list>
-        <welcome-file>/WEB-INF/login.jsp</welcome-file>
-    </welcome-file-list>
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -49,10 +43,5 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-
-
-
-
 
 </web-app>
