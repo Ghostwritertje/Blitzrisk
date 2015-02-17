@@ -1,35 +1,48 @@
 package integration.api;
 
 import be.kdg.dao.UserService;
+import be.kdg.services.UserManagerServicee;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import javax.transaction.Transactional;
 
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.put;
 
 /**
  * Created by user jorandeboever
  * Date:5/02/15.
  */
-@ContextConfiguration(locations = {"/testcontext.xml"})
+
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@TransactionConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 public class SecurityIT {
 
     private final String URL = "http://localhost:8080/BlitzRisk/api";
     private final String SECURE_PAGE = URL + "/secured/users";
 
-   //private static UserService userService = new UserService();
     @Autowired
-    public static UserService userService;
+    public UserService userService;
 
-    @BeforeClass
-    public static void configure() {
-        userService.removeUser("testuser");
-        userService.removeUser("testuser2");
-        userService.addUser("testuser", "testuserpass", "testuser@test.be");
+    @Before
+    public void setUp() {
+        try {
+            userService.removeUser("testuser");
+            userService.removeUser("testuser2");
+            userService.addUser("testuser", "testuserpass", "testuser@test.be");
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
