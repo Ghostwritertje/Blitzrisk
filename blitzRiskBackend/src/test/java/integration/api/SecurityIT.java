@@ -22,14 +22,14 @@ public class SecurityIT {
     private final String SECURE_PAGE = URL + "/secured/users";
 
    //private static UserService userService = new UserService();
-    //@Autowired
-    //public static UserService userService;
+    @Autowired
+    public static UserService userService;
 
     @BeforeClass
     public static void configure() {
-        /*userService.removeUser("testuser");
+        userService.removeUser("testuser");
         userService.removeUser("testuser2");
-        userService.addUser("testuser", "testuserpass", "testuser@test.be");*/
+        userService.addUser("testuser", "testuserpass", "testuser@test.be");
     }
 
     @Test

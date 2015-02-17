@@ -4,10 +4,8 @@ import be.kdg.model.User;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -52,18 +50,10 @@ public class UserService implements UserDetailsService {
     }
 
     public void removeUser(String username) {
-        /*Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-
-            Query query = session.createQuery("delete from User user where user.name = :username");
-            query.setParameter("username", username);
-            query.executeUpdate();
-
-        } catch (Exception e) {
-            session.close();
-        }
-        tx.commit();*/
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
+        query.setParameter("username", username);
+        User user = (User) query.uniqueResult();
+        sessionFactory.getCurrentSession().delete(user);
     }
 
 }
