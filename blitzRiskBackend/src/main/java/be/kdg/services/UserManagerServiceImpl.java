@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Marlies on 9/02/2015.
  */
 @Service("userManagerService")
-//@Transactional
+@Transactional
 public class UserManagerServiceImpl implements UserManagerServicee {
 
     @Autowired

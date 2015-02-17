@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserByUsername(String username) {
-        Query query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
         return (User) query.uniqueResult();
     }
@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void removeUser(String username) {
-        Query query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
         User user = (User) query.uniqueResult();
         sessionFactory.getCurrentSession().delete(user);

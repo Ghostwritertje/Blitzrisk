@@ -4,6 +4,8 @@ import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserManagerServicee;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,13 +26,18 @@ public class UserInfoController {
 
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
-    public String getToken(@RequestBody User user) {
-        User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
-        return TokenUtils.createToken(verifiedUser);
-    }
+    public ResponseEntity<String> getToken(@RequestHeader String name, @RequestHeader String password) {
 
+        User verifiedUser = userService.checkLogin(name, password);
+        if (verifiedUser != null) {
+            return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
@@ -44,6 +51,5 @@ public class UserInfoController {
     public List<User> getSecuredUsers() {
         return this.userService.findall();
     }
-
 
 }
