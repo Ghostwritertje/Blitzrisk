@@ -1,18 +1,13 @@
 package integration.api;
 
-import be.kdg.dao.UserService;
-import be.kdg.services.UserManagerServicee;
+import be.kdg.services.UserManagerService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import javax.transaction.Transactional;
 
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
@@ -30,7 +25,7 @@ public class SecurityIT {
     private final String SECURE_PAGE = URL + "/secured/users";
 
     @Autowired
-    public UserManagerServicee userService;
+    public UserManagerService userService;
 
     @Before
     public void setUp() {

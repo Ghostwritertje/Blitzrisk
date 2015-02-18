@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Service("userManagerService")
 @Transactional
-public class UserManagerServiceImpl implements UserManagerServicee {
+public class UserManagerServiceImpl implements UserManagerService {
 
     @Autowired
     private UserService userService;
