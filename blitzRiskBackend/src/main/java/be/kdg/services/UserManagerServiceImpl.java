@@ -3,6 +3,9 @@ package be.kdg.services;
 import be.kdg.dao.UserService;
 import be.kdg.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -13,7 +16,7 @@ import java.util.List;
  */
 @Service("userManagerService")
 @Transactional
-public class UserManagerServiceImpl implements UserManagerService {
+public class UserManagerServiceImpl implements UserManagerService, UserDetailsService {
 
     @Autowired
     private UserService userService;
@@ -32,7 +35,7 @@ public class UserManagerServiceImpl implements UserManagerService {
     //@Transactional
     @Override
     public void addUser(String username, String password, String email) {
-        userService.addUser(username, email, password);
+        userService.addUser(username, password, email);
     }
 
     //@Transactional
@@ -50,5 +53,10 @@ public class UserManagerServiceImpl implements UserManagerService {
     @Override
     public void removeUser(String username) {
         userService.removeUser(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userService.loadUserByUsername(username);
     }
 }
