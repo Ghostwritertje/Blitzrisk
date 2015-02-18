@@ -11,6 +11,8 @@ public interface UserManagerService {
     //@Transactional
     User checkLogin(String username, String password);
 
+    User checkLoginByEmail(String mail, String password);
+
     //@Transactional
     void addUser(String username, String password, String email);
 

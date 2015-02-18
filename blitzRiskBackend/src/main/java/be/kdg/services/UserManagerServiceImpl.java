@@ -24,6 +24,11 @@ public class UserManagerServiceImpl implements UserManagerService {
         return userService.checkLogin(username, password);
     }
 
+    @Override
+    public User checkLoginByEmail(String mail, String password) {
+        return userService.checkLogin(mail, password);
+    }
+
     //@Transactional
     @Override
     public void addUser(String username, String password, String email) {

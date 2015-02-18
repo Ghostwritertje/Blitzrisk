@@ -19,12 +19,7 @@
     <mvc:annotation-driven />
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <context:component-scan base-package="be.kdg"/> <!--use-default-filters="false">-->
-        <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />-->
-    <!--</context:component-scan>-->
-
-
-    <!-- ativate annotations in beans already registered in the application context-->
+    <context:component-scan base-package="be.kdg"/>
 
     <context:annotation-config/>
 

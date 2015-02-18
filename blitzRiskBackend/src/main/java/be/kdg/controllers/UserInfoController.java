@@ -1,5 +1,6 @@
 package be.kdg.controllers;
 
+import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserManagerService;
@@ -34,6 +35,10 @@ public class UserInfoController {
         if (verifiedUser != null) {
             return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
         } else {
+            verifiedUser = userService.checkLoginByEmail(name, password);
+            if (verifiedUser != null) {
+                return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
+            }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
