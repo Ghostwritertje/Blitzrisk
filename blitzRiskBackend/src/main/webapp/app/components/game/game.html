@@ -2,11 +2,10 @@
 <!--<risk-map watch="status"></risk-map>
 <input type="button" value="alert" ng-click="status='alert'">-->
 
-
-<riskmap watch="currentStatus">
-</riskmap>
-
-<input type="button" value="alert" onclick="clickRegion()"/>
-<div id="chat">
-    <div ng-include="'app/components/chat/chatBox.html'"></div>
+<div id="gameBoardWrapper">
+    <riskmap id="riskMap">
+    </riskmap>
+    <div id="chat">
+        <div ng-include="'app/components/chat/chatBox.html'"></div>
+    </div>
 </div>
