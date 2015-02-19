@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="blitzrisk" class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8 lt-ie7" ng-controller="HomeController"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8" ng-controller="HomeController"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9" ng-controller="HomeController"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="blitzrisk" class="no-js" ng-controller="HomeController"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,18 +11,43 @@
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="app/components/login/login.css">
     <link rel="stylesheet" href="app/components/register/register.css">
+    <link rel="stylesheet" href="app/components/overview/overview.css">
+    <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.min.css">
+
 
 </head>
-<body ng-app="blitzrisk">
+<body ng-app="blitzrisk"  >
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
+<div id="view">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#">BlitzRisk</a>
+          </div>
+          <div>
+              <ul class="nav navbar-nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="#">Profile</a></li>
+
+              </ul>
+              <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
+                  <li><a href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                  <li><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              </ul>
+              <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
+                  <li><a href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
+                  <li><a href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+              </ul>
+          </div>
+      </div>
+  </nav>
 
 
+  <ng-view >loading...</ng-view>
 
-  <ng-view>loading...</ng-view>
-
-
+</div>
   <script src="app/bower_components/angular/angular.min.js"></script>
   <script src="app/bower_components/angular-route/angular-route.min.js"></script>
   <script src="app/bower_components/jquery/dist/jquery.min.js"></script>
@@ -32,5 +57,8 @@
   <script src="app/components/register/registerController.js"></script>
   <script src="app/components/services/loginService.js"></script>
   <script src="app/components/game/gameController.js"></script>
+  <script src="app/components/overview/overviewController.js"></script>
+  <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
 </body>
 </html>

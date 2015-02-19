@@ -25,7 +25,7 @@ public class LogInIT {
 
     @BeforeClass
     public static void insertUser() {
-        System.setProperty("webdriver.chrome.driver", MyServerConfiguration.CHROMEDRIVERLOCATION);
+        System.setProperty("webdriver.chrome.driver", MyServerConfiguration.getChromedriverlocation());
         String workingDir = System.getProperty("user.dir");
         System.out.println(workingDir);
         UserService userService = new UserService();
@@ -39,7 +39,7 @@ public class LogInIT {
 
     @Test
     public void testNotLoggedIn() {
-        driver = new ChromeDriver();
+    //   driver = new ChromeDriver();
         driver.get(URL + "#/game");
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/login"));
         //(new WebDriverWait(driver, 10)).until((WebDriver d) -> !(d.getCurrentUrl().equals(URL + "#/game")));
@@ -89,12 +89,13 @@ public class LogInIT {
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("registerSuccess")));
 
         driver.get(URL);
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
         element = driver.findElement(By.id("username"));
         element.sendKeys(user.getName());
         element = driver.findElement(By.id("password"));
         element.sendKeys(user.getPassword());
         element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
 
         driver.get(URL + "#/register");
          element = driver.findElement(By.id("username"));

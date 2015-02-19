@@ -31,6 +31,9 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
                 return logMeIn();
             },
+            logOut: function logOut(){
+                token = null;
+            },
             getToken: function () {
                 var deferred = $q.defer();
                 if(token!= null){

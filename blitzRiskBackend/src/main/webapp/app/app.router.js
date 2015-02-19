@@ -12,6 +12,9 @@ router.config(['$routeProvider',
         }).when('/game', {
             templateUrl: 'app/components/game/game.html',
             controller: 'GameController'
+        }).when('/overview', {
+            templateUrl: 'app/components/overview/overview.html',
+            controller: 'OverviewController'
         }).otherwise({redirectTo: '/login'});
     }]);
 
