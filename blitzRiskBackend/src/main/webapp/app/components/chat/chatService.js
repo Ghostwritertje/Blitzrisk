@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskControllers').service("ChatService",function($q, $timeout){
+angular.module('blitzriskServices').service("ChatService",function($q, $timeout){
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -11,7 +11,7 @@ angular.module('blitzriskControllers').service("ChatService",function($q, $timeo
         messageIds = [];
 
     service.RECONNECT_TIMEOUT = 30000; //30 seconds
-    service.SOCKET_URL = "/spring-ng-chat2/chat";
+    service.SOCKET_URL = "/BlitzRisk/api/chat";
     service.CHAT_TOPIC = "/topic/message";
     service.CHAT_BROKER = "/blitzrisk/chat";
 
@@ -61,6 +61,7 @@ angular.module('blitzriskControllers').service("ChatService",function($q, $timeo
         socket.stomp.subscribe(service.CHAT_TOPIC, function(data){ // /topic/message
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
         });
+        service.send("aah");
     };
 
     var initialize = function(){

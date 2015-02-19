@@ -14,6 +14,7 @@
        http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
     <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
     <context:component-scan base-package="be.kdg"/>
 
 

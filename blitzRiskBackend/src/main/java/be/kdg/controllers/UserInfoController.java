@@ -1,6 +1,6 @@
 package be.kdg.controllers;
 
-import be.kdg.beans.UserBean;
+//import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.dao.UserService;
@@ -22,7 +22,7 @@ public class UserInfoController {
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
-
+        System.out.println("registering...");
         userService.addUser(username, password, email);
 
     }

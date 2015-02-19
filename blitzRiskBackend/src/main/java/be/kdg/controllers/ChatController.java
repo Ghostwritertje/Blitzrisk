@@ -18,7 +18,7 @@ import java.util.Date;
 public class ChatController {
     @RequestMapping(method= RequestMethod.GET) //for the HTML Angular page that contains our application
     public String viewApplication(){
-        return "chat";
+        return "index";
     }
 
     @MessageMapping("/chat") //for websocket traffic
