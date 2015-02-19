@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet href="../../app/components/game/game.css" type="text/css"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 64 64">
+  <circle id="status" fill="#888" cx="32" cy="32" r="32"/>
+</svg>
