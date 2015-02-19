@@ -6,6 +6,6 @@ package integration;
  */
 public class MyServerConfiguration {
     public static final String URL = "http://localhost:8080/BlitzRisk/";
-    public static final String CHROMEDRIVERLOCATION = System.getProperty("user.dir") +"/src/test/resources/chromedriver"; //location for chromeDriver
+    public static final String CHROMEDRIVERLOCATION = System.getProperty("user.dir") +"/src/test/resources/chromedriver.exe"; //location for chromeDriver
 
 }
