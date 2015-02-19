@@ -1,9 +1,12 @@
 package be.kdg.controllers;
 
+import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
-import be.kdg.dao.UserService;
+import be.kdg.services.UserManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
 @RestController
 public class UserInfoController {
     @Autowired
-    private UserService userService;
+    private UserManagerService userService;
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
@@ -24,13 +27,22 @@ public class UserInfoController {
 
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
-    public String getToken(@RequestBody User user) {
-        User verifiedUser = userService.checkLogin(user.getName(), user.getPassword());
-        return TokenUtils.createToken(verifiedUser);
-    }
+    public ResponseEntity<String> getToken(@RequestHeader String name, @RequestHeader String password) {
 
+        User verifiedUser = userService.checkLogin(name, password);
+        if (verifiedUser != null) {
+            return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
+        } else {
+            verifiedUser = userService.checkLoginByEmail(name, password);
+            if (verifiedUser != null) {
+                return new ResponseEntity<>(TokenUtils.createToken(verifiedUser), HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
@@ -44,6 +56,5 @@ public class UserInfoController {
     public List<User> getSecuredUsers() {
         return this.userService.findall();
     }
-
 
 }

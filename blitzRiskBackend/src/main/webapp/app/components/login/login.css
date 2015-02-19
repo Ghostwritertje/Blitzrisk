@@ -17,7 +17,7 @@
     margin: auto;
     background-color: #3F9A53;
     width: 353px;
-    height: 230px;
+    height: 260px;
 }
 
 .login-custom{
@@ -25,7 +25,7 @@
     padding: 1em;
 }
 
-.login-custom input[type="text"],input[type="password"]{
+.login-custom input[type="text"],input[type="password"], input[type='email']{
     color: white;
     background-color: #3F9A53;
     border-style: none;
@@ -34,7 +34,7 @@
     padding: 0;
 }
 
-.login-custom input[type="button"]{
+.login-custom input[type="submit"]{
     color: #3F9A53;
     font-weight: bold;
     font-size: 1em;
@@ -43,7 +43,11 @@
     height: 2em;
     padding-left: 2em;
     padding-right: 2em;
+    margin: 0;
+
 }
+
+
 
 h1{
     margin: 0;
@@ -71,3 +75,4 @@ h1{
     width: 300px;
     background-color: green;
 }
+
