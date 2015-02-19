@@ -1,6 +1,6 @@
 'use strict';
-angular.module('blitzriskControllers').controller('GameController', ['$scope',
-    function ($scope) {
+angular.module('blitzriskControllers').controller('GameController', ['$scope', "$GameService",
+    function ($scope, $GameService) {
 
         $scope.testClass = function(){
             alert("test");
@@ -9,8 +9,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             land.addClass("player1color");
 
         };
-        $scope.myData = {};
-        $scope.myData.doClick = function() {
+        $scope.doClick = function() {
             alert("clicked");
         };
     }
