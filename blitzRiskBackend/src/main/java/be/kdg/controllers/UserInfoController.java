@@ -27,6 +27,12 @@ public class UserInfoController {
 
     }
 
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public User getUser(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
+        return userService.getUser(username);
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
     public ResponseEntity<String> getToken(@RequestHeader String name, @RequestHeader String password) {
@@ -41,7 +47,18 @@ public class UserInfoController {
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @RequestMapping(value = "/user", method = RequestMethod.PUT)
+    public void updateUser(@RequestBody UserBean updatedUser, @RequestHeader("X-Auth-Token") String token){
+        String username = TokenUtils.getUserNameFromToken(token);
+        User originalUser = userService.getUser(username);
+
+        if(updatedUser.getEmail() != null && !updatedUser.getEmail().equals(originalUser.getEmail())) userService.changeEmail(originalUser.getName(), updatedUser.getEmail());
+
+        if(updatedUser.getPassword() != null && updatedUser.getPassword().length() > 0) userService.changePassword(originalUser.getName(), updatedUser.getPassword());
+
+        if(updatedUser.getEmail() != null && !updatedUser.getName().equals(originalUser.getUsername())) userService.changeUsername(originalUser.getName(), updatedUser.getName());
     }
 
 

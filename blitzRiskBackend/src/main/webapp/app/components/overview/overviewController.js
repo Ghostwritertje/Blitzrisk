@@ -15,12 +15,5 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
             $location.path(path);
         };
 
-
-
-
-
-
-
-
     }
 ]);
