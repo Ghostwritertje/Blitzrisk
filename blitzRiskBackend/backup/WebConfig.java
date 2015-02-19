@@ -10,16 +10,16 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 /**
  * Created by vman on 6/02/2015.
  */
-@Configuration
+//@Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "be.kdg.controller")
 public class WebConfig extends WebMvcConfigurerAdapter { //bootstrap the web context, for servlets
     @Bean
     public InternalResourceViewResolver getInternalResourceViewResolver(){
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/app/components/chat/"); //tells us the location of the dynamic resources (JSP files) by using
+        resolver.setPrefix("/WEB-INF/views/"); //tells us the location of the dynamic resources (JSP files) by using
                                               //getInternalResourceViewResolver
-        resolver.setSuffix(".html");
+        resolver.setSuffix(".jsp");
         return resolver;
     }
 
@@ -41,7 +41,7 @@ public class WebConfig extends WebMvcConfigurerAdapter { //bootstrap the web con
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){ //which static resources can be served?
-        registry.addResourceHandler("/assets/libs/**").addResourceLocations("/libs/");
+        registry.addResourceHandler("/libs/**").addResourceLocations("/libs/");
         registry.addResourceHandler("/app/**").addResourceLocations("/app/");
         registry.addResourceHandler("/assets/**").addResourceLocations("/assets/");
     }

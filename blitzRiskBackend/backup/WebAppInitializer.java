@@ -1,5 +1,6 @@
 package be.kdg.config;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by vman on 6/02/2015.
  */
+
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer { //load everything, Spring's replacement of web.xml
 
     @Override
@@ -20,12 +22,12 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() { //bean configuration
-        return new Class< ?>[]{AppConfig.class,WebSocketConfig.class};
+        return new Class< ?>[]{AppConfig.class, WebSocketConfig.class};
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() { //bean configuration
-        return new Class< ?>[] { WebConfig.class };
+        return new Class< ?>[] {WebConfig.class};
     }
 
     @Override

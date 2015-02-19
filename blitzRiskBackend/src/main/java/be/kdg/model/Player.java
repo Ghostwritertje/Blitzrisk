@@ -1,9 +1,9 @@
 package be.kdg.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +16,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    private String color;
+    private Integer color;
 
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -29,11 +29,14 @@ public class Player {
     @OneToMany(mappedBy = "player")
     private Set<Territory> territories = new HashSet<Territory>();
 
-    public String getColor() {
+    @OneToMany(mappedBy = "player")
+    private List<Turn> turns = new ArrayList<>();
+
+    public Integer getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(Integer color) {
         this.color = color;
     }
 
@@ -59,5 +62,9 @@ public class Player {
 
     public void setTerritories(Set<Territory> territories) {
         this.territories = territories;
+    }
+
+    public Integer getId() {
+        return Id;
     }
 }

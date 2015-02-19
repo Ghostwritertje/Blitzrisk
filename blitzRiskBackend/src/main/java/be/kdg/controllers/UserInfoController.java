@@ -3,7 +3,7 @@ package be.kdg.controllers;
 //import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
-import be.kdg.dao.UserService;
+import be.kdg.services.UserManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class UserInfoController {
     @Autowired
-    private UserService userService;
+    private UserManagerService userService;
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
@@ -56,6 +56,5 @@ public class UserInfoController {
     public List<User> getSecuredUsers() {
         return this.userService.findall();
     }
-
 
 }

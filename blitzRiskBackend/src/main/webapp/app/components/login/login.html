@@ -1,8 +1,9 @@
 <section class="login-wrapper">
     <section class="login-panel">
         <article class="login-custom">
-            <form ng-submit="login()">
-                <h1>Login</h1>
+            <h1>Login</h1>
+            <form ng-show="!busy" ng-submit="login()">
+
                 <div class="login-form-input">
                     <img src="assets/img/loginUserIcon.png">
                   <label> <input ng-model="username" id="username" type="text" ></label>
@@ -11,16 +12,21 @@
                     <img src="assets/img/loginLockIcon.png">
                     <label><input ng-model="password" id="password" type="password"></label>
                 </div>
+                <p ng-if="loginError" class="errorMessage">Wrong credentials</p>
+
                 <input ng-click="logIn()" type="submit" value="login">
-                <input ng-click="go('/game')" type="submit" value="login">
+
+                <p>Dont have an account? <b><a href="" ng-click="go('/register')">Please, Register</a></b></p>
+
             </form>
+            <div ng-if="busy" >
+                <p>Logging in</p>
+            </div>
         </article>
 
         <!--ng-click="go('/game')"<article class="login-social">
             <div id="fb-root"></div>
         </article>-->
     </section>
-
-    <!-- TODO: Registerform -->
 
 </section>

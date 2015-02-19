@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 /**
  * Created by vman on 6/02/2015.
  */
-@Configuration
+//@Configuration
 //which packages to scan, but excludes all configuration and controller classes
 @ComponentScan(basePackages = "be.kdg", excludeFilters = {
         @ComponentScan.Filter(value=Controller.class, type=FilterType.ANNOTATION),

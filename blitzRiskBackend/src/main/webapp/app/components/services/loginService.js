@@ -2,18 +2,20 @@
 
 angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
     function ($http, $q) {
-        var hosturl = "http://localhost:8080/BlitzRisk/api/login";
+        var hosturl = "http://localhost:8080/BlitzRisk/api/";
         var token = null;
+        var isLoggedIn = false;
         var username;
         var password;
 
         function logMeIn() {
             var deferred = $q.defer();  //maak promise
 
-            $http.get('http://localhost:8080/BlitzRisk/api/login', {headers: {'name': username, 'password': password}})
+            $http.get(hosturl + 'login', {headers: {'name': username, 'password': password}})
                 .success(function (data) {
                     token = data;
                     deferred.resolve(data);
+                    isLoggedIn = true;
 
                 }).
                 error(function () {
@@ -43,7 +45,10 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
             },
             register: function(name, pass, email){
-                return $http.post(hosturl + 'user/' + name, {headers: {'password' : pass, 'email': email}});
+                return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email,'password' : pass}});
+            },
+            isLoggedIn: function(){
+                return isLoggedIn;
             }
         }
     }]);

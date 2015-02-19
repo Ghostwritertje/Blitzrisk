@@ -17,7 +17,7 @@
     margin: auto;
     background-color: #3F9A53;
     width: 353px;
-    height: 230px;
+    height: 260px;
 }
 
 .login-custom{
@@ -43,6 +43,8 @@
     height: 2em;
     padding-left: 2em;
     padding-right: 2em;
+    margin: 0;
+
 }
 
 
@@ -73,3 +75,4 @@ h1{
     width: 300px;
     background-color: green;
 }
+
