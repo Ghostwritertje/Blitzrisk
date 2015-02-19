@@ -1,7 +1,5 @@
 package be.kdg.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 
 /**
@@ -16,10 +14,6 @@ public class Move {
     private Integer Id;
 
     @ManyToOne
-    @JoinColumn(name = "gameId")
-    private Game game;
-
-    @ManyToOne
     @JoinColumn(name = "turnId")
     private Turn turn;
 
@@ -31,13 +25,12 @@ public class Move {
     @JoinColumn(name = "originTerritoryId")
     private Territory originTerritory;
 
-    public Game getGame() {
-        return game;
-    }
+    private Integer numberOfUnitsToAttack;
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
+    private Integer originTerritoryStartingNrUnits;
+    private Integer originTerritoryRemainingNrUnits;
+    private Integer destinationTerritoryStartingNrUnits;
+    private Integer destinationTerritoryRemainingNrUnits;
 
     public Turn getTurn() {
         return turn;
@@ -61,5 +54,45 @@ public class Move {
 
     public void setOriginTerritory(Territory originTerritory) {
         this.originTerritory = originTerritory;
+    }
+
+    public Integer getNumberOfUnitsToAttack() {
+        return numberOfUnitsToAttack;
+    }
+
+    public void setNumberOfUnitsToAttack(Integer numberOfUnitsToAttack) {
+        this.numberOfUnitsToAttack = numberOfUnitsToAttack;
+    }
+
+    public Integer getOriginTerritoryStartingNrUnits() {
+        return originTerritoryStartingNrUnits;
+    }
+
+    public void setOriginTerritoryStartingNrUnits(Integer originTerritoryStartingNrUnits) {
+        this.originTerritoryStartingNrUnits = originTerritoryStartingNrUnits;
+    }
+
+    public Integer getOriginTerritoryRemainingNrUnits() {
+        return originTerritoryRemainingNrUnits;
+    }
+
+    public void setOriginTerritoryRemainingNrUnits(Integer originTerritoryRemainingNrUnits) {
+        this.originTerritoryRemainingNrUnits = originTerritoryRemainingNrUnits;
+    }
+
+    public Integer getDestinationTerritoryStartingNrUnits() {
+        return destinationTerritoryStartingNrUnits;
+    }
+
+    public void setDestinationTerritoryStartingNrUnits(Integer destinationTerritoryStartingNrUnits) {
+        this.destinationTerritoryStartingNrUnits = destinationTerritoryStartingNrUnits;
+    }
+
+    public Integer getDestinationTerritoryRemainingNrUnits() {
+        return destinationTerritoryRemainingNrUnits;
+    }
+
+    public void setDestinationTerritoryRemainingNrUnits(Integer destinationTerritoryRemainingNrUnits) {
+        this.destinationTerritoryRemainingNrUnits = destinationTerritoryRemainingNrUnits;
     }
 }

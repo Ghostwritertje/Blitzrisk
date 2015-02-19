@@ -3,7 +3,9 @@ package be.kdg.model;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +26,14 @@ public class Turn {
     private Game game;
 
     @OneToMany(mappedBy = "turn")
-    private Set<Move> moves = new HashSet<Move>();
+    private List<Move> moves = new ArrayList<>();
+
+    @OneToMany(mappedBy = "turn")
+    private List<Move> calculatedMoves = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "playerId")
+    private Player player;
 
     public Integer getNumber() {
         return number;
@@ -42,11 +51,27 @@ public class Turn {
         this.game = game;
     }
 
-    public Set<Move> getMoves() {
+    public List<Move> getMoves() {
         return moves;
     }
 
-    public void setMoves(Set<Move> moves) {
+    public void setMoves(List<Move> moves) {
         this.moves = moves;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public List<Move> getCalculatedMoves() {
+        return calculatedMoves;
+    }
+
+    public void setCalculatedMoves(List<Move> calculatedMoves) {
+        this.calculatedMoves = calculatedMoves;
     }
 }
