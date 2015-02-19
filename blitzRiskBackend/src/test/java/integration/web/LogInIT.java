@@ -41,12 +41,21 @@ public class LogInIT {
         System.setProperty("webdriver.chrome.driver", MyServerConfiguration.CHROMEDRIVERLOCATION);
         String workingDir = System.getProperty("user.dir");
         System.out.println(workingDir);
+
+    }
+
+    @Before
+    public void createDriver() {
         driver = new ChromeDriver();
+    }
+
+    @After
+    public void quitDriver() {
+        driver.quit();
     }
 
     @Test
     public void testNotLoggedIn() {
-        driver = new ChromeDriver();
         driver.get(URL + "#/game");
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/login"));
     }
@@ -55,14 +64,13 @@ public class LogInIT {
     @Test
     public void testCorrectLogin() {
         userService.addUser("seleniumTestUser", "seleniumTestUser", "seleniumTestUser");
-        driver = new ChromeDriver();
         driver.get(URL);
         WebElement usernameElement = driver.findElement(By.id("username"));
         usernameElement.sendKeys("seleniumTestUser");
         WebElement passwordElement = driver.findElement(By.id("password"));
         passwordElement.sendKeys("seleniumTestUser");
         usernameElement.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/game"));
         userService.removeUser("seleniumTestUser");
     }
 
@@ -114,10 +122,5 @@ public class LogInIT {
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
         userService.removeUser(user.getName());
-    }
-
-    @AfterClass
-    public static void quitDriver() {
-        driver.quit();
     }
 }
