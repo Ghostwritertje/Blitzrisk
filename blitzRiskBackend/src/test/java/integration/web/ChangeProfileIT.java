@@ -87,7 +87,7 @@ public class ChangeProfileIT {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
 
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("email")));
         element = driver.findElement(By.id("email"));
 
         element.clear();
@@ -108,7 +108,7 @@ public class ChangeProfileIT {
     public void testChangePassword() {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
 
         element = driver.findElement(By.id("newPassword"));
         element.sendKeys("newPassword");
@@ -130,7 +130,7 @@ public class ChangeProfileIT {
         element = driver.findElement(By.id("password"));
         element.sendKeys("newPassword");
         element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 20)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
 
 
     }
@@ -168,7 +168,7 @@ public class ChangeProfileIT {
     public void testChangeAllUserDetails() {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
 
         element = driver.findElement(By.id("username"));
         element.clear();

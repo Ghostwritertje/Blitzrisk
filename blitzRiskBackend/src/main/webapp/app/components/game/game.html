@@ -2,7 +2,11 @@
 <!--<risk-map watch="status"></risk-map>
 <input type="button" value="alert" ng-click="status='alert'">-->
 
+
 <riskmap watch="currentStatus">
 </riskmap>
 
-<input type="button" value="alert" ng-click="currentStatus='alert'"/>
+<input type="button" value="alert" onclick="clickRegion()"/>
+<div id="chat">
+    <div ng-include="'app/components/chat/chatBox.html'"></div>
+</div>
