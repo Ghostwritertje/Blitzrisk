@@ -65,4 +65,8 @@ public class Territory {
     public void addNeighbour(Territory territory) {
         neighbourTerritories.add(territory);
     }
+
+    public Integer getId() {
+        return Id;
+    }
 }
