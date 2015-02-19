@@ -46,6 +46,12 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>4.1.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.2.2</version>
@@ -110,6 +116,29 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <!--<version>2.3.3</version>-->
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!--<version>2.3.3</version>-->
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>2.3.3</version>
+        </dependency>
 
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -122,11 +151,12 @@
             <version>1.9.13</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+        <!-- gaf fouten -->
+<!--        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.5.0</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
@@ -135,10 +165,92 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-juli</artifactId>
+            <version>8.0.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--nieuw-->
+        <!--<dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-client</artifactId>
+        <version>9.1.3.v20140225</version>
+        &lt;!&ndash;<version>9.1.1.v20140108</version>&ndash;&gt;
+        <scope>test</scope>
+        </dependency>
+        <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-server</artifactId>
+        <version>9.1.3.v20140225</version>
+        &lt;!&ndash;<version>9.1.1.v20140108</version>&ndash;&gt;
+        <scope>test</scope>
+        </dependency>-->
+        <!--<dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlet</artifactId>
+        <version>9.1.3.v20140225</version>
+        &lt;!&ndash;<version>9.1.1.v20140108</version>&ndash;&gt;
+        </dependency>
+        <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-servlet</artifactId>
+        <version>9.1.3.v20140225</version>
+        &lt;!&ndash;<version>9.1.1.v20140108</version>&ndash;&gt;
+        </dependency>-->
+
+        <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-websocket</artifactId>
+        <version>8.1.16.v20140903</version>
+        </dependency>
+        <!--<dependency>
+        <groupId>org.eclipse.jetty.aggregate</groupId>
+        <artifactId>jetty-all-server</artifactId>
+        <version>8.1.16.v20140903</version>
+
+        </dependency>-->
+
+        <!-- ws example project -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-websocket</artifactId>
+            <version>8.0.0-RC5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-coyote</artifactId>
+            <version>8.0.0-RC5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-client</artifactId>
+            <version>9.0.6.v20130930</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-servlet</artifactId>
+            <!--<version>9.1.3.v20140225</version>-->
+            <version>9.1.1.v20140108</version>
+        </dependency>
+
+        <!-- alleen gebruiken als je op jetty gaat deployen -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-maven-plugin</artifactId>
             <version>9.0.0.v20130308</version>
+            <!--<version>9.1.1.v20140108</version>-->
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.orbit</groupId>
@@ -146,6 +258,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -155,6 +268,11 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.1.4.RELEASE</version>
         </dependency>
     </dependencies>
     <reporting>
@@ -233,10 +351,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- alleen gebruiken als je op jetty gaat deployen -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.0.0.v20130308</version>
+                <!--<version>9.0.0.v20130308</version>-->
+                <version>9.1.1.v20140108</version>
                 <configuration>
                     <httpConnector>
                         <port>9999</port>
@@ -272,6 +392,18 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>5.0.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                        <version>5.0.2</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

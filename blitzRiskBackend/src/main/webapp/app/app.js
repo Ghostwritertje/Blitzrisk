@@ -9,5 +9,3 @@ var blitzrisk = angular.module('blitzrisk', [
 }]);
 var blitzriskControllers = angular.module('blitzriskControllers',['blitzriskServices']);
 var blitzriskServices = angular.module('blitzriskServices', []);
-
-
