@@ -15,7 +15,7 @@ import static com.jayway.restassured.RestAssured.put;
  * Created by user jorandeboever
  * Date:5/02/15.
  */
-@ContextConfiguration(locations = {"/testcontext.xml"})
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 public class SecurityIT {
 
     private final String URL = "http://localhost:8080/BlitzRisk/api";

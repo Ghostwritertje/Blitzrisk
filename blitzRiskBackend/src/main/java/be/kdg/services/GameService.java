@@ -24,9 +24,11 @@ public class GameService {
         Game game = new Game();
         List<Player> players =  new ArrayList<>();
 
+        int i = 0;
         for (User user : users) {
             Player player = new Player();
             player.setUser(user);
+            player.setColor(i++);
             players.add(player);
         }
         game.setPlayers(players);

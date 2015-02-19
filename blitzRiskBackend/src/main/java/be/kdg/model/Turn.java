@@ -28,6 +28,9 @@ public class Turn {
     @OneToMany(mappedBy = "turn")
     private List<Move> moves = new ArrayList<>();
 
+    @OneToMany(mappedBy = "turn")
+    private List<Move> calculatedMoves = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
@@ -62,5 +65,13 @@ public class Turn {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public List<Move> getCalculatedMoves() {
+        return calculatedMoves;
+    }
+
+    public void setCalculatedMoves(List<Move> calculatedMoves) {
+        this.calculatedMoves = calculatedMoves;
     }
 }

@@ -22,7 +22,7 @@ public class TurnService {
         return turn;
     }
 
-    public Turn executedTurn(Turn turn) throws IllegalMoveException {
+    public void executedTurn(Turn turn) throws IllegalMoveException {
 
         Player player = turn.getPlayer();
         for (Move move : turn.getMoves()) {
@@ -42,47 +42,56 @@ public class TurnService {
             if (move.getOriginTerritory().getNumberOfUnits()<2) throw new IllegalMoveException("Too few units to attack");
 
             Move calculatedMove = calculateMove(move);
-
-
-
-
         }
         //TODO: denken over replay !!
-        return  new Turn();
     }
 
     public Move calculateMove(Move move) {
 
-        int attackers = move.getNumberOfUnits();
+        int attackers = move.getNumberOfUnitsToAttack();
         int defenders = move.getDestinationTerritory().getNumberOfUnits();
-        int attackingDeaths = 0;
-        int defendingDeaths = 0;
+        int survivingAttacckers = attackers;
+        int survivingDefenders = defenders;
+        int originTerritoryStartingNrUnits = move.getOriginTerritory().getNumberOfUnits();
+        int originTerritoryRemainingNrUnits;
+        int destinationTerritoryStartingNrUnits = move.getDestinationTerritory().getNumberOfUnits();
 
+        move.setOriginTerritoryStartingNrUnits(originTerritoryStartingNrUnits);
+        move.setDestinationTerritoryStartingNrUnits(destinationTerritoryStartingNrUnits);
+
+        //attackers have a 60% survival rate, defenders have a 70% survival rate
         for (int i = 0; i<attackers; i++) {
             if (Math.random()<0.7){
-                attackingDeaths+=1;
+                survivingAttacckers-=1;
             }
         }
 
         for (int i = 0; i<defenders; i++) {
             if (Math.random()<0.6){
-                defendingDeaths+=1;
+                survivingDefenders-=1;
             }
         }
 
 
-
-        //als verdedigend land veroverd is
-        if (defenders-defendingDeaths == 0) {
+        //if attacker has won
+        if (survivingDefenders <= 0) {
+            //surviving attackers will occupy the destination territory
+            originTerritoryRemainingNrUnits = originTerritoryStartingNrUnits-attackers;
             move.getDestinationTerritory().setPlayer(move.getOriginTerritory().getPlayer());
-            move.getDestinationTerritory().setNumberOfUnits(attackers-attackingDeaths);
-            move.getOriginTerritory().setNumberOfUnits(move.getOriginTerritory().getNumberOfUnits()-attackers);
+            move.getDestinationTerritory().setNumberOfUnits(survivingAttacckers);
+            move.setDestinationTerritoryRemainingNrUnits(survivingAttacckers);
+
+            //updated number of units in origin country
+            move.setOriginTerritoryRemainingNrUnits(originTerritoryRemainingNrUnits);
+            move.getOriginTerritory().setNumberOfUnits(originTerritoryRemainingNrUnits);
         }
         else
         {
-            move.getDestinationTerritory().setNumberOfUnits(defenders-defendingDeaths);
-            move.getOriginTerritory().setNumberOfUnits(move.getNumberOfUnits()-attackingDeaths);
-            move.setNumberOfUnits(0);
+            //number of units in both territories will be reduced
+            move.getDestinationTerritory().setNumberOfUnits(survivingDefenders);
+            move.setDestinationTerritoryRemainingNrUnits(survivingDefenders);
+            move.getOriginTerritory().setNumberOfUnits(survivingAttacckers);
+            move.setOriginTerritoryRemainingNrUnits(survivingAttacckers);
         }
 
         return move;
