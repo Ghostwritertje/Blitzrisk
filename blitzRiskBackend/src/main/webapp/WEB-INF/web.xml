@@ -1,5 +1,6 @@
 <web-app schemaLocation="http://java.sun.com/xml/ns/javaee     http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
+    <annotation-driven/>
     <display-name>BlitzRiskBackend</display-name>
 
     <servlet>
@@ -7,13 +8,21 @@
         <servlet-class>
             org.springframework.web.servlet.DispatcherServlet
         </servlet-class>
+        <async-supported>true</async-supported>
 
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 /WEB-INF/dispatcher.xml
             </param-value>
+   <!--         <param-value>
+                &lt;!&ndash;WEB-INF/ws.xml&ndash;&gt;
+            </param-value>-->
         </init-param>
+<!--        <init-param>
+            <param-name>dispatchOptionsRequest</param-name>
+            <param-value>true</param-value>
+        </init-param>-->
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -27,15 +36,20 @@
         <param-value>
             /WEB-INF/dispatcher.xml
         </param-value>
+<!--        <param-value>
+            /WEB-INF/ws.xml
+        </param-value>-->
     </context-param>
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
     <!--Spring security filters-->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <filter-mapping>
