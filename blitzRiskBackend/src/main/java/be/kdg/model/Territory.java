@@ -21,7 +21,7 @@ public class Territory {
     @JoinColumn(name = "playerId")
     private Player player;
 
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 
