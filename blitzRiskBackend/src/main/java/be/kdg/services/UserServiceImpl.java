@@ -1,6 +1,6 @@
 package be.kdg.services;
 
-import be.kdg.dao.UserService;
+import be.kdg.dao.UserDao;
 import be.kdg.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,59 +16,59 @@ import java.util.List;
  */
 @Service("userManagerService")
 @Transactional
-public class UserManagerServiceImpl implements UserManagerService, UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
 
     //@Transactional
     @Override
     public User checkLogin(String username, String password) {
-        return userService.checkLogin(username, password);
+        return userDao.checkLogin(username, password);
     }
 
     @Override
     public User checkLoginByEmail(String mail, String password) {
-        return userService.checkLogin(mail, password);
+        return userDao.checkLogin(mail, password);
     }
 
     //@Transactional
     @Override
     public void addUser(String username, String password, String email) {
-        userService.addUser(username, password, email);
+        userDao.addUser(username, password, email);
     }
 
     //@Transactional
     @Override
     public User getUser(String username) {
-        return userService.loadUserByUsername(username);
+        return userDao.loadUserByUsername(username);
     }
 
     //@Transactional
     @Override
     public List<User> findall() {
-        return userService.findall();
+        return userDao.findall();
     }
 
     @Override
     public void removeUser(String username) {
-        userService.removeUser(username);
+        userDao.removeUser(username);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.loadUserByUsername(username);
+        return userDao.loadUserByUsername(username);
     }
     @Override
     public void changePassword(String username, String newPassword) {
-       userService.changePassword(username, newPassword);
+       userDao.changePassword(username, newPassword);
     }
     @Override
     public void changeEmail(String username, String newEmail) {
-        userService.changeEmail(username, newEmail);
+        userDao.changeEmail(username, newEmail);
     }
     @Override
     public void changeUsername(String username, String newUsername) {
-        userService.changeUsername(username, newUsername);
+        userDao.changeUsername(username, newUsername);
     }
 }

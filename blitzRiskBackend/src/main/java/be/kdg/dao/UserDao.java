@@ -16,9 +16,8 @@ import java.util.List;
  * Created by Marlies on 4/01/2015.
  */
 
-@Service("userService")
-
-public class UserService {
+@Service("userDao")
+public class UserDao {
 
     @Autowired
     private SessionFactory sessionFactory;

@@ -19,9 +19,14 @@ public class GameService {
     @Autowired
     private TerritoryService territoryService;
 
-    public Game createNewGame(List<User> users) {
-
+    public Game createGame() {
         Game game = new Game();
+        game.setTerritories(territoryService.getTerritories());
+        return game;
+    }
+
+    public void addUserstToGame (List<User> users, Game game) {
+
         List<Player> players =  new ArrayList<>();
 
         int i = 0;
@@ -33,10 +38,8 @@ public class GameService {
         }
         game.setPlayers(players);
         game.setPlayerTurn(0);
-        game.setTerritories(territoryService.getTerritories());
 
         assignRandomTerritories(game);
-    return game;
     }
 
     public Game assignRandomTerritories(Game game) {

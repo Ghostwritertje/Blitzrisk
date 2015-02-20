@@ -17,6 +17,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private Integer color;
+    InvitationStatus invitationStatus = InvitationStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -66,5 +67,13 @@ public class Player {
 
     public Integer getId() {
         return Id;
+    }
+
+    public InvitationStatus getInvitationStatus() {
+        return invitationStatus;
+    }
+
+    public void setInvitationStatus(InvitationStatus invitationStatus) {
+        this.invitationStatus = invitationStatus;
     }
 }

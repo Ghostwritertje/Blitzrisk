@@ -1,6 +1,7 @@
 package be.kdg.controllers;
 
 import be.kdg.model.Game;
+import be.kdg.model.Player;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.GameService;
@@ -32,6 +33,16 @@ public class GameController {
         GameWrapper wrapper = new GameWrapper(game);
         return wrapper;
     }
+
+    @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)
+    @ResponseBody
+    public void acceptGame(@PathVariable("id") String playerId) {
+
+        //player.setAccepted(true);
+    }
+
+
+
 
 
 

@@ -69,4 +69,7 @@ public class Game {
     public Integer getId() {
         return Id;
     }
+    public void addPlayer (Player player) {
+        players.add(player);
+    }
 }

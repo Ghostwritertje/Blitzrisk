@@ -1,9 +1,7 @@
 package be.kdg.services;
 
-import be.kdg.dao.UserService;
+import be.kdg.dao.UserDao;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by user jorandeboever
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 //@Service("testData")
 public class TestDataInitialisationService  implements InitializingBean {
     //@Autowired
-    private UserService userService;
+    private UserDao userDao;
 
     @Override
     public void afterPropertiesSet() throws Exception {

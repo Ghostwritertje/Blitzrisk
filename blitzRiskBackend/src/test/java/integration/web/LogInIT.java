@@ -1,8 +1,7 @@
 package integration.web;
 
-import be.kdg.dao.UserService;
 import be.kdg.model.User;
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -13,9 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Random;
@@ -33,7 +30,7 @@ public class LogInIT {
     private static WebDriver driver;
 
     @Autowired
-    private UserManagerService userService;
+    private UserService userService;
 
 
     @BeforeClass

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Marlies on 17/02/2015.
  */
-public interface UserManagerService {
+public interface UserService {
     //@Transactional
     User checkLogin(String username, String password);
 

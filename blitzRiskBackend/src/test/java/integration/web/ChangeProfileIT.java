@@ -1,8 +1,6 @@
 package integration.web;
 
-import be.kdg.dao.UserService;
-import be.kdg.model.User;
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -16,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Random;
-
 /**
  * Created by user jorandeboever
  * Date:19/02/15.
@@ -29,7 +25,7 @@ public class ChangeProfileIT {
     private static WebDriver driver;
 
     @Autowired
-    public UserManagerService userService;
+    public UserService userService;
 
     @BeforeClass
     public static void insertUser() {
