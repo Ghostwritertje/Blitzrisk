@@ -10,8 +10,8 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
         function logMeIn() {
             var deferred = $q.defer();  //maak promise
-
-            $http.get(hosturl + 'login', {headers: {'name': username, 'password': password}})
+            var passwordHash = hashPassword(password);
+            $http.get(hosturl + 'login', {headers: {'name': username, 'password': passwordHash}})
                 .success(function (data) {
                     token = data;
                     deferred.resolve(data);
@@ -22,6 +22,10 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                     deferred.reject('Wrong log in details');
                 });
             return deferred.promise;
+        }
+
+        function hashPassword(password){
+            return CryptoJS.SHA256(password).toString()
         }
 
         return {
@@ -45,7 +49,8 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
             },
             register: function(name, pass, email){
-                return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email,'password' : pass}});
+                var passwordHash = hashPassword(pass);
+                return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email,'password' : passwordHash }});
             },
             isLoggedIn: function(){
                 return isLoggedIn;

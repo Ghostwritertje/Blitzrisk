@@ -7,7 +7,6 @@ angular.module('blitzriskControllers').controller('LoginController', ['$scope', 
         $scope.busy = false;
         $scope.loginError = false;
 
-
         $scope.go = function (path) {
             $location.path(path);
         };

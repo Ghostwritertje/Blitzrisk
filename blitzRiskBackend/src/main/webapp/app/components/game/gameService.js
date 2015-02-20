@@ -3,12 +3,20 @@
  */
 'use strict';
 
-angular.module('blitzriskServices').factory('GameService', ['$http',
-    function ($http) {
+angular.module('blitzriskServices').factory('GameService', ['$http', '$q',
+    function ($http, $q) {
+        var territoryLayout;
 
         return {
-            getTerritoryLayout: function () {
-                return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout');
+            initTerritoryLayout: function () {
+                var territoryLayoutDeffer = $q.defer();
+                $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout').
+                    success(function(data){territoryLayout = data; territoryLayoutDeffer.resolve(data);}).
+                    error(function (data) {territoryLayoutDeffer.reject(data);});
+                return territoryLayoutDeffer.promise;
+            },
+            getTerritoryLayout: function(){
+                return territoryLayout;
             }
         }
     }]);
