@@ -1,5 +1,6 @@
 package be.kdg.model;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -21,12 +22,15 @@ public class Game {
 
     private Integer playerTurn;
 
-    @OneToMany(mappedBy = "game")
+    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany
     private List<Player> players = new ArrayList<>();
 
+    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(mappedBy = "game")
     private List<Turn> turns = new ArrayList<>();
 
+    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(mappedBy = "game")
     private Set<Territory> territories = new HashSet<Territory>();
 
