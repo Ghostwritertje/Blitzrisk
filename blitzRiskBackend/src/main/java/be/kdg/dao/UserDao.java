@@ -63,6 +63,12 @@ public class UserDao {
         return (User) query.uniqueResult();
     }
 
+    public User loadUserById(int id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :id");
+        query.setParameter("id", id);
+        return (User) query.uniqueResult();
+    }
+
     public List<User> findall() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         return criteria.list();

@@ -26,14 +26,14 @@ public class GameService {
     @Autowired
     private GameDao gameDao;
 
-    public Game createNewGame(List<User> users) {
+    public Game createNewGame() {
         Game game = new Game();
         game.setTerritories(territoryService.getTerritories());
         saveGame(game);
         return game;
     }
 
-    public void addUserstToGame (List<User> users, Game game) {
+    public void addUsersToGame(List<User> users, Game game) {
 
         List<Player> players =  new ArrayList<>();
 

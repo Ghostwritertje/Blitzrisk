@@ -56,7 +56,8 @@ public class GameServiceTest {
         users.add(user4);
 
         //4 users use 40 territories
-        Game game = gameService.createNewGame(users);
+        Game game = gameService.createNewGame();
+        gameService.addUsersToGame(users, game);
         int numberOfTerritories = 0;
         for (Territory territory: game.getTerritories()) {
             if(territory.getPlayer() != null) numberOfTerritories++;
@@ -79,7 +80,8 @@ public class GameServiceTest {
         users.add(user2);
         users.add(user3);
 
-        Game game = gameService.createNewGame(users);
+        Game game = gameService.createNewGame();
+        gameService.addUsersToGame(users, game);
         int numberOfTerritories = 0;
         for (Territory territory: game.getTerritories()) {
             if(territory.getPlayer() != null) numberOfTerritories++;
@@ -105,7 +107,8 @@ public class GameServiceTest {
         users.add(user3);
         users.add(user4);
 
-        Game game = gameService.createNewGame(users);
+        Game game = gameService.createNewGame();
+        gameService.addUsersToGame(users, game);
         int countUser1 = 0;
         int countUser2 = 0;
         int countUser3 = 0;
@@ -139,8 +142,12 @@ public class GameServiceTest {
         users.add(user3);
         users.add(user4);
 
-        Game game1 = gameService.createNewGame(users);
-        Game game2 = gameService.createNewGame(users);
+        Game game1 = gameService.createNewGame();
+        Game game2 = gameService.createNewGame();
+
+        gameService.addUsersToGame(users, game1);
+        gameService.addUsersToGame(users, game2);
+
 
         Assert.assertFalse(game1.getTerritories().equals(game2.getTerritories()));
 
@@ -152,7 +159,8 @@ public class GameServiceTest {
         userService.addUser("user", "user", "user");
         List<User> users = userService.findall();
 
-        Game game = gameService.createNewGame(users);
+        Game game = gameService.createNewGame();
+        gameService.addUsersToGame(users, game);
         gameService.saveGame(game);
 
         Game savedGame=gameService.getGame(game.getId());

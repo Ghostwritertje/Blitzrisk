@@ -29,4 +29,6 @@ public interface UserService {
     void changeEmail(String username, String newEmail);
 
     void changeUsername(String username, String newUsername);
+
+    public User getUserById(int id);
 }

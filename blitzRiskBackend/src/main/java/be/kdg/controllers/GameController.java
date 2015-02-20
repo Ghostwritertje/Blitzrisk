@@ -3,15 +3,11 @@ package be.kdg.controllers;
 import be.kdg.model.Game;
 import be.kdg.model.Player;
 import be.kdg.model.User;
-import be.kdg.security.TokenUtils;
-import be.kdg.services.GameService;
-import be.kdg.services.TurnService;
+import be.kdg.services.*;
 import be.kdg.wrappers.GameWrapper;
+import be.kdg.wrappers.PlayerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Alexander on 16/2/2015.
@@ -26,12 +22,18 @@ public class GameController {
     @Autowired
     TurnService turnService;
 
-    @RequestMapping(value = "/createGame", method = RequestMethod.POST, produces = "application/json")
+    @Autowired
+    PlayerService playerService;
+
+    @Autowired
+    UserService userServiceImpl;
+
+    @RequestMapping(value = "/createGame", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public GameWrapper createGame(@RequestBody List<User> users) {
-        Game game = gameService.createNewGame(users);
-        GameWrapper wrapper = new GameWrapper(game);
-        return wrapper;
+    public GameWrapper createGame() {
+        Game game = gameService.createNewGame();
+        GameWrapper gameWrapper = new GameWrapper(game);
+        return gameWrapper;
     }
 
     @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)
@@ -40,6 +42,19 @@ public class GameController {
 
         //player.setAccepted(true);
     }
+
+    @RequestMapping(value = "/inviteUser", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public PlayerWrapper inviteUser(@RequestBody int userId, int gameId) {
+        User user = userServiceImpl.getUserById(userId);
+        Game game = gameService.getGame(gameId);
+        Player player = new Player();
+        player.setGame(game);
+        player.setUser(user);
+        PlayerWrapper playerWrapper = new PlayerWrapper(player);
+        return playerWrapper;
+    }
+
 
 
 
@@ -51,14 +66,14 @@ public class GameController {
    /* @RequestMapping(value = "/createGame", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
 
-        userService.addUser(username, password, email);
+        userServiceImpl.addUser(username, password, email);
 
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getUsers() {
-        return this.userService.findall();
+        return this.userServiceImpl.findall();
     }*/
 
 }

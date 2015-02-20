@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service("gameDao")
 public class GameDao {
+
     @Autowired
     private SessionFactory sessionFactory;
 

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Marlies on 9/02/2015.
  */
-@Service("userManagerService")
+@Service("userServiceImpl")
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -40,8 +40,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     //@Transactional
     @Override
-    public User getUser(String username) {
+     public User getUser(String username) {
         return userDao.loadUserByUsername(username);
+    }
+
+    public User getUserById(int id) {
+        return userDao.loadUserById(id);
     }
 
     //@Transactional

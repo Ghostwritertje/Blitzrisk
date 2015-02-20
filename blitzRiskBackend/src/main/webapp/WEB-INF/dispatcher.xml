@@ -42,7 +42,7 @@
     </security:http>
 
     <security:authentication-manager  id="authenticationManager">
-        <security:authentication-provider user-service-ref="userManagerService">
+        <security:authentication-provider user-service-ref="userServiceImpl">
         </security:authentication-provider>
     </security:authentication-manager>
 
@@ -52,7 +52,7 @@
     <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService"></bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
-        <constructor-arg ref="userManagerService" />
+        <constructor-arg ref="userServiceImpl" />
     </bean>
     <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint" />
 
