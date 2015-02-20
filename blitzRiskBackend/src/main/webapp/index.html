@@ -9,10 +9,10 @@
   <title>My AngularJS App</title>
   <meta name="description" content="">
     <link rel="stylesheet" href="assets/css/index.css">
-
     <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.css">
-
-
+    <link rel="stylesheet" href="app/components/login/login.css">
+    <link rel="stylesheet" href="app/components/game/game.css">
+    <link rel="stylesheet" href="app/components/register/register.css">
 </head>
 <body ng-app="blitzrisk"  >
   <!--[if lt IE 7]>
@@ -59,7 +59,8 @@
   <script src="app/components/game/gameController.js"></script>
   <script src="app/components/overview/overviewController.js"></script>
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
+  <script src="app/components/game/gameService.js"></script>
+  <script src="app/components/game/riskmapEvents.js"></script>
   <script src="app/components/chat/chatController.js"></script>
   <script src="app/components/chat/chatService.js"></script>
 
@@ -67,6 +68,5 @@
   <script src="assets/libs/sockjs-0.3.4.js"></script>
   <script src="app/bower_components/stomp/stomp.js"></script>
   <script src="assets/libs/lodash.js"></script>
-
 </body>
 </html>

@@ -8,7 +8,7 @@
 /* messages: array contains all received messages */
 /* max: the maximum allowed chars in a message */
 
-angular.module('blitzriskControllers').controller("chatCtrl", function ($scope, ChatService) {
+angular.module('blitzriskControllers').controller("chatCtrl", [ '$scope', 'ChatService', function ($scope, ChatService) {
     $scope.messages = [];
     $scope.message = "";
     $scope.max = 140;
@@ -24,4 +24,5 @@ angular.module('blitzriskControllers').controller("chatCtrl", function ($scope, 
         //updates the progress part of the directive
         $scope.messages.push(message);
     });
-});
+}
+]);
