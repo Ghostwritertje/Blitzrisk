@@ -1,6 +1,6 @@
 'use strict';
-angular.module('blitzriskControllers').controller('GameController', ['$scope', "$GameService",
-    function ($scope, $GameService) {
+angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
+    function ($scope, GameService) {
 
         $scope.testClass = function(){
             alert("test");

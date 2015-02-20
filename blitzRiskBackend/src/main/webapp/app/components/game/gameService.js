@@ -3,12 +3,8 @@
  */
 'use strict';
 
-angular.module('blitzriskServices').factory('GameService', ['$http', '$q',
-    function ($http, $q) {
-        var hosturl = "http://localhost:8080/BlitzRisk/api/login";
-        var token = null;
-        var username;
-        var password;
+angular.module('blitzriskServices').factory('GameService', ['$http',
+    function ($http) {
 
         return {
             getTerritoryLayout: function () {
