@@ -83,4 +83,8 @@
     <bean id="userService" class="be.kdg.dao.UserService">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+    <bean id="gameDao" class="be.kdg.dao.GameDao">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 </beans>

@@ -1,5 +1,6 @@
 package be.kdg.services;
 
+import be.kdg.dao.GameDao;
 import be.kdg.model.Game;
 import be.kdg.model.Player;
 import be.kdg.model.Territory;
@@ -7,17 +8,23 @@ import be.kdg.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
  * Created by Alexander on 6/2/2015.
  */
 
+
 @Service("gameService")
+@Transactional
 public class GameService {
 
     @Autowired
     private TerritoryService territoryService;
+
+    @Autowired
+    private GameDao gameDao;
 
     public Game createNewGame(List<User> users) {
 
@@ -36,7 +43,8 @@ public class GameService {
         game.setTerritories(territoryService.getTerritories());
 
         assignRandomTerritories(game);
-    return game;
+        saveGame(game);
+        return game;
     }
 
     public Game assignRandomTerritories(Game game) {
@@ -64,6 +72,16 @@ public class GameService {
 
     public Player CurrentPlayerforTurn(Game game) {
         return game.getPlayers().get(game.getPlayerTurn());
+    }
+
+
+    public void saveGame(Game game) {
+        gameDao.saveGame(game);
+    }
+
+
+    public Game getGame(int gameId) {
+        return gameDao.getGame(gameId);
     }
 
 
