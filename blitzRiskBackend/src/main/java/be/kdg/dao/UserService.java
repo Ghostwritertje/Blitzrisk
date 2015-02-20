@@ -76,4 +76,26 @@ public class UserService {
         sessionFactory.getCurrentSession().delete(user);
     }
 
+    public void changePassword(String username, String newPassword) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
+        query.setParameter("username", username);
+        User user = (User) query.uniqueResult();
+        user.setPassword(newPassword);
+        sessionFactory.getCurrentSession().save(user);
+    }
+    public void changeEmail(String username, String newEmail) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
+        query.setParameter("username", username);
+        User user = (User) query.uniqueResult();
+        user.setEmail(newEmail);
+        sessionFactory.getCurrentSession().save(user);
+    }
+    public void changeUsername(String username, String newUsername) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
+        query.setParameter("username", username);
+        User user = (User) query.uniqueResult();
+        user.setName(newUsername);
+        sessionFactory.getCurrentSession().save(user);
+    }
+
 }

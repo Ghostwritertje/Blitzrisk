@@ -1,5 +1,6 @@
 package be.kdg.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,8 +31,6 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private Set<Player> players = new HashSet<Player>();
-
-
 
     public String getName() {
         return name;

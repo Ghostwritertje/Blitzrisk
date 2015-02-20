@@ -23,4 +23,10 @@ public interface UserManagerService {
     List<User> findall();
 
     void removeUser(String username);
+
+    void changePassword(String username, String newPassword);
+
+    void changeEmail(String username, String newEmail);
+
+    void changeUsername(String username, String newUsername);
 }
