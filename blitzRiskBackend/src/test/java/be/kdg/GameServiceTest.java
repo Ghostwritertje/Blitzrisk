@@ -6,6 +6,7 @@ import be.kdg.model.Game;
 import be.kdg.model.Territory;
 import be.kdg.model.User;
 import be.kdg.services.GameService;
+import be.kdg.services.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +23,16 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Alexander on 10/2/2015.
  */
+
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/testcontext.xml"})
 public class GameServiceTest {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired(required=true)
     private GameService gameService;
@@ -138,6 +143,20 @@ public class GameServiceTest {
         Game game2 = gameService.createNewGame(users);
 
         Assert.assertFalse(game1.getTerritories().equals(game2.getTerritories()));
+
+    }
+
+    @Test
+    public void saveGame() {
+        userService.addUser("user", "user", "user");
+        userService.addUser("user", "user", "user");
+        List<User> users = userService.findall();
+
+        Game game = gameService.createNewGame(users);
+        gameService.saveGame(game);
+
+        Game savedGame=gameService.getGame(game.getId());
+        assertTrue(savedGame.equals(game));
 
     }
 
