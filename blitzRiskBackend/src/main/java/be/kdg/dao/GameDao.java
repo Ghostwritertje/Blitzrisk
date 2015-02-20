@@ -21,6 +21,7 @@ public class GameDao {
     }
 
     public void saveGame(Game game) {
+        //sessionFactory.getCurrentSession().getTransaction().commit();
         try {
             sessionFactory.getCurrentSession().save(game);
         } catch (ConstraintViolationException e) {

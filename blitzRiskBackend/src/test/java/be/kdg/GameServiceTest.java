@@ -155,6 +155,7 @@ public class GameServiceTest {
 
     @Test
     public void saveGame() {
+
         userService.addUser("user", "user", "user");
         userService.addUser("user", "user", "user");
         List<User> users = userService.findall();
@@ -163,8 +164,9 @@ public class GameServiceTest {
         gameService.addUsersToGame(users, game);
         gameService.saveGame(game);
 
+
         Game savedGame=gameService.getGame(game.getId());
-        assertTrue(savedGame.equals(game));
+        assertTrue(savedGame.getId() == game.getId());
 
     }
 
