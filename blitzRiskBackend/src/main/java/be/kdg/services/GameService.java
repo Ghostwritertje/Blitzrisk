@@ -84,5 +84,9 @@ public class GameService {
         return gameDao.getGame(gameId);
     }
 
+    public void removeGame(Game game) {
+        gameDao.removeGame(game);
+    }
+
 
 }

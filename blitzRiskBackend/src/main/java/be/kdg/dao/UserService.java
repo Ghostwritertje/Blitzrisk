@@ -74,6 +74,7 @@ public class UserService {
         query.setParameter("username", username);
         User user = (User) query.uniqueResult();
         sessionFactory.getCurrentSession().delete(user);
+        //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!removing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     public void changePassword(String username, String newPassword) {

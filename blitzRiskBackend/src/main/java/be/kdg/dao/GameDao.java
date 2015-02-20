@@ -31,4 +31,8 @@ public class GameDao {
     public Game getGame(int gameId) {
         return (Game) sessionFactory.getCurrentSession().get(Game.class, gameId);
     }
+
+    public void removeGame(Game game) {
+        sessionFactory.getCurrentSession().delete(game);
+    }
 }

@@ -7,8 +7,7 @@ import be.kdg.model.Territory;
 import be.kdg.model.User;
 import be.kdg.services.GameService;
 import be.kdg.services.UserManagerService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,8 +27,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GameServiceTest {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private List<User> users;
 
     @Autowired
     private UserManagerService userManagerService;
@@ -37,74 +35,55 @@ public class GameServiceTest {
     @Autowired(required=true)
     private GameService gameService;
 
+    @Before
+    public void createUsers() {
+        userManagerService.addUser("Lyle Collins", "lyle", "lyle@collins.be");
+        userManagerService.addUser("Margaret Crawford", "margaret", "margaret@crawford.be");
+        userManagerService.addUser("Lorenzo Jones", "lorenzo", "lorenzo@jones.be");
+        userManagerService.addUser("Guadalupe Howard", "guadalupe", "gaudalupe@howard.be");
+        users = new ArrayList<>();
+        users.add(userManagerService.getUser("Lyle Collins"));
+        users.add(userManagerService.getUser("Margaret Crawford"));
+        users.add(userManagerService.getUser("Lorenzo Jones"));
+        users.add(userManagerService.getUser("Guadalupe Howard"));
+    }
+
+    @After
+    public void removeUsers() {
+        for(User user: users) {
+            userManagerService.removeUser(user.getName());
+        }
+    }
+
     @Test
     public void dividableBy4Players() {
-        List<User> users = new ArrayList<User>();
-
-        User user = new User();
-        user.setName("een");
-        User user2 = new User();
-        user2.setName("twee");
-        User user3 = new User();
-        user3.setName("drie");
-        User user4 = new User();
-        user4.setName("vier");
-
-        users.add(user);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
-
-        //4 users use 40 territories
         Game game = gameService.createNewGame(users);
         int numberOfTerritories = 0;
         for (Territory territory: game.getTerritories()) {
             if(territory.getPlayer() != null) numberOfTerritories++;
         }
         assertTrue("4 players use 40 territories", 40 == numberOfTerritories);
+        gameService.removeGame(game);
     }
 
     @Test
     public void dividableBy3Players() {
-        List<User> users = new ArrayList<User>();
+        List <User> threeUsers = new ArrayList<>();
+        for (int i = 0; i< 3; i++) {
+            threeUsers.add(users.get(i));
+        }
 
-        User user = new User();
-        user.setName("een");
-        User user2 = new User();
-        user2.setName("twee");
-        User user3 = new User();
-        user3.setName("drie");
-
-        users.add(user);
-        users.add(user2);
-        users.add(user3);
-
-        Game game = gameService.createNewGame(users);
+        Game game = gameService.createNewGame(threeUsers);
         int numberOfTerritories = 0;
         for (Territory territory: game.getTerritories()) {
             if(territory.getPlayer() != null) numberOfTerritories++;
         }
-        assertTrue("4 players use 40 territories", 42 == numberOfTerritories);
+        assertTrue("3 players use 42 territories", 42 == numberOfTerritories);
+        gameService.removeGame(game);
     }
 
     @Test
     public void dividedFair() {
-        List<User> users = new ArrayList<User>();
-
-        User user = new User();
-        user.setName("een");
-        User user2 = new User();
-        user2.setName("twee");
-        User user3 = new User();
-        user3.setName("drie");
-        User user4 = new User();
-        user4.setName("vier");
-
-        users.add(user);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
-
         Game game = gameService.createNewGame(users);
         int countUser1 = 0;
         int countUser2 = 0;
@@ -112,52 +91,37 @@ public class GameServiceTest {
         int countUser4 = 0;
         for (Territory territory: game.getTerritories()) {
             if(territory.getPlayer() != null) {
-                if(territory.getPlayer().getUser().equals(user)) countUser1++;
-                if(territory.getPlayer().getUser().equals(user2)) countUser2++;
-                if(territory.getPlayer().getUser().equals(user3)) countUser3++;
-                if(territory.getPlayer().getUser().equals(user4)) countUser4++;
+                if(territory.getPlayer().getUser().equals(users.get(0))) countUser1++;
+                if(territory.getPlayer().getUser().equals(users.get(1))) countUser2++;
+                if(territory.getPlayer().getUser().equals(users.get(2))) countUser3++;
+                if(territory.getPlayer().getUser().equals(users.get(3))) countUser4++;
             }
         }
         assertTrue("players need to have the same number of territories", countUser1 == countUser2 && countUser1 == countUser3 && countUser1 ==countUser4);
+        gameService.removeGame(game);
     }
 
     @Test
     public void randomDividedTerritories() {
-        List<User> users = new ArrayList<User>();
-
-        User user = new User();
-        user.setName("een");
-        User user2 = new User();
-        user2.setName("twee");
-        User user3 = new User();
-        user3.setName("drie");
-        User user4 = new User();
-        user4.setName("vier");
-
-        users.add(user);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
 
         Game game1 = gameService.createNewGame(users);
         Game game2 = gameService.createNewGame(users);
 
         Assert.assertFalse(game1.getTerritories().equals(game2.getTerritories()));
+        gameService.removeGame(game1);
+        gameService.removeGame(game2);
 
     }
 
     @Test
     public void saveGame() {
-        userManagerService.addUser("user", "user", "user");
-        userManagerService.addUser("user2", "user2", "user2");
-        userManagerService.addUser("user3", "user3", "user3");
-        List<User> users = userManagerService.findall();
 
         Game game = gameService.createNewGame(users);
         //gameService.saveGame(game);
 
         Game savedGame=gameService.getGame(game.getId());
         assertTrue(savedGame.getId() == game.getId());
+        gameService.removeGame(game);
 
     }
 
