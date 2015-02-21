@@ -1,6 +1,6 @@
 'use strict';
-angular.module('blitzriskControllers').controller('LoginController', ['$scope', '$http', '$location', 'LoginService',
-    function ($scope, $http, $location, LoginService) {
+angular.module('blitzriskControllers').controller('LoginController', ['$scope', '$rootScope',  '$http', '$location', 'LoginService',
+    function ($scope, $rootScope, $http, $location, LoginService) {
         $scope.username = '';
         $scope.password = '';
 
@@ -16,7 +16,9 @@ angular.module('blitzriskControllers').controller('LoginController', ['$scope', 
             var promise = LoginService.login($scope.username, $scope.password);
 
             promise.then(function(message) {
-                $location.path("/game");
+                $rootScope.myUsername = $scope.username;
+                $rootScope.loggedIn = true;
+                $location.path("/overview");
             }, function(reason) {
            //     alert('Failed: ' + reason);
                 $scope.busy = false;

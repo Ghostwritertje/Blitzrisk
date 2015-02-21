@@ -35,13 +35,54 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
                 return logMeIn();
             },
+            logOut: function logOut() {
+                token = null;
+            },
             getToken: function () {
                 var deferred = $q.defer();
-                if(token!= null){
+                if (token != null) {
                     deferred.resolve(token);
-                }else {
+                } else {
                     return logMeIn();
                 }
+
+            },
+            authenticate: function (pass) {
+                return angular.equals(pass, password);
+            },
+            updateUser: function (name, email, pass) {
+                var deferred = $q.defer();
+
+                $http.put(hosturl + 'user', {
+                    'name': name,
+                    'password': pass,
+                    'email': email
+                }, {headers: {'X-Auth-Token': token}})
+                    .success(function () {
+                        username = name;
+                        if (pass != null) password = pass;
+
+                        var promise = logMeIn();
+                        promise.then(function () {
+                            deferred.resolve();
+                        });
+
+
+                    });
+
+                return deferred.promise;
+            },
+            getUserDetails: function () {
+                var deferred = $q.defer();
+
+                $http.get(hosturl + "user", {headers: {'X-Auth-Token': token}})
+                    .success(function (data) {
+                        deferred.resolve({"username": data.name, "email": data.email});
+                    }).
+                    error(function () {
+                        deferred.reject('Token Expired');
+                    });
+                return deferred.promise;
 
             },
             getUsers: function () {
@@ -52,7 +93,7 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 var passwordHash = hashPassword(pass);
                 return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email,'password' : passwordHash }});
             },
-            isLoggedIn: function(){
+            isLoggedIn: function () {
                 return isLoggedIn;
             }
         }

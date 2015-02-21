@@ -59,4 +59,16 @@ public class UserManagerServiceImpl implements UserManagerService, UserDetailsSe
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userService.loadUserByUsername(username);
     }
+    @Override
+    public void changePassword(String username, String newPassword) {
+       userService.changePassword(username, newPassword);
+    }
+    @Override
+    public void changeEmail(String username, String newEmail) {
+        userService.changeEmail(username, newEmail);
+    }
+    @Override
+    public void changeUsername(String username, String newUsername) {
+        userService.changeUsername(username, newUsername);
+    }
 }
