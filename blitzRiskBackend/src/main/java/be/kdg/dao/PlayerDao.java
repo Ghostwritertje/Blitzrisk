@@ -1,7 +1,6 @@
 package be.kdg.dao;
 
 import be.kdg.model.Player;
-import be.kdg.model.User;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
@@ -34,5 +33,9 @@ public class PlayerDao {
         Query query = sessionFactory.getCurrentSession().createQuery("from Player where id = :id");
         query.setParameter("id", id);
         return (Player) query.uniqueResult();
+    }
+
+    public void removePlayer(Player player) {
+        sessionFactory.getCurrentSession().delete(player);
     }
 }

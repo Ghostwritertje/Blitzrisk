@@ -52,7 +52,7 @@ public class GameServiceTest {
     @After
     public void removeUsers() {
         for(User user: users) {
-            //userManagerService.removeUser(user.getName());
+            userManagerService.removeUser(user.getName());
         }
     }
 
@@ -67,7 +67,7 @@ public class GameServiceTest {
         assertTrue("4 players use 40 territories", 40 == numberOfTerritories);
         gameService.removeGame(game);
     }
-/*
+
     @Test
     public void dividableBy3Players() {
         List <User> threeUsers = new ArrayList<>();
@@ -130,6 +130,4 @@ public class GameServiceTest {
         assertTrue(savedGame.getId() == game.getId());
         gameService.removeGame(game);
     }
-
-*/
 }

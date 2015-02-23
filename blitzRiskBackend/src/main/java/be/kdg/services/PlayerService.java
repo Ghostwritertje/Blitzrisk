@@ -2,6 +2,7 @@ package be.kdg.services;
 
 import be.kdg.dao.PlayerDao;
 import be.kdg.model.Game;
+import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class PlayerService {
         Player player = new Player();
         player.setUser(user);
         player.setGame(game);
+        player.setInvitationStatus(InvitationStatus.PENDING);
         game.addPlayer(player);
         playerDao.savePlayer(player);
     }
