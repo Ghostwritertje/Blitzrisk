@@ -10,7 +10,6 @@ import be.kdg.services.UserManagerService;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -115,14 +114,10 @@ public class GameServiceTest {
 
     @Test
     public void saveGame() {
-
         Game game = gameService.createNewGame(users);
-        //gameService.saveGame(game);
-
         Game savedGame=gameService.getGame(game.getId());
         assertTrue(savedGame.getId() == game.getId());
         gameService.removeGame(game);
-
     }
 
 
