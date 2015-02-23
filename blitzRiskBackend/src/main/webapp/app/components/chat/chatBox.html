@@ -1,20 +1,19 @@
-<div ng-controller="chatCtrl">
-    <form ng-submit="addMessage()" name="messageForm"> <!-- send the message using websockets -->
-        <input type="text" placeholder="Compose a new message..." ng-model="message"/> <!-- bind the message
-        input to the message model -->
 
-        <!-- fancy Twitter-like feature: remaining max chars -->
-        <div class="info">
-            <span class="count" ng-bind="max - message.length" ng-class="{danger: message.length > max}">140</span>
-            <button ng-disabled="message.length > max || message.length === 0">Send</button>
+<div class="msg_box" style="right:290px">
+    <div class="msg_head">Risk Chat
+        <div class="close">x</div>
+    </div>
+    <div class="msg_wrap">
+        <div class="msg_body" ng-repeat="message in messages | orderBy:'tie':true">
+            <div class="msg_a" ng-if="message.self">
+                {{message.message}}
+            </div>
+            <div class="msg_b" ng-if="!message.self">{{message.message}}</div>
+            <div class="msg_a">This is from A	</div>
+            <div class="msg_b">This is from B, and its amazingly kool nah... i know it even i liked it :)</div>
+            <div class="msg_a">Wow, Thats great to hear from you man </div>
+            <div class="msg_push"></div>
         </div>
-    </form>
-
-    <hr/>
-
-    <p ng-repeat="message in messages | orderBy:'time':true" class="message"> <!-- message are sorted by date,
-       with the most recent one at the top of the list -->
-        <time>{{message.time | date:'HH:mm'}}</time>
-        <span ng-class="{self: message.self}">{{message.message}}</span> <!-- apply self class if message is from yourself -->
-    </p>
+        <div class="msg_footer"><textarea class="msg_input" rows="4"></textarea></div>
+    </div>
 </div>
