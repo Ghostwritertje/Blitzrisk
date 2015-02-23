@@ -30,6 +30,7 @@ public class GameService {
         Game game = new Game();
         game.setTerritories(territoryService.getTerritories());
         saveGame(game);
+        game.setPlayerTurn(0);
         return game;
     }
 
@@ -45,11 +46,20 @@ public class GameService {
             players.add(player);
         }
         game.setPlayers(players);
-        game.setPlayerTurn(0);
+
 
         assignRandomTerritories(game);
     }
 
+    public void addUserToGame(User user, Game game) {
+
+        Player player = new Player();
+        player.setUser(user);
+        player.setColor(game.getPlayers().size());
+
+        game.getPlayers().add(player);
+
+    }
     public Game assignRandomTerritories(Game game) {
 
 

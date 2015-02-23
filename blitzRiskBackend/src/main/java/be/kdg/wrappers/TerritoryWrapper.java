@@ -15,7 +15,9 @@ public class TerritoryWrapper {
         Id = territory.getId();
         this.numberOfUnits = territory.getNumberOfUnits();
         this.key = territory.getGameKey();
-        this.playerWrapper = new PlayerWrapper(territory.getPlayer());
+        if (territory.getPlayer() != null) {
+            this.playerWrapper = new PlayerWrapper(territory.getPlayer());
+        }
     }
 
     public Integer getId() {

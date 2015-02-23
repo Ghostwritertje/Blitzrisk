@@ -28,12 +28,14 @@ public class GameController {
     @Autowired
     UserService userServiceImpl;
 
-    @RequestMapping(value = "/createGame", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/createGame/{userId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public GameWrapper createGame() {
+    public String createGame(@PathVariable("userId") int userId) {
         Game game = gameService.createNewGame();
-        GameWrapper gameWrapper = new GameWrapper(game);
-        return gameWrapper;
+        gameService.addUserToGame(userServiceImpl.getUserById(userId),game);
+        System.out.println();
+        String json = new String("{\"gameId\": "+game.getId()+"}");
+        return json;
     }
 
     @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)

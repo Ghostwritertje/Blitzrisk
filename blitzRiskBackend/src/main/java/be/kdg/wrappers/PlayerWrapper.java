@@ -14,20 +14,20 @@ import java.util.Set;
  * Created by Alexander on 16/2/2015.
  */
 public class PlayerWrapper {
-    private Integer Id;
+    private Integer id;
     private Integer color;
 
     public PlayerWrapper(Player player) {
-        Id = player.getId();
+        this.id = player.getId();
         this.color = player.getColor();
     }
 
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 
     public Integer getColor() {
