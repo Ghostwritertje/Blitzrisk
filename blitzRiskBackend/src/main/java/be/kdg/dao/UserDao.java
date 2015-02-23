@@ -16,9 +16,8 @@ import java.util.List;
  * Created by Marlies on 4/01/2015.
  */
 
-@Service("userService")
-
-public class UserService {
+@Service("userDao")
+public class UserDao {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -61,6 +60,12 @@ public class UserService {
     public User loadUserByUsername(String username) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
+        return (User) query.uniqueResult();
+    }
+
+    public User loadUserById(int id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :id");
+        query.setParameter("id", id);
         return (User) query.uniqueResult();
     }
 

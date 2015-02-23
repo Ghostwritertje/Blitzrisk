@@ -23,7 +23,7 @@ public class Game {
     private Integer playerTurn;
 
     @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
-    @OneToMany
+    @OneToMany(mappedBy = "game")
     private List<Player> players = new ArrayList<>();
 
     @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
@@ -72,5 +72,8 @@ public class Game {
 
     public Integer getId() {
         return Id;
+    }
+    public void addPlayer (Player player) {
+        players.add(player);
     }
 }

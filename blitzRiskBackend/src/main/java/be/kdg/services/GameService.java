@@ -26,9 +26,16 @@ public class GameService {
     @Autowired
     private GameDao gameDao;
 
-    public Game createNewGame(List<User> users) {
-
+    public Game createNewGame() {
         Game game = new Game();
+        game.setTerritories(territoryService.getTerritories());
+        saveGame(game);
+        game.setPlayerTurn(0);
+        return game;
+    }
+
+    public void addUsersToGame(List<User> users, Game game) {
+
         List<Player> players =  new ArrayList<>();
 
         int i = 0;
@@ -39,14 +46,20 @@ public class GameService {
             players.add(player);
         }
         game.setPlayers(players);
-        game.setPlayerTurn(0);
-        game.setTerritories(territoryService.getTerritories());
+
 
         assignRandomTerritories(game);
-        saveGame(game);
-        return game;
     }
 
+    public void addUserToGame(User user, Game game) {
+
+        Player player = new Player();
+        player.setUser(user);
+        player.setColor(game.getPlayers().size());
+
+        game.getPlayers().add(player);
+
+    }
     public Game assignRandomTerritories(Game game) {
 
 

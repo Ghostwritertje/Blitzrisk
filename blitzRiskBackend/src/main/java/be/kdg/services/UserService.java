@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Marlies on 17/02/2015.
  */
-public interface UserManagerService {
+public interface UserService {
     //@Transactional
     User checkLogin(String username, String password);
 
@@ -29,4 +29,6 @@ public interface UserManagerService {
     void changeEmail(String username, String newEmail);
 
     void changeUsername(String username, String newUsername);
+
+    public User getUserById(int id);
 }

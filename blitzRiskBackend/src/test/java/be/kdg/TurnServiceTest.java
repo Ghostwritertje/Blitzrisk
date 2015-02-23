@@ -7,7 +7,7 @@ import be.kdg.model.Territory;
 import be.kdg.model.User;
 import be.kdg.services.GameService;
 import be.kdg.services.TurnService;
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class TurnServiceTest {
     private List<User> users;
 
     @Autowired
-    private UserManagerService userManagerService;
+    private UserService userManagerService;
     @Autowired
     private GameService gameService;
     @Autowired
@@ -48,7 +48,8 @@ public class TurnServiceTest {
         users.add(userManagerService.getUser("Margaret Crawford"));
         users.add(userManagerService.getUser("Lorenzo Jones"));
         users.add(userManagerService.getUser("Guadalupe Howard"));
-        game = gameService.createNewGame(users);
+        game = gameService.createNewGame();
+        gameService.addUsersToGame(users, game);
     }
 
     @Test(expected = IllegalMoveException.class)

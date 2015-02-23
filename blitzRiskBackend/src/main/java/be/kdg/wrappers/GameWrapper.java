@@ -30,9 +30,11 @@ public class GameWrapper {
         Id = game.getId();
         this.playerTurn = game.getPlayerTurn();
 
-        for (Player player : game.getPlayers()) {
-            PlayerWrapper playerWrapper = new PlayerWrapper(player);
-            playerWrappers.add(playerWrapper);
+        if (game.getPlayers() != null) {
+            for (Player player : game.getPlayers()) {
+                PlayerWrapper playerWrapper = new PlayerWrapper(player);
+                playerWrappers.add(playerWrapper);
+            }
         }
         this.turns = game.getTurns();
 

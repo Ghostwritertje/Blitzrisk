@@ -1,6 +1,6 @@
 package integration.api;
 
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class SecurityIT {
 
 
     @Autowired
-    public UserManagerService userService;
+    public UserService userService;
 
     @Before
     public void setUp() {
