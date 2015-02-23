@@ -1,16 +1,14 @@
 package be.kdg;
 
 import be.kdg.exceptions.IllegalMoveException;
-import be.kdg.model.Game;
-import be.kdg.model.Move;
-import be.kdg.model.Territory;
-import be.kdg.model.User;
+import be.kdg.model.*;
 import be.kdg.services.GameService;
 import be.kdg.services.TurnService;
 import be.kdg.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Marlies on 22/02/2015.
@@ -29,9 +28,10 @@ import java.util.Set;
 public class TurnServiceTest {
     private Game game;
     private List<User> users;
+    private User user;
 
     @Autowired
-    private UserService userManagerService;
+    private UserService userService;
     @Autowired
     private GameService gameService;
     @Autowired
@@ -39,30 +39,15 @@ public class TurnServiceTest {
 
     @Before
     public void createGame() {
-        userManagerService.addUser("Lyle Collins", "lyle", "lyle@collins.be");
-        userManagerService.addUser("Margaret Crawford", "margaret", "margaret@crawford.be");
-        userManagerService.addUser("Lorenzo Jones", "lorenzo", "lorenzo@jones.be");
-        userManagerService.addUser("Guadalupe Howard", "guadalupe", "gaudalupe@howard.be");
-        users = new ArrayList<>();
-        users.add(userManagerService.getUser("Lyle Collins"));
-        users.add(userManagerService.getUser("Margaret Crawford"));
-        users.add(userManagerService.getUser("Lorenzo Jones"));
-        users.add(userManagerService.getUser("Guadalupe Howard"));
-        game = gameService.createNewGame();
-        gameService.addUsersToGame(users, game);
+        user =  Mockito.mock(User.class);
+        when(user.getEmail()).thenReturn("user1@test.be");
+        when(user.getName()).thenReturn("user1");
+        when(user.getName()).thenReturn("user1");
+
     }
 
-    @Test(expected = IllegalMoveException.class)
+    @Test
     public void attackFromForeignCountry() {
-        /*HashSet territorySet = ((HashSet<Territory>)game.getTerritories());
-        Territory attackingTerritory = territorySet
-        attackingTerritory.setPlayer(game.getPlayers().get(0));
-        Move move = new Move();
-        move.setOriginTerritory(attackingTerritory);
-        move.setDestinationTerritory(((Set<Territory>) game.getTerritories()).get(1));
-        move.setNumberOfUnitsToAttack(1);
-        List<Move> moves = new ArrayList<>();
-        moves.add(move);
-        turnService.createTurn(game, game.getPlayers().get(3), moves);*/
+
     }
 }

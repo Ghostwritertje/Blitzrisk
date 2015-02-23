@@ -274,6 +274,11 @@
             <artifactId>spring-websocket</artifactId>
             <version>4.1.4.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
