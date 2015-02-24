@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>be.kdg</groupId>
-    <artifactId>blitzRiskBackend</artifactId>
+    <artifactId>BlitzRisk</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>blitzRiskBackend</name>
+    <name>BlitzRisk</name>
     <url>http://maven.apache.org</url>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -328,7 +328,7 @@
                 <!-- Voert Integration tests uit en maakt er een exec van -->
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-
+                <version>1.4.12</version>
                 <configuration>
                     <configuration>
                         <properties>
@@ -336,13 +336,9 @@
                             <cargo.jvmargs>
                                 -javaagent:${jacoco.agent.path}=destfile=${basedir}/target/coverage-reports/jacoco-it.exec
                             </cargo.jvmargs>
-
                         </properties>
-
                     </configuration>
-
                 </configuration>
-
                 <executions>
                     <execution>
                         <id>start-server</id>
@@ -350,7 +346,6 @@
                         <goals>
                             <goal>start</goal>
                         </goals>
-
                     </execution>
                     <execution>
                         <id>stop-server</id>
@@ -483,6 +478,47 @@
                     <execution>
                         <goals>
                             <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Replacer plugin -->
+            <plugin>
+                <!-- Changes port.xml to 9090 when deploying to Jetty -->
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>pre-integration</id>
+                        <configuration>
+                       <file>target/test-classes/port.txt</file>
+                            <replacements>
+                                <replacement>
+                                    <token>8080</token>
+                                    <value>9090</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration</id>
+                        <configuration>
+                            <file>target/test-classes/port.txt</file>
+                            <replacements>
+                                <replacement>
+                                    <token>9090</token>
+                                    <value>8080</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>replace</goal>
                         </goals>
                     </execution>
                 </executions>
