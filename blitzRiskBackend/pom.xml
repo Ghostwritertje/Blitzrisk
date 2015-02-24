@@ -13,6 +13,7 @@
         <spring.version>4.1.4.RELEASE</spring.version>
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
+        <jacoco.agent.path>/Users/jorandeboever/Documents/jacoco-0.7.3.201502191951/lib/jacocoagent.jar</jacoco.agent.path>
     </properties>
     <dependencies>
         <dependency>
@@ -154,11 +155,11 @@
             <type>jar</type>
         </dependency>
         <!-- gaf fouten -->
-<!--        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.5.0</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                    <version>2.5.0</version>
+                </dependency>-->
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
@@ -210,9 +211,9 @@
         </dependency>-->
 
         <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-websocket</artifactId>
-        <version>8.1.16.v20140903</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-websocket</artifactId>
+            <version>8.1.16.v20140903</version>
         </dependency>
         <!--<dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
@@ -321,12 +322,46 @@
     <build>
         <plugins>
             <plugin>
+                <!-- Cargo plugin starts new Jetty Server -->
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <configuration>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>9090</cargo.servlet.port>
+                            <cargo.jvmargs>-javaagent:${jacoco.agent.path}=destfile=${project.build.directory}/itest.jacoco</cargo.jvmargs>
+                        </properties>
+
+                    </configuration>
+
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
-              <!--  <configuration>
-                    <argLine>${surefireArgLine}</argLine>
-                </configuration>-->
+                <!--  <configuration>
+                      <argLine>${surefireArgLine}</argLine>
+                  </configuration>-->
+
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -341,20 +376,24 @@
                         </goals>
                         <configuration>
                             <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-<!--
-                            <propertyName>surefireArgLine</propertyName>
--->
+                            <!--
+                                                        <propertyName>surefireArgLine</propertyName>
+                            -->
 
                         </configuration>
                     </execution>
-                          <execution>
+                    <execution>
                         <id>post-unit-test</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
+<!--
                             <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+-->
+                            <dataFile>${basedir}/target/itest.jacoco</dataFile>
+
                             <outputDirectory>${basedir}/target/site/jacoco-unit</outputDirectory>
 
                         </configuration>
@@ -368,9 +407,9 @@
                         </goals>
                         <configuration>
                             <destFile>${basedir}/target/coverage-reports/jacoco-it.exec</destFile>
-<!--
-                            <propertyName>failsafeArgLine</propertyName>
--->
+                            <!--
+                                                        <propertyName>failsafeArgLine</propertyName>
+                            -->
                         </configuration>
                     </execution>
                     <execution>
@@ -381,7 +420,7 @@
                         </goals>
                         <configuration>
                             <dataFile>${basedir}/target/coverage-reports/jacoco-it.exec</dataFile>
-                           <!-- <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>-->
+                            <!-- <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>-->
                             <outputDirectory>${basedir}/target/site/jacoco-it</outputDirectory>
                         </configuration>
                     </execution>
@@ -424,14 +463,14 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
-                      <!--  <configuration>
-                            &lt;!&ndash; Sets the VM argument line used when integration tests are run. &ndash;&gt;
-                            <argLine>${failsafeArgLine}</argLine>
-                            &lt;!&ndash;
-                                Skips integration tests if the value of skip.integration.tests property
-                                is true
-                            &ndash;&gt;
-                        </configuration>-->
+                        <!--  <configuration>
+                              &lt;!&ndash; Sets the VM argument line used when integration tests are run. &ndash;&gt;
+                              <argLine>${failsafeArgLine}</argLine>
+                              &lt;!&ndash;
+                                  Skips integration tests if the value of skip.integration.tests property
+                                  is true
+                              &ndash;&gt;
+                          </configuration>-->
                     </execution>
                 </executions>
             </plugin>
