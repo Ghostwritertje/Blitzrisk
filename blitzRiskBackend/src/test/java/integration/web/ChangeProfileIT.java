@@ -1,7 +1,5 @@
 package integration.web;
 
-import be.kdg.dao.UserService;
-import be.kdg.model.User;
 import be.kdg.services.UserManagerService;
 import integration.MyServerConfiguration;
 import org.junit.*;
@@ -11,12 +9,12 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Random;
 
 /**
  * Created by user jorandeboever
@@ -89,7 +87,6 @@ public class ChangeProfileIT {
 
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("email")));
         element = driver.findElement(By.id("email"));
-
         element.clear();
         element.sendKeys("newemail@selenium.com");
         element = driver.findElement(By.id("password"));
@@ -108,7 +105,7 @@ public class ChangeProfileIT {
     public void testChangePassword() {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
 
         element = driver.findElement(By.id("newPassword"));
         element.sendKeys("newPassword");
@@ -139,9 +136,12 @@ public class ChangeProfileIT {
     public void testChangeUsername() {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/profile"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")).getAttribute("value").equals("seleniumuser"));
 
         element = driver.findElement(By.id("username"));
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username")));
+        element.clear();
         element.clear();
         element.sendKeys("seleniumuser2");
 
@@ -168,7 +168,7 @@ public class ChangeProfileIT {
     public void testChangeAllUserDetails() {
         WebElement element = driver.findElement(By.id("profileTab"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")).getAttribute("value").equals("seleniumuser"));
 
         element = driver.findElement(By.id("username"));
         element.clear();
