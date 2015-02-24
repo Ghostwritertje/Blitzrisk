@@ -11,6 +11,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.1.4.RELEASE</spring.version>
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
     </properties>
     <dependencies>
         <dependency>
@@ -274,6 +276,13 @@
             <artifactId>spring-websocket</artifactId>
             <version>4.1.4.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.3.201502191951</version>
+        </dependency>
+
+
     </dependencies>
     <reporting>
         <plugins>
@@ -292,11 +301,7 @@
                 <version>2.6</version>
 
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.17</version>
-            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -310,10 +315,81 @@
                     <failOnError>false</failOnError>
                 </configuration>
             </plugin>
+
         </plugins>
     </reporting>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+              <!--  <configuration>
+                    <argLine>${surefireArgLine}</argLine>
+                </configuration>-->
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.3.201502191951</version>
+
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+<!--
+                            <propertyName>surefireArgLine</propertyName>
+-->
+
+                        </configuration>
+                    </execution>
+                          <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                            <outputDirectory>${basedir}/target/site/jacoco-unit</outputDirectory>
+
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${basedir}/target/coverage-reports/jacoco-it.exec</destFile>
+<!--
+                            <propertyName>failsafeArgLine</propertyName>
+-->
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-it.exec</dataFile>
+                           <!-- <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>-->
+                            <outputDirectory>${basedir}/target/site/jacoco-it</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
@@ -348,6 +424,14 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
+                      <!--  <configuration>
+                            &lt;!&ndash; Sets the VM argument line used when integration tests are run. &ndash;&gt;
+                            <argLine>${failsafeArgLine}</argLine>
+                            &lt;!&ndash;
+                                Skips integration tests if the value of skip.integration.tests property
+                                is true
+                            &ndash;&gt;
+                        </configuration>-->
                     </execution>
                 </executions>
             </plugin>
@@ -387,7 +471,8 @@
                         <id>stop-jetty</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>stop</goal>  <!-- Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) -->
+                            <goal>stop</goal>
+                            <!-- Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) -->
 
                         </goals>
                     </execution>
