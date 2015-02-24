@@ -25,7 +25,7 @@ import java.util.Random;
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ChangeProfileIT {
-    private final String URL = MyServerConfiguration.URL;
+    private final String URL = MyServerConfiguration.getURL();
     private static WebDriver driver;
 
     @Autowired
@@ -48,14 +48,14 @@ public class ChangeProfileIT {
         }
         //Log in
 
-        driver.get(MyServerConfiguration.URL);
+        driver.get(MyServerConfiguration.getURL());
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement element = driver.findElement(By.id("username"));
         element.sendKeys("seleniumuser");
         element = driver.findElement(By.id("password"));
         element.sendKeys("seleniumpass");
         element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.URL + "#/overview"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/overview"));
 
     }
 

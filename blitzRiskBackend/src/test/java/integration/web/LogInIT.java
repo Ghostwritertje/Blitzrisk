@@ -29,7 +29,7 @@ import java.util.Random;
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LogInIT {
-    private final String URL = MyServerConfiguration.URL;
+    private final String URL = MyServerConfiguration.getURL();
     private static WebDriver driver;
 
     @Autowired
@@ -57,7 +57,7 @@ public class LogInIT {
     @Test
     public void testNotLoggedIn() {
         driver.get(URL + "#/game");
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/login"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/login"));
     }
 
 
