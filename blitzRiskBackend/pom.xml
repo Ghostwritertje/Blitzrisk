@@ -13,7 +13,8 @@
         <spring.version>4.1.4.RELEASE</spring.version>
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
-        <jacoco.agent.path>/Users/jorandeboever/Documents/jacoco-0.7.3.201502191951/lib/jacocoagent.jar</jacoco.agent.path>
+        <jacoco.agent.path>${basedir}/lib/jacocoagent.jar
+        </jacoco.agent.path>
     </properties>
     <dependencies>
         <dependency>
@@ -321,15 +322,19 @@
     </reporting>
     <build>
         <plugins>
+            <!-- Cargo Plugin -->
             <plugin>
                 <!-- Cargo plugin starts new Jetty Server -->
+                <!-- Voert Integration tests uit en maakt er een exec van -->
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
                 <configuration>
                     <configuration>
                         <properties>
                             <cargo.servlet.port>9090</cargo.servlet.port>
-                            <cargo.jvmargs>-javaagent:${jacoco.agent.path}=destfile=${project.build.directory}/itest.jacoco</cargo.jvmargs>
+                            <cargo.jvmargs>
+                                -javaagent:${jacoco.agent.path}=destfile=${basedir}/target/coverage-reports/jacoco-it.exec
+                            </cargo.jvmargs>
                         </properties>
 
                     </configuration>
@@ -358,9 +363,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
-                <!--  <configuration>
-                      <argLine>${surefireArgLine}</argLine>
-                  </configuration>-->
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                    </execution>
+                </executions>
 
             </plugin>
             <plugin>
@@ -370,57 +377,42 @@
 
                 <executions>
                     <execution>
+                        <!-- This execution analyses the unit tests into an exec. -->
                         <id>pre-unit-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
                             <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-                            <!--
-                                                        <propertyName>surefireArgLine</propertyName>
-                            -->
+
 
                         </configuration>
                     </execution>
                     <execution>
+                        <!-- This execution transforms the Unit testresults into a html-page -->
+
                         <id>post-unit-test</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
-<!--
-                            <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
--->
-                            <dataFile>${basedir}/target/itest.jacoco</dataFile>
 
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
                             <outputDirectory>${basedir}/target/site/jacoco-unit</outputDirectory>
 
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>pre-integration-test</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${basedir}/target/coverage-reports/jacoco-it.exec</destFile>
-                            <!--
-                                                        <propertyName>failsafeArgLine</propertyName>
-                            -->
-                        </configuration>
-                    </execution>
-                    <execution>
+                        <!-- This execution transforms the Integration testresults into a html-page -->
                         <id>post-integration-test</id>
-                        <phase>post-integration-test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
                             <dataFile>${basedir}/target/coverage-reports/jacoco-it.exec</dataFile>
-                            <!-- <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>-->
                             <outputDirectory>${basedir}/target/site/jacoco-it</outputDirectory>
                         </configuration>
                     </execution>
@@ -463,22 +455,14 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
-                        <!--  <configuration>
-                              &lt;!&ndash; Sets the VM argument line used when integration tests are run. &ndash;&gt;
-                              <argLine>${failsafeArgLine}</argLine>
-                              &lt;!&ndash;
-                                  Skips integration tests if the value of skip.integration.tests property
-                                  is true
-                              &ndash;&gt;
-                          </configuration>-->
                     </execution>
                 </executions>
             </plugin>
             <!-- alleen gebruiken als je op jetty gaat deployen -->
-            <plugin>
+      <!--      <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <!--<version>9.0.0.v20130308</version>-->
+                &lt;!&ndash;<version>9.0.0.v20130308</version>&ndash;&gt;
                 <version>9.1.1.v20140108</version>
                 <configuration>
                     <httpConnector>
@@ -511,7 +495,7 @@
                         <phase>post-integration-test</phase>
                         <goals>
                             <goal>stop</goal>
-                            <!-- Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) -->
+                            &lt;!&ndash; Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) &ndash;&gt;
 
                         </goals>
                     </execution>
@@ -528,7 +512,7 @@
                         <version>5.0.2</version>
                     </dependency>
                 </dependencies>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 
