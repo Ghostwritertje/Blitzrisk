@@ -62,6 +62,11 @@ public class UserInfoController {
         if(updatedUser.getEmail() != null && !updatedUser.getName().equals(originalUser.getUsername())) userService.changeUsername(originalUser.getName(), updatedUser.getName());
     }
 
+    @RequestMapping(value = "/addFriend/userId/{userId}/friendId/{friendId}", method = RequestMethod.POST, produces = "application/json")
+    public void addFriend(@PathVariable Integer userId, @PathVariable Integer friendId) {
+        userService.addFriend(userId, friendId);
+    }
+
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody

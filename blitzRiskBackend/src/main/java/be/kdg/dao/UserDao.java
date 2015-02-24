@@ -57,6 +57,17 @@ public class UserDao {
         }
     }
 
+    public void addFriend(int userId, int newFriendId) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.Id = :userId");
+        query.setParameter("userId", userId);
+        User user = (User)query.uniqueResult();
+        Query friendQuery = sessionFactory.getCurrentSession().createQuery("from User u where u.id = :userId");
+        friendQuery.setParameter("userId", newFriendId);
+        User newFriend = (User)friendQuery.uniqueResult();
+        user.addFriend(newFriend);
+        sessionFactory.getCurrentSession().save(user);
+    }
+
     public User loadUserByUsername(String username) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);

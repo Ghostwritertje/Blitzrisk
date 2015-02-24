@@ -26,11 +26,18 @@ public class User implements UserDetails {
     private String name;
     private String password;
 
-   @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user")
     private Set<Player> players = new HashSet<Player>();
+
+    @ManyToOne(cascade={CascadeType.ALL})
+    @JoinColumn(name = "friend_id")
+    private User friend;
+
+    @OneToMany(mappedBy = "friend")
+    private Set<User> friends = new HashSet<User>();
 
     public String getName() {
         return name;
@@ -48,6 +55,14 @@ public class User implements UserDetails {
         authorities.add(new SimpleGrantedAuthority("user"));
 
         return authorities;
+    }
+
+    public void addFriend(User friend) {
+        this.friends.add(friend);
+    }
+
+    public Set<User> getFriends() {
+        return friends;
     }
 
     public String getPassword() {

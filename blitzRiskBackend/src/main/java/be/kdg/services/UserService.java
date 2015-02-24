@@ -16,6 +16,8 @@ public interface UserService {
     //@Transactional
     void addUser(String username, String password, String email);
 
+    void addFriend(int userId, int newFriend);
+
     //@Transactional
     User getUser(String username);
 
