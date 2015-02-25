@@ -23,6 +23,7 @@ public class Player {
     private Integer Id;
     private Integer color;
     //InvitationStatus invitationStatus = InvitationStatus.PENDING;
+    @Enumerated(EnumType.STRING)
     InvitationStatus invitationStatus;
 
     @ManyToOne

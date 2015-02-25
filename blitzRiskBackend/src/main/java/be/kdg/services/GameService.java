@@ -1,6 +1,7 @@
 package be.kdg.services;
 
 import be.kdg.dao.GameDao;
+import be.kdg.dao.PlayerDao;
 import be.kdg.model.Game;
 import be.kdg.model.Player;
 import be.kdg.model.Territory;
@@ -51,15 +52,6 @@ public class GameService {
         assignRandomTerritories(game);
     }
 
-    public void addUserToGame(User user, Game game) {
-
-        Player player = new Player();
-        player.setUser(user);
-        player.setColor(game.getPlayers().size());
-
-        game.getPlayers().add(player);
-
-    }
     public Game assignRandomTerritories(Game game) {
 
 

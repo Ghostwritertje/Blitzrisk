@@ -1,6 +1,7 @@
 package be.kdg.controllers;
 
 import be.kdg.model.Game;
+import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
 import be.kdg.services.*;
@@ -32,17 +33,17 @@ public class GameController {
     @ResponseBody
     public String createGame(@PathVariable("userId") int userId) {
         Game game = gameService.createNewGame();
-        gameService.addUserToGame(userServiceImpl.getUserById(userId),game);
-        System.out.println();
+        playerService.createPlayer(userServiceImpl.getUserById(userId), game);
         String json = new String("{\"gameId\": "+game.getId()+"}");
         return json;
     }
 
-    @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)
+    @RequestMapping(value = "/acceptGame/{playerId}", method = RequestMethod.PUT)
     @ResponseBody
-    public void acceptGame(@PathVariable("id") String playerId) {
-
-        //player.setAccepted(true);
+    public void acceptGame(@PathVariable("playerId") String playerId) {
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        player.setInvitationStatus(InvitationStatus.ACCEPTED);
+        playerService.savePlayer(player);
     }
 
     @RequestMapping(value = "/inviteUser", method = RequestMethod.POST, produces = "application/json")

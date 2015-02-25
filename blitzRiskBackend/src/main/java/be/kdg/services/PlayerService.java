@@ -25,11 +25,16 @@ public class PlayerService {
         player.setUser(user);
         player.setGame(game);
         player.setInvitationStatus(InvitationStatus.PENDING);
+        player.setColor(game.getPlayers().size());
         game.addPlayer(player);
         playerDao.savePlayer(player);
     }
 
     public Player getPlayerById(int id) {
         return playerDao.getPlayerById(id);
+    }
+
+    public void savePlayer(Player player) {
+        playerDao.savePlayer(player);
     }
 }
