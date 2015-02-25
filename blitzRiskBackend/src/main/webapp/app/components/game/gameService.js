@@ -3,12 +3,14 @@
  */
 'use strict';
 
-angular.module('blitzriskServices').factory('GameService', ['$http',
-    function ($http) {
+angular.module('blitzriskServices').factory('GameService', ['$http', 'LoginService',
+    function ($http, LoginService) {
 
         return {
             getTerritoryLayout: function () {
-                return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout');
+                //    return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout');
+                var token = LoginService.getToken();
+                return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout', {headers: {'X-Auth-Token': token}});
             }
         }
     }]);

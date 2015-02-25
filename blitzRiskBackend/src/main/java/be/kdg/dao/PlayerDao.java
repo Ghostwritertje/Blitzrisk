@@ -22,17 +22,16 @@ public class PlayerDao {
     }
 
     public void savePlayer(Player player) {
-        try {
-            sessionFactory.getCurrentSession().save(player);
-        } catch (ConstraintViolationException e) {
-            throw e;
-        }
+        sessionFactory.getCurrentSession().save(player);
     }
 
     public Player getPlayerById (int id) {
         Query query = sessionFactory.getCurrentSession().createQuery("from Player where id = :id");
         query.setParameter("id", id);
         return (Player) query.uniqueResult();
+    }
+    public void updatePlayer(Player player) {
+        sessionFactory.getCurrentSession().update(player);
     }
 
     public void removePlayer(Player player) {

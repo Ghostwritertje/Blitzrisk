@@ -50,6 +50,10 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    public Integer getId() {
+        return Id;
+    }
+
     public String getPassword() {
         return password;
     }

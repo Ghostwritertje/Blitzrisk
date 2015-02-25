@@ -1,8 +1,10 @@
 package be.kdg.controllers;
 
 import be.kdg.model.Game;
+import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
+import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
 import be.kdg.wrappers.GameWrapper;
 import be.kdg.wrappers.PlayerWrapper;
@@ -28,32 +30,34 @@ public class GameController {
     @Autowired
     UserService userServiceImpl;
 
-    @RequestMapping(value = "/createGame/{userId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/createGame", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String createGame(@PathVariable("userId") int userId) {
+    public String createGame(@RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
         Game game = gameService.createNewGame();
-        gameService.addUserToGame(userServiceImpl.getUserById(userId),game);
-        System.out.println();
-        String json = new String("{\"gameId\": "+game.getId()+"}");
+        gameService.addUserToGame(user, game);
+
+        String json = new String("{\"gameId\": " + game.getId() + "}");
+
         return json;
     }
 
-    @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)
+    @RequestMapping(value = "/acceptGame/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public void acceptGame(@PathVariable("id") String playerId) {
-
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        player.setInvitationStatus(InvitationStatus.ACCEPTED);
+        playerService.updatePlayer(player);
         //player.setAccepted(true);
     }
 
-    @RequestMapping(value = "/inviteUser", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/game/{gameId}/invite/{userId}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public PlayerWrapper inviteUser(@RequestBody int userId, int gameId) {
-        User user = userServiceImpl.getUserById(userId);
-        Game game = gameService.getGame(gameId);
-        Player player = new Player();
-        player.setGame(game);
-        player.setUser(user);
-        PlayerWrapper playerWrapper = new PlayerWrapper(player);
+
+    public PlayerWrapper inviteUser(@PathVariable("userId") int userId, @PathVariable("gameId") int gameId) {
+        Player newPlayer = gameService.inviteUser(userId, gameId);
+
+        PlayerWrapper playerWrapper = new PlayerWrapper(newPlayer);
         return playerWrapper;
     }
 
