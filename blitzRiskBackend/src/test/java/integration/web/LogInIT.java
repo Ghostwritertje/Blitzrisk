@@ -86,6 +86,7 @@ public class LogInIT {
         user.setEmail(user.getName() + "@kdg.be");
 
         driver.get(URL + "#/register");
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement element = driver.findElement(By.id("username"));
         element.sendKeys(user.getName());
         element = driver.findElement(By.id("password"));
