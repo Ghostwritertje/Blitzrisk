@@ -95,4 +95,25 @@ public class TurnService {
 
         return move;
     }
+
+    public double calculateNumberOfReinforcements(Player player) {
+        double territoriesNo = (double) player.getTerritories().size();
+        territoriesNo = Math.ceil(territoriesNo/3);
+        if (territoriesNo < 3) return 3;
+        else return territoriesNo;
+    }
+
+    public void addReinforcements(Player player, List<Reinforcement> reinforcements) throws IllegalMoveException{
+        int reinforcementsTotal = 0;
+        for (Reinforcement reinforcement: reinforcements) {
+            if(!reinforcement.getTerritory().getPlayer().equals(player)) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
+            reinforcementsTotal += reinforcement.getNumberOfUnits();
+        }
+        if (reinforcementsTotal > (int) calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
+
+        for(Reinforcement reinforcement: reinforcements){
+            int numberOfUnits = reinforcement.getNumberOfUnits() + reinforcement.getTerritory().getNumberOfUnits();
+            reinforcement.getTerritory().setNumberOfUnits(numberOfUnits);
+        }
+    }
 }

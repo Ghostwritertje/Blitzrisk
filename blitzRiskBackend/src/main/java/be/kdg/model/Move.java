@@ -95,4 +95,6 @@ public class Move {
     public void setDestinationTerritoryRemainingNrUnits(Integer destinationTerritoryRemainingNrUnits) {
         this.destinationTerritoryRemainingNrUnits = destinationTerritoryRemainingNrUnits;
     }
+
+
 }

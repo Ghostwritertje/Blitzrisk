@@ -35,6 +35,9 @@ public class Turn {
     @JoinColumn(name = "playerId")
     private Player player;
 
+    @OneToMany(mappedBy="turn")
+    private List<Reinforcement> reinforcements;
+
     public Integer getNumber() {
         return number;
     }
@@ -73,5 +76,13 @@ public class Turn {
 
     public void setCalculatedMoves(List<Move> calculatedMoves) {
         this.calculatedMoves = calculatedMoves;
+    }
+
+    public List<Reinforcement> getReinforcements() {
+        return reinforcements;
+    }
+
+    public void setReinforcements(List<Reinforcement> reinforcements) {
+        this.reinforcements = reinforcements;
     }
 }

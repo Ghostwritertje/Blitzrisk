@@ -10,12 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import static org.mockito.Mockito.when;
 
@@ -174,5 +176,83 @@ public class TurnServiceTest {
         Assert.assertFalse("Player shouldn't always lose", defendersCount==10);
     }
 
+    public void reinforceWithFewTerritories() throws IllegalMoveException{
+        when(origin.getPlayer()).thenReturn(player1);
+        when(origin.getNumberOfUnits()).thenReturn(1);
 
+        HashSet<Territory> territories = new HashSet<>();
+        territories.add(origin);
+        territories.add(destination);
+        when(game.getTerritories()).thenReturn(territories);
+
+        Reinforcement reinforcement = new Reinforcement();
+        reinforcement.setNumberOfUnits(3);
+        reinforcement.setTerritory(origin);
+        List<Reinforcement> reinforcements = new ArrayList<>();
+        reinforcements.add(reinforcement);
+        turnService.addReinforcements(player1, reinforcements);
+        Assert.assertTrue("player should have 4 units", origin.getNumberOfUnits() == 4);
+    }
+
+    public void reinforceWithManyTerritories() throws IllegalMoveException {
+        HashSet<Territory> territories = new HashSet<>();
+        when(origin.getPlayer()).thenReturn(player1);
+        when(origin.getNumberOfUnits()).thenReturn(1);
+        territories.add(origin);
+        for (int i = 0; i < 12; i++) {
+            Territory territory = Mockito.mock(Territory.class);
+            when(territory.getPlayer()).thenReturn(player1);
+            when(territory.getNumberOfUnits()).thenReturn(1);
+            territories.add(territory);
+        }
+
+        when(game.getTerritories()).thenReturn(territories);
+
+        Reinforcement reinforcement = new Reinforcement();
+        reinforcement.setNumberOfUnits(4);
+        reinforcement.setTerritory(origin);
+        List<Reinforcement> reinforcements = new ArrayList<>();
+        reinforcements.add(reinforcement);
+        turnService.addReinforcements(player1, reinforcements);
+        Assert.assertTrue("Origin should have 4 units", origin.getNumberOfUnits() == 4);
+        for (Territory territory: territories) {
+            Assert.assertTrue("Territory should have 1 unit", territory.getNumberOfUnits() == 1);
+        }
+    }
+
+    @Test(expected = IllegalMoveException.class)
+    public void reinforceTooManyUnits() throws IllegalMoveException{
+        when(origin.getPlayer()).thenReturn(player1);
+        when(origin.getNumberOfUnits()).thenReturn(1);
+
+        HashSet<Territory> territories = new HashSet<>();
+        territories.add(origin);
+        territories.add(destination);
+        when(game.getTerritories()).thenReturn(territories);
+
+        Reinforcement reinforcement = new Reinforcement();
+        reinforcement.setNumberOfUnits(5);
+        reinforcement.setTerritory(origin);
+        List<Reinforcement> reinforcements = new ArrayList<>();
+        reinforcements.add(reinforcement);
+        turnService.addReinforcements(player1, reinforcements);
+    }
+
+    @Test(expected = IllegalMoveException.class)
+    public void reinforceForeignTerritory() throws IllegalMoveException{
+        when(origin.getPlayer()).thenReturn(player1);
+        when(origin.getNumberOfUnits()).thenReturn(1);
+
+        HashSet<Territory> territories = new HashSet<>();
+        territories.add(origin);
+        territories.add(destination);
+        when(game.getTerritories()).thenReturn(territories);
+
+        Reinforcement reinforcement = new Reinforcement();
+        reinforcement.setNumberOfUnits(1);
+        reinforcement.setTerritory(origin);
+        List<Reinforcement> reinforcements = new ArrayList<>();
+        reinforcements.add(reinforcement);
+        turnService.addReinforcements(player2, reinforcements);
+    }
 }

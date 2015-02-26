@@ -33,9 +33,11 @@ public class Player {
     @JoinColumn(name = "gameId")
     private Game game;
 
+    @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "player")
     private Set<Territory> territories = new HashSet<Territory>();
 
+    @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "player")
     private List<Turn> turns = new ArrayList<>();
 
