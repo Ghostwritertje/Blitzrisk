@@ -1,7 +1,6 @@
 package be.kdg;
 
 
-
 import be.kdg.model.Game;
 import be.kdg.model.Territory;
 import be.kdg.model.User;
@@ -29,22 +28,31 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GameServiceTest {
 
-    @Autowired(required=true)
+    @Autowired(required = true)
     private GameService gameService;
 
-    private @Mock List<User> usersMock;
-    private @Mock User user;
-
+    private
+    @Mock
+    List<User> usersMock;
+    private
+    @Mock
+    User user;
 
 
     @Before
-    public void createUsers() {
-        MockitoAnnotations.initMocks(this);
-        usersMock = new ArrayList<>();
-        usersMock.add(user);
-        usersMock.add(user);
-        usersMock.add(user);
-    }
+     public void createUsers() {
+         MockitoAnnotations.initMocks(this);
+         usersMock = new ArrayList<>();
+         usersMock.add(user);
+         usersMock.add(user);
+         usersMock.add(user);
+     }
+
+    /*@Test
+    public void test() {
+        assertTrue(true);
+
+    }*/
 
     @Test
     public void dividableBy4Players() {
@@ -104,7 +112,7 @@ public class GameServiceTest {
 
     }
 
-    @Test
+    /*@Test
     public void saveGame() {
         List<User> usersMock = new ArrayList<>();
         usersMock.add(user);
@@ -112,10 +120,10 @@ public class GameServiceTest {
         usersMock.add(user);
         Game game = gameService.createNewGame();
         gameService.addUsersToGame(usersMock, game);
-        gameService.saveGame(game);
+        gameService.updateGame(game);
 
         Game savedGame=gameService.getGame(game.getId());
-        assertTrue(savedGame.getId() == game.getId());
+        assertTrue("game should be saved", savedGame.getId() == game.getId());
         gameService.removeGame(game);
-    }
+    }*/
 }

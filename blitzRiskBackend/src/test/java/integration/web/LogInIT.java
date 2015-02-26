@@ -26,7 +26,7 @@ import java.util.Random;
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LogInIT {
-    private final String URL = MyServerConfiguration.URL;
+    private final String URL = MyServerConfiguration.getURL();
     private static WebDriver driver;
 
     @Autowired
@@ -34,29 +34,22 @@ public class LogInIT {
 
 
     @BeforeClass
-    public static void insertUser() {
+    public static void setUp() {
         System.setProperty("webdriver.chrome.driver", MyServerConfiguration.getChromedriverlocation());
-        String workingDir = System.getProperty("user.dir");
-        System.out.println(workingDir);
-
-    }
-
-    @Before
-    public void createDriver() {
         driver = new ChromeDriver();
     }
 
-    @After
-    public void quitDriver() {
+    @AfterClass
+    public static void cleanUp() {
         driver.quit();
     }
 
     @Test
     public void testNotLoggedIn() {
         driver.get(URL + "#/game");
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/login"));
+        driver.get(URL + "#/game");
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/login"));
     }
-
 
     @Test
     public void testCorrectLogin() {
@@ -68,6 +61,8 @@ public class LogInIT {
         passwordElement.sendKeys("seleniumTestUser");
         usernameElement.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
+        WebElement element = driver.findElement(By.id("logOut"));
+        element.click();
         userService.removeUser("seleniumTestUser");
     }
 
@@ -82,7 +77,6 @@ public class LogInIT {
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
     }
 
-
     @Test
     public void testRegisterNewUser() {
         User user = new User();
@@ -92,6 +86,7 @@ public class LogInIT {
         user.setEmail(user.getName() + "@kdg.be");
 
         driver.get(URL + "#/register");
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement element = driver.findElement(By.id("username"));
         element.sendKeys(user.getName());
         element = driver.findElement(By.id("password"));
@@ -109,6 +104,8 @@ public class LogInIT {
         element.sendKeys(user.getPassword());
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
+         element = driver.findElement(By.id("logOut"));
+        element.click();
 
         driver.get(URL + "#/register");
          element = driver.findElement(By.id("username"));

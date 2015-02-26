@@ -1,13 +1,18 @@
 package be.kdg.controllers;
 
+import be.kdg.beans.PlayerBean;
 import be.kdg.model.Game;
+import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
+import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
-import be.kdg.wrappers.GameWrapper;
-import be.kdg.wrappers.PlayerWrapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alexander on 16/2/2015.
@@ -28,54 +33,52 @@ public class GameController {
     @Autowired
     UserService userServiceImpl;
 
-    @RequestMapping(value = "/createGame/{userId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/createGame", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String createGame(@PathVariable("userId") int userId) {
+    public String createGame(@RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
         Game game = gameService.createNewGame();
-        gameService.addUserToGame(userServiceImpl.getUserById(userId),game);
-        System.out.println();
-        String json = new String("{\"gameId\": "+game.getId()+"}");
-        return json;
+        gameService.addUserToGame(user, game);
+
+
+        return game.getId().toString();
     }
 
-    @RequestMapping(value = "/acceptGame", method = RequestMethod.PUT)
+    @RequestMapping(value = "/acceptGame/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public void acceptGame(@PathVariable("id") String playerId) {
-
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        player.setInvitationStatus(InvitationStatus.ACCEPTED);
+        playerService.updatePlayer(player);
         //player.setAccepted(true);
     }
 
-    @RequestMapping(value = "/inviteUser", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/game/{gameId}/invite/{userId}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public PlayerWrapper inviteUser(@RequestBody int userId, int gameId) {
-        User user = userServiceImpl.getUserById(userId);
-        Game game = gameService.getGame(gameId);
-        Player player = new Player();
-        player.setGame(game);
-        player.setUser(user);
-        PlayerWrapper playerWrapper = new PlayerWrapper(player);
-        return playerWrapper;
+    public String inviteUser(@PathVariable("userId") int userId, @PathVariable("gameId") int gameId) {
+        Player newPlayer = gameService.inviteUser(userId, gameId);
+
+        return newPlayer.getUser().getUsername();
     }
 
-
-
-
-
-
-
-
-
-   /* @RequestMapping(value = "/createGame", method = RequestMethod.PUT)
-    public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
-
-        userServiceImpl.addUser(username, password, email);
-
+    @RequestMapping(value = "/game/{gameId}/invite-random", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String inviteRandomUser(@PathVariable("gameId") int gameId) {
+        Player newPlayer = gameService.inviteRandomUser(gameId);
+        return newPlayer.getUser().getUsername();
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<User> getUsers() {
-        return this.userServiceImpl.findall();
-    }*/
+    public List<PlayerBean> inviteRandomUser(@PathVariable("username") String username) {
+        List<Player> players = gameService.getPlayers(username);
+        List<PlayerBean> playerBeanList = new ArrayList<>();
+
+        for(Player player : players){
+            playerBeanList.add( new PlayerBean(player));
+        }
+
+        return playerBeanList;
+    }
 
 }

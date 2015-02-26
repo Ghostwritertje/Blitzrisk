@@ -24,15 +24,15 @@ public class Game {
 
     private Integer playerTurn;
 
-    @Cascade(CascadeType.PERSIST)
+  //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game")
     private List<Player> players = new ArrayList<>();
 
-    @Cascade(CascadeType.PERSIST)
+  //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game")
     private List<Turn> turns = new ArrayList<>();
 
-    @Cascade(CascadeType.PERSIST)
+  //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game")
     private Set<Territory> territories = new HashSet<Territory>();
 

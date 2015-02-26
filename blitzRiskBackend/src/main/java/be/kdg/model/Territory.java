@@ -24,10 +24,10 @@ public class Territory {
     @JoinColumn(name = "playerId")
     private Player player;
 
-    //@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
-    private Set<Territory> neighbourTerritories = new HashSet<Territory>();
+    private Set<Territory> neighbourTerritories;
 
     @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @ManyToOne

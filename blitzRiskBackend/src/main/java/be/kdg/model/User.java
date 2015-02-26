@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by user jorandeboever
@@ -30,7 +28,7 @@ public class User implements UserDetails {
     private String email;
 
     @OneToMany(mappedBy = "user")
-    private Set<Player> players = new HashSet<Player>();
+    private List<Player> players = new ArrayList<Player>();
 
     @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "friend_id")
@@ -63,6 +61,10 @@ public class User implements UserDetails {
 
     public Set<User> getFriends() {
         return friends;
+    }
+
+    public Integer getId() {
+        return Id;
     }
 
     public String getPassword() {
@@ -105,4 +107,6 @@ public class User implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

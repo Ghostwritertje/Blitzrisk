@@ -1,10 +1,9 @@
 package be.kdg.services;
 
 import be.kdg.dao.GameDao;
-import be.kdg.model.Game;
-import be.kdg.model.Player;
-import be.kdg.model.Territory;
-import be.kdg.model.User;
+import be.kdg.dao.PlayerDao;
+import be.kdg.dao.UserDao;
+import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +16,16 @@ import java.util.*;
 
 
 @Service("gameService")
-@Transactional
 public class GameService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private PlayerDao playerDao;
+
+    @Autowired
+    private PlayerService playerService;
 
     @Autowired
     private TerritoryService territoryService;
@@ -26,38 +33,30 @@ public class GameService {
     @Autowired
     private GameDao gameDao;
 
+    @Transactional
     public Game createNewGame() {
         Game game = new Game();
         game.setTerritories(territoryService.getTerritories());
-        saveGame(game);
+
         game.setPlayerTurn(0);
+        gameDao.saveGame(game);
         return game;
     }
 
     public void addUsersToGame(List<User> users, Game game) {
 
-        List<Player> players =  new ArrayList<>();
-
-        int i = 0;
         for (User user : users) {
-            Player player = new Player();
-            player.setUser(user);
-            player.setColor(i++);
-            players.add(player);
-        }
-        game.setPlayers(players);
+            Player player =  playerService.createPlayer(user, game);
 
+        }
+      //  game.setPlayers(players);
 
         assignRandomTerritories(game);
     }
 
+
     public void addUserToGame(User user, Game game) {
-
-        Player player = new Player();
-        player.setUser(user);
-        player.setColor(game.getPlayers().size());
-
-        game.getPlayers().add(player);
+        playerService.createPlayer(user, game);
 
     }
     public Game assignRandomTerritories(Game game) {
@@ -87,19 +86,51 @@ public class GameService {
         return game.getPlayers().get(game.getPlayerTurn());
     }
 
-
-    public void saveGame(Game game) {
-        gameDao.saveGame(game);
+    @Transactional
+    public void updateGame(Game game) {
+        gameDao.updateGame(game);
     }
 
 
+    @Transactional
     public Game getGame(int gameId) {
         return gameDao.getGame(gameId);
     }
 
+    @Transactional
     public void removeGame(Game game) {
         gameDao.removeGame(game);
     }
 
 
+    @Transactional
+    public Player inviteUser(int userId, int gameId) {
+        return createPlayerForInvite(userId, gameId);
+    }
+
+    @Transactional
+    public Player inviteRandomUser(int gameId) {
+        List<User> users = userDao.findall();
+        Random random = new Random();
+        return createPlayerForInvite(users.get(random.nextInt(users.size())).getId(), gameId);
+    }
+
+    private Player createPlayerForInvite(int userId, int gameId){
+        User user = userDao.loadUserById(userId);
+        Game game = gameDao.getGame(gameId);
+        Player player = new Player();
+        player.setUser(user);
+        player.setGame(game);
+        player.setColor(game.getPlayers().size());
+        player.setInvitationStatus(InvitationStatus.PENDING);
+        playerDao.savePlayer(player);
+        return player;
+    }
+
+    @Transactional
+    public List<Player> getPlayers(String username) {
+        User user = userDao.loadUserByUsername(username);
+        return playerDao.getPlayersForUser(user);
+
+    }
 }
