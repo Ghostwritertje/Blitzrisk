@@ -286,7 +286,6 @@
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.7.3.201502191951</version>
         </dependency>
-
     </dependencies>
     <reporting>
         <plugins>

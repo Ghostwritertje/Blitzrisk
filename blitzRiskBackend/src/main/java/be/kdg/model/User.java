@@ -62,7 +62,6 @@ public class User implements UserDetails {
     public Set<User> getFriends() {
         return friends;
     }
-
     public Integer getId() {
         return Id;
     }

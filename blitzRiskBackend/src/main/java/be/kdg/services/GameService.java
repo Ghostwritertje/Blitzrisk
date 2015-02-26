@@ -43,7 +43,7 @@ public class GameService {
         return game;
     }
 
-    public void addUsersToGame(List<User> users, Game game) {
+/*    public void addUsersToGame(List<User> users, Game game) {
 
         for (User user : users) {
             Player player =  playerService.createPlayer(user, game);
@@ -52,14 +52,14 @@ public class GameService {
       //  game.setPlayers(players);
 
         assignRandomTerritories(game);
-    }
+    }*/
 
 
     public void addUserToGame(User user, Game game) {
         playerService.createPlayer(user, game);
 
     }
-    public Game assignRandomTerritories(Game game) {
+   /* public Game assignRandomTerritories(Game game) {
 
 
         List<Territory> territoryList = new ArrayList<>(game.getTerritories());
@@ -81,12 +81,12 @@ public class GameService {
         }
         return game;
     }
-
-    public Player CurrentPlayerforTurn(Game game) {
+*/
+   /* public Player CurrentPlayerforTurn(Game game) {
         return game.getPlayers().get(game.getPlayerTurn());
-    }
+    }*/
 
-    @Transactional
+  /*  @Transactional
     public void updateGame(Game game) {
         gameDao.updateGame(game);
     }
@@ -101,7 +101,7 @@ public class GameService {
     public void removeGame(Game game) {
         gameDao.removeGame(game);
     }
-
+*/
 
     @Transactional
     public Player inviteUser(int userId, int gameId) {

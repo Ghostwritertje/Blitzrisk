@@ -1,6 +1,7 @@
 package be.kdg.dao;
 
 import be.kdg.model.Game;
+import be.kdg.model.Player;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
