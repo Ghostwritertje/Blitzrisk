@@ -23,7 +23,10 @@ router.config(['$routeProvider',
             templateUrl: 'app/components/profile/profile.html',
             controller: 'ProfileController',
             css: 'app/components/profile/profile.css'
-        }).otherwise({redirectTo: '/login'});
+        }).otherwise(
+            {
+
+                redirectTo: '/login'});
     }]);
 
 
@@ -35,9 +38,11 @@ router.run(function ($rootScope, $location, LoginService) {
 
 
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
+        $rootScope.currentPage = $location.url();
         if (!LoginService.isLoggedIn() && unsecuredPages.indexOf($location.url()) < 0) {
 
             event.preventDefault();
+            $rootScope.currentPage = '/login';
             $location.path('/login');
         }
 

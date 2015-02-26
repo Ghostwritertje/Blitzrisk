@@ -11,6 +11,7 @@ public class PlayerBean {
     private int Id;
     private int color;
     private InvitationStatus invitationStatus;
+    private int gameId;
 
     public PlayerBean() {
     }
@@ -19,6 +20,7 @@ public class PlayerBean {
         this.Id = player.getId();
         this.color = player.getColor();
         this.invitationStatus = player.getInvitationStatus();
+        this.gameId = player.getGame().getId();
     }
 
     public int getId() {
@@ -27,6 +29,14 @@ public class PlayerBean {
 
     public void setId(int id) {
         Id = id;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 
     public int getColor() {

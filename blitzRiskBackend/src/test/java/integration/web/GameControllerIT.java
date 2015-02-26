@@ -1,4 +1,4 @@
-package integration.api;
+package integration.web;
 
 import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
@@ -64,9 +64,12 @@ public class GameControllerIT {
 
     @Test
     public void testAcceptGame() {
+
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         List<Player> players = gameService.getPlayers("testgameuser");
+
         for(Player player : players){
             if(player.getInvitationStatus().equals(InvitationStatus.PENDING)) given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);
         }
