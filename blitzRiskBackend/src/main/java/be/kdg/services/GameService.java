@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 /**
+ *
  * Created by Alexander on 6/2/2015.
  */
 
@@ -36,7 +37,8 @@ public class GameService {
     @Transactional
     public Game createNewGame() {
         Game game = new Game();
-        game.setTerritories(territoryService.getTerritories());
+       //Wordt al gedaan in constructor van game
+       // game.setTerritories(territoryService.getTerritories());
 
         game.setPlayerTurn(0);
         gameDao.saveGame(game);
@@ -104,8 +106,12 @@ public class GameService {
 */
 
     @Transactional
-    public Player inviteUser(int userId, int gameId) {
-        return createPlayerForInvite(userId, gameId);
+    public Player inviteUser(String userName, int gameId) {
+        User user = userDao.loadUserByUsername(userName);
+        if (user != null) {
+            return createPlayerForInvite(user.getId(), gameId);
+        } else
+            return null;
     }
 
     @Transactional
@@ -115,7 +121,7 @@ public class GameService {
         return createPlayerForInvite(users.get(random.nextInt(users.size())).getId(), gameId);
     }
 
-    private Player createPlayerForInvite(int userId, int gameId){
+    private Player createPlayerForInvite(int userId, int gameId) {
         User user = userDao.loadUserById(userId);
         Game game = gameDao.getGame(gameId);
         Player player = new Player();
@@ -132,5 +138,10 @@ public class GameService {
         User user = userDao.loadUserByUsername(username);
         return playerDao.getPlayersForUser(user);
 
+    }
+
+    @Transactional
+    public Game getGame(int gameId) {
+        return gameDao.getGame(gameId);
     }
 }

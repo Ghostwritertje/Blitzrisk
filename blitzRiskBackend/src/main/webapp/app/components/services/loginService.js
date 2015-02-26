@@ -36,6 +36,9 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             },
             logOut: function logOut() {
                 token = null;
+                isLoggedIn = false;
+                username = null;
+
             },
             getToken: function () {
                return token;

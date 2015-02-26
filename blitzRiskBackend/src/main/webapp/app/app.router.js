@@ -19,13 +19,16 @@ router.config(['$routeProvider',
             templateUrl: 'app/components/overview/overview.html',
             controller: 'OverviewController',
             css: 'app/components/overview/overview.css'
+        }).when('/gamelobby', {
+            templateUrl: 'app/components/gamelobby/gamelobby.html',
+            controller: 'GamelobbyController',
+            css: 'app/components/gamelobby/gamelobby.css'
         }).when('/profile', {
             templateUrl: 'app/components/profile/profile.html',
             controller: 'ProfileController',
             css: 'app/components/profile/profile.css'
         }).otherwise(
             {
-
                 redirectTo: '/login'});
     }]);
 
@@ -34,7 +37,7 @@ router.config(['$routeProvider',
 //If user is not logged in, he is send to log-in page
 router.run(function ($rootScope, $location, LoginService) {
     //Add pages here that users can access without logging in
-    var unsecuredPages = ['/login', '/register' ];
+    var unsecuredPages = ['/login', '/register' ,'/overview', '/gamelobby'];
 
 
     $rootScope.$on('$routeChangeStart', function (event, next, current) {

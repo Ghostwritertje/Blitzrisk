@@ -26,6 +26,7 @@ angular.module('blitzriskControllers').controller('HomeController', ['$scope', '
             $rootScope.myUsername = '';
             LoginService.logOut();
             $location.path('/login');
+
         }
 
 

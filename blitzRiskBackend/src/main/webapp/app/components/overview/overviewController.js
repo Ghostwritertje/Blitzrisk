@@ -8,11 +8,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
 
         $scope.recentlyPlayed = [{"name": "Dummy145"}, {"name": "Dummy234"}, {"name": "Dummy367"}];
 
-        $scope.players =
-            [{"color": 0, "invitationStatus": "ACCEPTED", "id": 1, "gameId": 12},
-                {"color": 0, "invitationStatus": "PENDING", "id": 2, "gameId": 34},
-                {"color": 0, "invitationStatus": "PENDING", "id": 4, "gameId": 32},
-                {"color": 0, "invitationStatus": "PENDING", "id": 5, "gameId": 92}];
+        $scope.players = "";
 
         loadGames();
 
@@ -23,16 +19,24 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
 
         $scope.createNewGame = function () {
             var promise = GameService.createNewGame();
+            promise.then(function (payload) {
+                GameService.setCurrentGame(payload.data);
+                $location.path('/gamelobby')
+            })
+        };
+
+        $scope.acceptGame = function (playerId) {
+            var promise = GameService.acceptGame(playerId);
             promise.then(function () {
                 loadGames();
             })
         };
 
-        $scope.acceptGame = function (gameId){
-            var promise = GameService.acceptGame(gameId);
-            promise.then(function () {
-                loadGames();
-            })
+        $scope.enterLobby = function (gameId) {
+            GameService.setCurrentGame(gameId);
+            $location.path('/gamelobby');
+
+
         };
 
         function loadGames() {
@@ -41,6 +45,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
                 $scope.players = data;
             });
         }
+
 
     }
 ]);

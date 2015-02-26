@@ -6,26 +6,23 @@
 angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'LoginService',
     function ($http, $q, LoginService) {
         var securityToken = null;
+        var currentGame = null;
+        var currentGameId = null;
 
-        function resolveSecurityToken() {
-            securityToken = LoginService.getToken();
-        }
 
-        resolveSecurityToken();
         return {
             getTerritoryLayout: function () {
                 //    return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout');
-              //  if (securityToken == null) resolveSecurityToken();
+                //  if (securityToken == null) resolveSecurityToken();
 
-                return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': securityToken}});
+                return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}});
             },
             getGamesList: function () {
                 var deferred = $q.defer();  //maak promise
-             //  if (securityToken == null) resolveSecurityToken();
 
                 var username = LoginService.getUserName();
 
-                $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': securityToken}})
+                $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         deferred.resolve(data);
                     });
@@ -34,15 +31,32 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
 
             },
             createNewGame: function () {
-              // if (securityToken == null) resolveSecurityToken();
 
-                return $http.get('api/createGame', {headers: {'X-Auth-Token': securityToken}});
+                return $http.get('api/createGame', {headers: {'X-Auth-Token': LoginService.getToken()}});
 
             },
-            acceptGame: function(gameId) {
-          //     if (securityToken == null) resolveSecurityToken();
+            acceptGame: function (playerId) {
 
-                return $http.put('api/acceptGame/' + gameId, null, {headers: {'X-Auth-Token': securityToken}});
+                return $http.put('api/acceptGame/' + playerId, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+            },
+            setCurrentGame: function (gameId) {
+                /*var deferred = $q.defer();
+                 $http.get('api/game/' + gameId, {headers: {'X-Auth-Token': securityToken}}).success(function (data){
+                 currentGame = data;
+                 deferred.resolve();
+                 });
+                 return deferred.promise;*/
+                currentGameId = gameId;
+            },
+            getCurrentGame: function () {
+                return $http.get('api/game/' + currentGameId, {headers: {'X-Auth-Token': LoginService.getToken()}})
+            },
+            invitePlayerToGame: function (username) {
+                return $http.post('api/game/' + currentGameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+
+            },
+            invitRandomPlayerToGame : function() {
+                return $http.post('api/game/' + currentGameId + '/invite-random', null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             }
         }
     }]);

@@ -19,20 +19,22 @@
                 <li class="list-group-item list-group-item-success">Invitations</li>
                 <li ng-repeat="player in players" ng-if="player.invitationStatus == 'PENDING'" class="list-group-item">
                     <span>{{player.gameId}}</span>
-                    <button ng-click="acceptGame(player.gameId)" class="btn btn-info btn-xs" style="float: right;">
+                    <button ng-click="acceptGame(player.id)" class="btn btn-info btn-xs" style="float: right;">
                         Accept
                     </button>
                 </li>
                 <li class="list-group-item list-group-item-info">My Games</li>
                 <li ng-repeat="player in players" ng-if="player.invitationStatus == 'ACCEPTED'" class="list-group-item">
-                    <span>{{player.gameId}}</span>
-                    <button ng-click="go('/game')" class="btn btn-success btn-xs" style="float: right;">Play</button>
+                    <div ng-click="enterLobby(player.gameId)"><span >{{player.gameId}}</span>
+                        <button ng-click="go('/game')" class="btn btn-success btn-xs" style="float: right;">Play
+                        </button>
+                    </div>
                 </li>
-
 
             </ul>
             <button ng-click="createNewGame()" class="btn btn-default btn-md">Create new Game</button>
-          </div>
+
+        </div>
         <div class="col-sm-4">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-success">Recently Played</li>
@@ -41,3 +43,4 @@
         </div>
     </div>
 </section>
+

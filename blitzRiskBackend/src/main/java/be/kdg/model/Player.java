@@ -27,7 +27,7 @@ public class Player {
     @Enumerated(EnumType.STRING)
     InvitationStatus invitationStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 

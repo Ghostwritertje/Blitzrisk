@@ -1,0 +1,22 @@
+<section id="gamelobbyContainer" class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-success">Players</li>
+                <li ng-repeat="player in game.players" class="list-group-item">{{player.username}} <span class="badge"> {{player.invitationStatus}}</span>
+                </li>
+                <li class="list-group-item">
+                    <div class="input-group">
+                        <input ng-model="newUser" type="text" class="form-control">
+                        <span class="input-group-btn">
+                         <button ng-click="addPlayer()" class="btn btn-default" type="button">Add</button>
+                            <button ng-click="addRandomPlayer()" class="btn btn-default" type="button">Add Random</button>
+
+                        </span>
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>

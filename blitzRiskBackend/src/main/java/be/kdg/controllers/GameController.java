@@ -8,6 +8,7 @@ import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
 
+import be.kdg.wrappers.GameWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,18 +47,15 @@ public class GameController {
 
     @RequestMapping(value = "/acceptGame/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public void acceptGame(@PathVariable("id") String playerId) {
-        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
-        player.setInvitationStatus(InvitationStatus.ACCEPTED);
-        playerService.updatePlayer(player);
+    public void acceptGame(@PathVariable("id") int playerId) {
         //player.setAccepted(true);
+        playerService.acceptGame(playerId);
     }
 
-    @RequestMapping(value = "/game/{gameId}/invite/{userId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/game/{gameId}/invite/{userName}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String inviteUser(@PathVariable("userId") int userId, @PathVariable("gameId") int gameId) {
-        Player newPlayer = gameService.inviteUser(userId, gameId);
-
+    public String inviteUser(@PathVariable("userName") String userName, @PathVariable("gameId") int gameId) {
+        Player newPlayer = gameService.inviteUser(userName, gameId);
         return newPlayer.getUser().getUsername();
     }
 
@@ -70,15 +68,20 @@ public class GameController {
 
     @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<PlayerBean> inviteRandomUser(@PathVariable("username") String username) {
+    public List<PlayerBean> getPlayers(@PathVariable("username") String username) {
         List<Player> players = gameService.getPlayers(username);
         List<PlayerBean> playerBeanList = new ArrayList<>();
 
-        for(Player player : players){
-            playerBeanList.add( new PlayerBean(player));
+        for (Player player : players) {
+            playerBeanList.add(new PlayerBean(player));
         }
 
         return playerBeanList;
+    }
+
+    @RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET, produces = "application/json")
+    public GameWrapper getGame(@PathVariable("gameId") int gameId) {
+        return new GameWrapper(gameService.getGame(gameId));
     }
 
 }
