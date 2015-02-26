@@ -12,13 +12,13 @@ import java.util.List;
 @Service("turnService")
 public class TurnService {
 
-    public Turn createTurn(Game game, Player player,List<Move> moveList) {
+    public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
 
         Turn turn = new Turn();
         turn.setMoves(moveList);
         turn.setPlayer(player);
         game.addTurn(turn);
-
+        executeTurn(turn);
         return turn;
     }
 
@@ -30,16 +30,16 @@ public class TurnService {
                 throw new IllegalMoveException("Illegal origin territory");
             }
 
-            boolean isNeighbour = false;
+            /*boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
                 if(territory.equals(move.getDestinationTerritory())) isNeighbour = true;
             }
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
-
+*/
             if (move.getDestinationTerritory().getPlayer().equals(player)) throw new IllegalMoveException("Can't attack own territory");
 
-            if (move.getOriginTerritory().getNumberOfUnits()<2) throw new IllegalMoveException("Too few units to attack");
+            if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");
 
             Move calculatedMove = calculateMove(move);
         }

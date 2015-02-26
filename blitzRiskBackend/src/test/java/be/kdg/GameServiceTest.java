@@ -104,7 +104,7 @@ public class GameServiceTest {
 
     }
 
-    @Test
+    /*@Test
     public void saveGame() {
         List<User> usersMock = new ArrayList<>();
         usersMock.add(user);
@@ -117,5 +117,5 @@ public class GameServiceTest {
         Game savedGame=gameService.getGame(game.getId());
         assertTrue(savedGame.getId() == game.getId());
         gameService.removeGame(game);
-    }
+    }*/
 }

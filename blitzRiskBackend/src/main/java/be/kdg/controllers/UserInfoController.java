@@ -63,12 +63,12 @@ public class UserInfoController {
     }
 
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+   /* @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getUsers() {
         return this.userService.findall();
     }
-
+*/
     @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getSecuredUsers() {

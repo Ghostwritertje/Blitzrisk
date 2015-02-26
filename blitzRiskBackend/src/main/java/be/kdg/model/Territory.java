@@ -1,8 +1,11 @@
 package be.kdg.model;
 
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,17 +22,17 @@ public class Territory {
     private Integer numberOfUnits;
     private Integer gameKey;
 
-    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
 
-    //@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value=CascadeType.PERSIST)
     @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
-    private Set<Territory> neighbourTerritories = new HashSet<Territory>();
+    private Set<Territory> neighbourTerritories;
 
-    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name= "gameId")
     private Game game;
