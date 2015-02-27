@@ -25,7 +25,7 @@
                 </li>
                 <li class="list-group-item list-group-item-info">My Games</li>
                 <li ng-repeat="player in players" ng-if="player.invitationStatus == 'ACCEPTED'" class="list-group-item">
-                    <div class="acceptedGames" ng-click="enterLobby(player.gameId)"><span >{{player.gameId}}</span>
+                    <div  class="acceptedGames" ng-click="enterLobby(player.gameId)"><span >{{player.gameId}}</span>
                         <button ng-click="go('/game')" class="btn btn-success btn-xs" style="float: right;">Play
                         </button>
                     </div>

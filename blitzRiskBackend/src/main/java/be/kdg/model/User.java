@@ -27,7 +27,7 @@ public class User implements UserDetails {
    @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Player> players = new ArrayList<Player>();
 
     public String getName() {

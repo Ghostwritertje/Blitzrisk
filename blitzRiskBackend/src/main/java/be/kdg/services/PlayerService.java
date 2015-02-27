@@ -2,10 +2,7 @@ package be.kdg.services;
 
 import be.kdg.dao.GameDao;
 import be.kdg.dao.PlayerDao;
-import be.kdg.model.Game;
-import be.kdg.model.InvitationStatus;
-import be.kdg.model.Player;
-import be.kdg.model.User;
+import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +21,12 @@ public class PlayerService {
     PlayerDao playerDao;
 
     @Autowired
+    TerritoryService territoryService;
+
+    @Autowired
     GameDao gameDao;
 
-    public Player createPlayer (User user, Game game) {
+    public Player createPlayer(User user, Game game) {
         Player player = new Player();
         player.setUser(user);
         player.setGame(game);
@@ -46,22 +46,28 @@ public class PlayerService {
         playerDao.updatePlayer(player);
 
         //Check if game can begin
-        boolean everyoneAccepted = true;
-        List<Player> gamePlayers = player.getGame().getPlayers();
-        for(Player gamePlayer : gamePlayers){
-            if(!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)){
-                everyoneAccepted = false;
+        boolean ready = true;
+        List<Player> gamePlayers = playerDao.getPlayersForGame(player.getGame());
+        int numberOfPlayers = 0;
+        for (Player gamePlayer : gamePlayers) {
+            if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
+                ready = false;
             }
+            numberOfPlayers = numberOfPlayers + 1;
+
+
         }
 
-        if(everyoneAccepted && gamePlayers.size() > 0){
+        System.out.println(numberOfPlayers);
+
+        if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();
-            gameDao.saveGame(game);
+            //   gameDao.saveGame(game);
             game.assignRandomTerritories();
             game.setStarted(true);
             gameDao.updateGame(game);
         }
 
 
-    }
+}
 }
