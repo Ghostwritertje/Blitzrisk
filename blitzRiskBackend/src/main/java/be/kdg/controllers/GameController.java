@@ -1,6 +1,8 @@
 package be.kdg.controllers;
 
 import be.kdg.beans.PlayerBean;
+import be.kdg.exceptions.IllegalUserInviteException;
+import be.kdg.exceptions.UnAuthorizedActionException;
 import be.kdg.model.Game;
 import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
@@ -10,6 +12,8 @@ import be.kdg.services.*;
 
 import be.kdg.wrappers.GameWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -36,34 +40,63 @@ public class GameController {
 
     @RequestMapping(value = "/createGame", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String createGame(@RequestHeader("X-Auth-Token") String token) {
+    public ResponseEntity<String> createGame(@RequestHeader("X-Auth-Token") String token) {
         User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
         Game game = gameService.createNewGame();
-        gameService.addUserToGame(user, game);
+        try {
+            gameService.addUserToGame(user, game);
+        } catch (IllegalUserInviteException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
-
-        return game.getId().toString();
+        return new ResponseEntity<>(game.getId().toString(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/acceptGame/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public void acceptGame(@PathVariable("id") int playerId) {
+    public ResponseEntity<String> acceptGame(@PathVariable("id") int playerId, @RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        Player player = playerService.getPlayerById(playerId);
+        if(player.getUser().getId() != user.getId()) {
+            return new ResponseEntity<String>("You may not accept other peoples games", HttpStatus.FORBIDDEN);
+        }
         //player.setAccepted(true);
         playerService.acceptGame(playerId);
+        return null;
     }
 
     @RequestMapping(value = "/game/{gameId}/invite/{userName}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String inviteUser(@PathVariable("userName") String userName, @PathVariable("gameId") int gameId) {
-        Player newPlayer = gameService.inviteUser(userName, gameId);
-        return newPlayer.getUser().getUsername();
+    public ResponseEntity<String> inviteUser(@PathVariable("userName") String userName, @PathVariable("gameId") int gameId, @RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        try {
+            gameService.checkUserInGame(gameId, user);
+        } catch (UnAuthorizedActionException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+
+        Player newPlayer = null;
+        try {
+            newPlayer = gameService.inviteUser(userName, gameId);
+        } catch (IllegalUserInviteException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(newPlayer.getUser().getUsername() , HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/game/{gameId}/invite-random", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String inviteRandomUser(@PathVariable("gameId") int gameId) {
-        Player newPlayer = gameService.inviteRandomUser(gameId);
-        return newPlayer.getUser().getUsername();
+    public ResponseEntity<String> inviteRandomUser(@PathVariable("gameId") int gameId, @RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        try {
+            gameService.checkUserInGame(gameId, user);
+        } catch (UnAuthorizedActionException e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+
+        Player newPlayer = null;
+        newPlayer = gameService.inviteRandomUser(gameId);
+        return new ResponseEntity<String>(newPlayer.getUser().getUsername(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
@@ -80,8 +113,16 @@ public class GameController {
     }
 
     @RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET, produces = "application/json")
-    public GameWrapper getGame(@PathVariable("gameId") int gameId) {
-        return new GameWrapper(gameService.getGame(gameId));
+    public ResponseEntity<GameWrapper> getGame(@PathVariable("gameId") int gameId, @RequestHeader("X-Auth-Token") String token) {
+        GameWrapper gameWrapper = null;
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        try {
+            gameService.checkUserInGame(gameId, user);
+        } catch (UnAuthorizedActionException e) {
+            return new ResponseEntity<GameWrapper>(gameWrapper, HttpStatus.FORBIDDEN);
+        }
+        gameWrapper = new GameWrapper(gameService.getGame(gameId));
+        return new ResponseEntity<GameWrapper>(gameWrapper, HttpStatus.OK);
     }
 
 }
