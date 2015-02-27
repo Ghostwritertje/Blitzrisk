@@ -2,9 +2,7 @@ package be.kdg;
 
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
-import be.kdg.services.GameService;
 import be.kdg.services.TurnService;
-import be.kdg.services.UserService;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -185,11 +183,12 @@ public class TurnServiceTest {
         territories.add(destination);
         when(game.getTerritories()).thenReturn(territories);
 
-        Reinforcement reinforcement = new Reinforcement();
-        reinforcement.setNumberOfUnits(3);
-        reinforcement.setTerritory(origin);
-        List<Reinforcement> reinforcements = new ArrayList<>();
-        reinforcements.add(reinforcement);
+        Move move = new Move();
+        move.setNumberOfUnitsToAttack(3);
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
+        List<Move> reinforcements = new ArrayList<>();
+        reinforcements.add(move);
         turnService.addReinforcements(player1, reinforcements);
         Assert.assertTrue("player should have 4 units", origin.getNumberOfUnits() == 4);
     }
@@ -208,11 +207,12 @@ public class TurnServiceTest {
 
         when(game.getTerritories()).thenReturn(territories);
 
-        Reinforcement reinforcement = new Reinforcement();
-        reinforcement.setNumberOfUnits(4);
-        reinforcement.setTerritory(origin);
-        List<Reinforcement> reinforcements = new ArrayList<>();
-        reinforcements.add(reinforcement);
+        Move move = new Move();
+        move.setNumberOfUnitsToAttack(4);
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
+        List<Move> reinforcements = new ArrayList<>();
+        reinforcements.add(move);
         turnService.addReinforcements(player1, reinforcements);
         Assert.assertTrue("Origin should have 4 units", origin.getNumberOfUnits() == 4);
         for (Territory territory: territories) {
@@ -230,11 +230,12 @@ public class TurnServiceTest {
         territories.add(destination);
         when(game.getTerritories()).thenReturn(territories);
 
-        Reinforcement reinforcement = new Reinforcement();
-        reinforcement.setNumberOfUnits(5);
-        reinforcement.setTerritory(origin);
-        List<Reinforcement> reinforcements = new ArrayList<>();
-        reinforcements.add(reinforcement);
+        Move move = new Move();
+        move.setNumberOfUnitsToAttack(5);
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
+        List<Move> reinforcements = new ArrayList<>();
+        reinforcements.add(move);
         turnService.addReinforcements(player1, reinforcements);
     }
 
@@ -248,11 +249,12 @@ public class TurnServiceTest {
         territories.add(destination);
         when(game.getTerritories()).thenReturn(territories);
 
-        Reinforcement reinforcement = new Reinforcement();
-        reinforcement.setNumberOfUnits(1);
-        reinforcement.setTerritory(origin);
-        List<Reinforcement> reinforcements = new ArrayList<>();
-        reinforcements.add(reinforcement);
+        Move move = new Move();
+        move.setNumberOfUnitsToAttack(3);
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
+        List<Move> reinforcements = new ArrayList<>();
+        reinforcements.add(move);
         turnService.addReinforcements(player2, reinforcements);
     }
 }

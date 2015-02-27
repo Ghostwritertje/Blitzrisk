@@ -1,12 +1,8 @@
 package be.kdg.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by user jorandeboever
@@ -34,9 +30,6 @@ public class Turn {
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
-
-    @OneToMany(mappedBy="turn")
-    private List<Reinforcement> reinforcements;
 
     public Integer getNumber() {
         return number;
@@ -76,13 +69,5 @@ public class Turn {
 
     public void setCalculatedMoves(List<Move> calculatedMoves) {
         this.calculatedMoves = calculatedMoves;
-    }
-
-    public List<Reinforcement> getReinforcements() {
-        return reinforcements;
-    }
-
-    public void setReinforcements(List<Reinforcement> reinforcements) {
-        this.reinforcements = reinforcements;
     }
 }
