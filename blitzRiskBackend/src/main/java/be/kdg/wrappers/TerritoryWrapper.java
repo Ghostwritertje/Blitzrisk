@@ -9,14 +9,14 @@ public class TerritoryWrapper {
     private Integer Id;
     private Integer numberOfUnits;
     private Integer key;
-    private PlayerWrapper playerWrapper;
+    private Integer playerId;
 
     public TerritoryWrapper(Territory territory) {
         Id = territory.getId();
         this.numberOfUnits = territory.getNumberOfUnits();
         this.key = territory.getGameKey();
         if (territory.getPlayer() != null) {
-            this.playerWrapper = new PlayerWrapper(territory.getPlayer());
+            this.playerId = territory.getPlayer().getId();
         }
     }
 
@@ -44,11 +44,11 @@ public class TerritoryWrapper {
         this.key = key;
     }
 
-    public PlayerWrapper getPlayerWrapper() {
-        return playerWrapper;
+    public Integer getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerWrapper(PlayerWrapper playerWrapper) {
-        this.playerWrapper = playerWrapper;
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
     }
 }

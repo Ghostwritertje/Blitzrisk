@@ -15,8 +15,10 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             $http.get(hosturl + 'login', {headers: {'name': username, 'password': password}})
                 .success(function (data) {
                     token = data;
-                    deferred.resolve(data);
                     isLoggedIn = true;
+
+                    deferred.resolve(data);
+
 
                 }).
                 error(function () {
@@ -34,14 +36,12 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             },
             logOut: function logOut() {
                 token = null;
+                isLoggedIn = false;
+                username = null;
+
             },
             getToken: function () {
-                var deferred = $q.defer();
-                if (token != null) {
-                    deferred.resolve(token);
-                } else {
-                    return logMeIn();
-                }
+               return token;
 
             },
             authenticate: function (pass) {
@@ -82,9 +82,8 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 return deferred.promise;
 
             },
-            getUsers: function () {
-                return $http.get('api/users');
-
+            getUserName: function (){
+                return username;
             },
             register: function (name, pass, email) {
                 return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email, 'password': pass}});

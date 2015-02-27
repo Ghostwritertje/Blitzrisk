@@ -1,11 +1,15 @@
 package be.kdg.dao;
 
 import be.kdg.model.Player;
+import be.kdg.model.User;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Alexander on 20/2/2015.
@@ -22,20 +26,23 @@ public class PlayerDao {
     }
 
     public void savePlayer(Player player) {
-        try {
-            sessionFactory.getCurrentSession().save(player);
-        } catch (ConstraintViolationException e) {
-            throw e;
-        }
+        sessionFactory.getCurrentSession().save(player);
     }
 
-    public Player getPlayerById (int id) {
+    public Player getPlayerById(int id) {
         Query query = sessionFactory.getCurrentSession().createQuery("from Player where id = :id");
         query.setParameter("id", id);
         return (Player) query.uniqueResult();
     }
 
-    public void removePlayer(Player player) {
-        sessionFactory.getCurrentSession().delete(player);
+    public void updatePlayer(Player player) {
+        sessionFactory.getCurrentSession().update(player);
+    }
+
+    public List<Player> getPlayersForUser(User user) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from Player player where player.user = :user");
+        query.setParameter("user", user);
+        return  query.list();
+
     }
 }

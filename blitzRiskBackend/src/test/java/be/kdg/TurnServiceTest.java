@@ -1,8 +1,6 @@
 package be.kdg;
 
-import be.kdg.dao.MoveDao;
-import be.kdg.dao.TerritoryDao;
-import be.kdg.dao.TurnDao;
+import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
 import be.kdg.services.TurnService;
@@ -48,6 +46,10 @@ public class TurnServiceTest {
     private TurnDao turnDao;
     @Autowired
     private MoveDao moveDao;
+    @Autowired
+    private GameDao gameDao;
+    @Autowired
+    private PlayerDao playerDao;
 
     @Autowired
     private TurnService turnService;
@@ -68,6 +70,8 @@ public class TurnServiceTest {
         territoryDao.setSessionFactory(sessionFactory);
         turnDao.setSessionFactory(sessionFactory);
         moveDao.setSessionFactory(sessionFactory);
+        gameDao.setSessionFactory(sessionFactory);
+        playerDao.setSessionFactory(sessionFactory);
         when(sessionFactory.getCurrentSession()).thenReturn(session);
 
         players = new ArrayList<>();

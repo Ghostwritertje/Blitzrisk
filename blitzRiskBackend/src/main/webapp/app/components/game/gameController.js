@@ -54,7 +54,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var land = angular.element(element[0].getSVGDocument().getElementById(territory));
                 //land.removeClass("player1colorhover");
                 land.attr("class", "player1color");
-            }
+            };
 
             scope.hideArrows = function () {
                 var i;

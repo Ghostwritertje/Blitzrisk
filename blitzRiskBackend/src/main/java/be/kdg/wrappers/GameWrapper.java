@@ -6,10 +6,6 @@ import be.kdg.model.Territory;
 import be.kdg.model.Turn;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,9 +18,10 @@ public class GameWrapper {
 
     private Integer Id;
     private Integer playerTurn;
-    private List<PlayerWrapper> playerWrappers = new ArrayList<>();
+    private boolean started;
+    private List<PlayerWrapper> players = new ArrayList<>();
     private List<Turn> turns = new ArrayList<>();
-    private Set<TerritoryWrapper> territoryWrappers = new HashSet<TerritoryWrapper>();
+    private Set<TerritoryWrapper> territories = new HashSet<TerritoryWrapper>();
 
     public GameWrapper(Game game) {
         Id = game.getId();
@@ -33,14 +30,15 @@ public class GameWrapper {
         if (game.getPlayers() != null) {
             for (Player player : game.getPlayers()) {
                 PlayerWrapper playerWrapper = new PlayerWrapper(player);
-                playerWrappers.add(playerWrapper);
+                players.add(playerWrapper);
             }
         }
-        this.turns = game.getTurns();
+    // not needed yet    this.turns = game.getTurns();
 
         for (Territory territory : game.getTerritories()) {
-            territoryWrappers.add(new TerritoryWrapper(territory));
+            territories.add(new TerritoryWrapper(territory));
         }
+        this.started = game.isStarted();
     }
 
     public Integer getId() {
@@ -49,6 +47,14 @@ public class GameWrapper {
 
     public void setId(Integer id) {
         Id = id;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     public Integer getPlayerTurn() {
@@ -68,19 +74,19 @@ public class GameWrapper {
         this.turns = turns;
     }
 
-    public Set<TerritoryWrapper> getTerritoryWrappers() {
-        return territoryWrappers;
+    public Set<TerritoryWrapper> getTerritories() {
+        return territories;
     }
 
-    public void setTerritoryWrappers(Set<TerritoryWrapper> territoryWrappers) {
-        this.territoryWrappers = territoryWrappers;
+    public void setTerritories(Set<TerritoryWrapper> territories) {
+        this.territories = territories;
     }
 
-    public List<PlayerWrapper> getPlayerWrappers() {
-        return playerWrappers;
+    public List<PlayerWrapper> getPlayers() {
+        return players;
     }
 
-    public void setPlayerWrappers(List<PlayerWrapper> playerWrappers) {
-        this.playerWrappers = playerWrappers;
+    public void setPlayers(List<PlayerWrapper> players) {
+        this.players = players;
     }
 }

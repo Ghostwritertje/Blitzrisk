@@ -23,21 +23,21 @@ public class Player {
     private Integer Id;
     private Integer color;
     //InvitationStatus invitationStatus = InvitationStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
     InvitationStatus invitationStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gameId")
     private Game game;
 
-    @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "player")
     private Set<Territory> territories = new HashSet<Territory>();
 
-    @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "player")
     private List<Turn> turns = new ArrayList<>();
 
@@ -83,5 +83,17 @@ public class Player {
 
     public void setInvitationStatus(InvitationStatus invitationStatus) {
         this.invitationStatus = invitationStatus;
+    }
+
+    public List<Turn> getTurns() {
+        return turns;
+    }
+
+    public void setTurns(List<Turn> turns) {
+        this.turns = turns;
+    }
+
+    public void addTurn(Turn turn) {
+        turns.add(turn);
     }
 }

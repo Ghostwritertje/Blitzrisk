@@ -1,8 +1,6 @@
 package be.kdg.services;
 
-import be.kdg.dao.MoveDao;
-import be.kdg.dao.TerritoryDao;
-import be.kdg.dao.TurnDao;
+import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,21 @@ public class TurnService {
     @Autowired
     private TerritoryDao territoryDao;
 
+    @Autowired
+    private GameDao gameDao;
+
+    @Autowired
+    private PlayerDao playerDao;
+
     public Turn createTurn(Game game, Player player) {
         Turn turn = new Turn();
         turn.setGame(game);
         turn.setPlayer(player);
         turnDao.updateTurn(turn);
-        //update player en game
+        game.addTurn(turn);
+        gameDao.updateGame(game);
+        player.addTurn(turn);
+        playerDao.updatePlayer(player);
         return turn;
     }
 
