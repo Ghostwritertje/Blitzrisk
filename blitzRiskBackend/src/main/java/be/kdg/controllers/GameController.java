@@ -124,5 +124,4 @@ public class GameController {
         gameWrapper = new GameWrapper(gameService.getGame(gameId));
         return new ResponseEntity<GameWrapper>(gameWrapper, HttpStatus.OK);
     }
-
 }
