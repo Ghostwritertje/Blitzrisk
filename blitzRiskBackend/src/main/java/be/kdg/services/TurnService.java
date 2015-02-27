@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,17 +27,34 @@ public class TurnService {
     @Autowired
     private TerritoryDao territoryDao;
 
-    public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
+    public Turn createTurn(Game game, Player player) {
+        Turn turn = new Turn();
+        turn.setGame(game);
+        turn.setPlayer(player);
+        turnDao.updateTurn(turn);
+        //update player en game
+        return turn;
+    }
 
+    public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
+    //alleen attack worden
         Turn turn = new Turn();
         turn.setMoves(moveList);
         turn.setPlayer(player);
         game.addTurn(turn);
         executeTurn(turn);
+        turn.setCalculatedMoves(moveList);
+        turnDao.updateTurn(turn);
+        for (Move move: moveList) {
+            moveDao.updateMove(move);
+            territoryDao.updateTerritory(move.getOriginTerritory());
+            territoryDao.updateTerritory(move.getDestinationTerritory());
+        }
+        //game en speler ook nog updaten
         return turn;
     }
 
-    public void executeTurn(Turn turn) throws IllegalMoveException {
+    private void executeTurn(Turn turn) throws IllegalMoveException {
 
         Player player = turn.getPlayer();
         for (Move move : turn.getMoves()) {
@@ -61,7 +77,7 @@ public class TurnService {
         }
     }
 
-    public Move calculateMove(Move move) {
+    private Move calculateMove(Move move) {
 
         int attackers = move.getNumberOfUnitsToAttack();
         int defenders = move.getDestinationTerritory().getNumberOfUnits();
@@ -119,9 +135,9 @@ public class TurnService {
         else return territoriesNo;
     }
 
-    public void addReinforcements(Player player, List<Move> moves) throws IllegalMoveException{
+    public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
         for(Move move: moves) {
-            //if (move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
+            if (!move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
         }
         int reinforcementsTotal = 0;
         for (Move move : moves) {
@@ -130,12 +146,15 @@ public class TurnService {
         }
         if (reinforcementsTotal > (int) calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
 
+
         for(Move move : moves){
             int numberOfUnits = move.getNumberOfUnitsToAttack() + move.getOriginTerritory().getNumberOfUnits();
             move.getOriginTerritory().setNumberOfUnits(numberOfUnits);
+            move.setTurn(turn);
             territoryDao.updateTerritory(move.getOriginTerritory());
             moveDao.updateMove(move);
         }
-        turnDao.updateTurn(moves.get(0).getTurn());
+        turn.setCalculatedMoves(moves);
+        turnDao.updateTurn(turn);
     }
 }
