@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userDao.addUser(username, password, email);
     }
 
+    @Override
     public void addFriend(int userId, int newFriendId){
         userDao.addFriend(userId, newFriendId);
     }
