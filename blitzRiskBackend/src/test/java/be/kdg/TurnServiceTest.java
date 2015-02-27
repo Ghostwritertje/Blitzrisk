@@ -1,9 +1,15 @@
 package be.kdg;
 
+import be.kdg.dao.MoveDao;
+import be.kdg.dao.TerritoryDao;
+import be.kdg.dao.TurnDao;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
 import be.kdg.services.TurnService;
 import junit.framework.Assert;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import static org.mockito.Mockito.when;
 
 /**
@@ -27,32 +35,69 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TurnServiceTest {
     private @Mock Game game;
-    private @Mock List<Player> players;
-    private @Mock Player player1;
-    private @Mock Player player2;
-    private @Mock Player player3;
-    private @Mock Territory origin;
-    private @Mock Territory destination;
+    private List<Player> players;
+    private List<Territory> territories;
+    private @Mock SessionFactory sessionFactory;
+    private @Mock Session session;
+    private @Mock Query query;
+    private @Mock User user;
+
+    @Autowired
+    private TerritoryDao territoryDao;
+    @Autowired
+    private TurnDao turnDao;
+    @Autowired
+    private MoveDao moveDao;
 
     @Autowired
     private TurnService turnService;
 
     @Before
     public void createGame() {
-        MockitoAnnotations.initMocks(this);
+        /*MockitoAnnotations.initMocks(this);
         players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
         players.add(player3);
         game.setPlayers(players);
+        territoryDao.setSessionFactory(sessionFactory);
+        turnDao.setSessionFactory(sessionFactory);
+        moveDao.setSessionFactory(sessionFactory);
+        when(sessionFactory.getCurrentSession()).thenReturn(session);*/
+        MockitoAnnotations.initMocks(this);
+        territoryDao.setSessionFactory(sessionFactory);
+        turnDao.setSessionFactory(sessionFactory);
+        moveDao.setSessionFactory(sessionFactory);
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
 
-        /*when(user.getEmail()).thenReturn("user1@test.be").thenReturn("user2@test.be").thenReturn("user3@test.be");
-        when(user.getName()).thenReturn("user1").thenReturn("user2").thenReturn("user3");
-        when(user.getPassword()).thenReturn("user1").thenReturn("user2").thenReturn("user3");*/
+        players = new ArrayList<>();
+        for (int i = 0 ; i<3 ; i++) {
+            Player player = new Player();
+             //player.setUser(user);
+            players.add(player);
+        }
+
+        Territory origin = new Territory();
+        origin.setNumberOfUnits(2);
+        origin.setPlayer(players.get(0));
+        Territory destination = new Territory();
+        destination.setNumberOfUnits(1);
+        destination.setPlayer(players.get(1));
+        destination.addNeighbour(origin);
+        origin.addNeighbour(destination);
+        territories = new ArrayList<>();
+        territories.add(origin);
+        territories.add(destination);
+        Set<Territory> playerTerritories = new HashSet<>();
+        playerTerritories.add(origin);
+        players.get(0).setTerritories(playerTerritories);
+        playerTerritories = new HashSet<>();
+        playerTerritories.add(destination);
+        players.get(1).setTerritories(playerTerritories);
 
     }
 
-    @Test(expected = IllegalMoveException.class)
+   /* @Test(expected = IllegalMoveException.class)
     public void attackFromForeignCountry() throws IllegalMoveException{
         when(origin.getPlayer()).thenReturn(player1);
         when(origin.getNumberOfUnits()).thenReturn(2);
@@ -172,89 +217,62 @@ public class TurnServiceTest {
         }
         Assert.assertFalse("Player shouldn't always win", attackersCount==10);
         Assert.assertFalse("Player shouldn't always lose", defendersCount==10);
-    }
+    }*/
 
+    @Test
     public void reinforceWithFewTerritories() throws IllegalMoveException{
-        when(origin.getPlayer()).thenReturn(player1);
-        when(origin.getNumberOfUnits()).thenReturn(1);
-
-        HashSet<Territory> territories = new HashSet<>();
-        territories.add(origin);
-        territories.add(destination);
-        when(game.getTerritories()).thenReturn(territories);
-
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(origin);
-        move.setOriginTerritory(origin);
+        move.setDestinationTerritory(territories.get(0));
+        move.setOriginTerritory(territories.get(0));
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        turnService.addReinforcements(player1, reinforcements);
-        Assert.assertTrue("player should have 4 units", origin.getNumberOfUnits() == 4);
+        turnService.addReinforcements(players.get(0), reinforcements);
+        Assert.assertTrue("player should have 5 units", territories.get(0).getNumberOfUnits() == 5);
     }
 
+    @Test
     public void reinforceWithManyTerritories() throws IllegalMoveException {
-        HashSet<Territory> territories = new HashSet<>();
-        when(origin.getPlayer()).thenReturn(player1);
-        when(origin.getNumberOfUnits()).thenReturn(1);
-        territories.add(origin);
+        HashSet playerTerritories = new HashSet();
+        playerTerritories.add(territories.get(0));
         for (int i = 0; i < 12; i++) {
-            Territory territory = Mockito.mock(Territory.class);
-            when(territory.getPlayer()).thenReturn(player1);
-            when(territory.getNumberOfUnits()).thenReturn(1);
+            Territory territory = new Territory();
+            territory.setPlayer(players.get(0));
+            territory.setNumberOfUnits(1);
             territories.add(territory);
+            playerTerritories.add(territory);
         }
-
-        when(game.getTerritories()).thenReturn(territories);
+        players.get(0).setTerritories(playerTerritories);
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(4);
-        move.setDestinationTerritory(origin);
-        move.setOriginTerritory(origin);
+        move.setDestinationTerritory(territories.get(0));
+        move.setOriginTerritory(territories.get(0));
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        turnService.addReinforcements(player1, reinforcements);
-        Assert.assertTrue("Origin should have 4 units", origin.getNumberOfUnits() == 4);
-        for (Territory territory: territories) {
-            Assert.assertTrue("Territory should have 1 unit", territory.getNumberOfUnits() == 1);
-        }
+        turnService.addReinforcements(players.get(0), reinforcements);
+        Assert.assertTrue("Origin should have 6 units", territories.get(0).getNumberOfUnits() == 6);
     }
 
     @Test(expected = IllegalMoveException.class)
     public void reinforceTooManyUnits() throws IllegalMoveException{
-        when(origin.getPlayer()).thenReturn(player1);
-        when(origin.getNumberOfUnits()).thenReturn(1);
-
-        HashSet<Territory> territories = new HashSet<>();
-        territories.add(origin);
-        territories.add(destination);
-        when(game.getTerritories()).thenReturn(territories);
-
         Move move = new Move();
         move.setNumberOfUnitsToAttack(5);
-        move.setDestinationTerritory(origin);
-        move.setOriginTerritory(origin);
+        move.setDestinationTerritory(territories.get(0));
+        move.setOriginTerritory(territories.get(0));
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        turnService.addReinforcements(player1, reinforcements);
+        turnService.addReinforcements(players.get(0), reinforcements);
     }
 
     @Test(expected = IllegalMoveException.class)
     public void reinforceForeignTerritory() throws IllegalMoveException{
-        when(origin.getPlayer()).thenReturn(player1);
-        when(origin.getNumberOfUnits()).thenReturn(1);
-
-        HashSet<Territory> territories = new HashSet<>();
-        territories.add(origin);
-        territories.add(destination);
-        when(game.getTerritories()).thenReturn(territories);
-
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(origin);
-        move.setOriginTerritory(origin);
+        move.setDestinationTerritory(territories.get(0));
+        move.setOriginTerritory(territories.get(0));
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        turnService.addReinforcements(player2, reinforcements);
+        turnService.addReinforcements(players.get(1), reinforcements);
     }
 }

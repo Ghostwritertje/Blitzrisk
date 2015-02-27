@@ -1,17 +1,32 @@
 package be.kdg.services;
 
+import be.kdg.dao.MoveDao;
+import be.kdg.dao.TerritoryDao;
+import be.kdg.dao.TurnDao;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Alexander on 13/2/2015.
  */
+@Transactional
 @Service("turnService")
 public class TurnService {
+
+    @Autowired
+    private MoveDao moveDao;
+
+    @Autowired
+    private TurnDao turnDao;
+
+    @Autowired
+    private TerritoryDao territoryDao;
 
     public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
 
@@ -106,7 +121,7 @@ public class TurnService {
 
     public void addReinforcements(Player player, List<Move> moves) throws IllegalMoveException{
         for(Move move: moves) {
-            if (move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
+            //if (move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
         }
         int reinforcementsTotal = 0;
         for (Move move : moves) {
@@ -118,6 +133,9 @@ public class TurnService {
         for(Move move : moves){
             int numberOfUnits = move.getNumberOfUnitsToAttack() + move.getOriginTerritory().getNumberOfUnits();
             move.getOriginTerritory().setNumberOfUnits(numberOfUnits);
+            territoryDao.updateTerritory(move.getOriginTerritory());
+            moveDao.updateMove(move);
         }
+        turnDao.updateTurn(moves.get(0).getTurn());
     }
 }
