@@ -16,9 +16,8 @@ import java.util.List;
  * Created by Marlies on 4/01/2015.
  */
 
-@Service("userService")
-
-public class UserService {
+@Service("userDao")
+public class UserDao {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -32,17 +31,6 @@ public class UserService {
         query.setParameter("username", username);
         query.setParameter("password", password);
         User user = (User) query.uniqueResult();
-        return user;
-    }
-
-    public User checkLoginByEmail(String email, String password) {
-        //Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        //Transaction tx = session.beginTransaction();
-        Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.email = :email and u.password = :password");
-        query.setParameter("email", email);
-        query.setParameter("password", password);
-        User user = (User) query.uniqueResult();
-        //tx.commit();
         return user;
     }
 
@@ -61,6 +49,12 @@ public class UserService {
     public User loadUserByUsername(String username) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
+        return (User) query.uniqueResult();
+    }
+
+    public User loadUserById(int id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :id");
+        query.setParameter("id", id);
         return (User) query.uniqueResult();
     }
 

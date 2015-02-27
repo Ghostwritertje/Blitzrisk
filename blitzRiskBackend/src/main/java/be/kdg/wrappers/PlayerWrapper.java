@@ -14,20 +14,41 @@ import java.util.Set;
  * Created by Alexander on 16/2/2015.
  */
 public class PlayerWrapper {
-    private Integer Id;
+    private Integer id;
     private Integer color;
+    private InvitationStatus invitationStatus;
+    private String username;
+
 
     public PlayerWrapper(Player player) {
-        Id = player.getId();
+        this.id = player.getId();
         this.color = player.getColor();
+        this.invitationStatus = player.getInvitationStatus();
+        this.username = player.getUser().getName();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public InvitationStatus getInvitationStatus() {
+        return invitationStatus;
+    }
+
+    public void setInvitationStatus(InvitationStatus invitationStatus) {
+        this.invitationStatus = invitationStatus;
     }
 
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 
     public Integer getColor() {

@@ -27,13 +27,12 @@
           </div>
           <div>
               <ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a id="profileTab" ng-click="go('/profile')" href="">Profile</a></li>
-
+                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">Profile</a></li>
+                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">Overview</a></li>
               </ul>
               <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
-                  <li><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                  <li><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                  <li ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                  <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
               </ul>
               <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
                   <li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>
@@ -58,8 +57,12 @@
   <script src="app/components/profile/profileController.js"></script>
   <script src="app/components/services/loginService.js"></script>
   <script src="app/components/game/gameController.js"></script>
+  <script src="app/components/gamelobby/gamelobbyController.js"></script>
+
   <script src="app/components/overview/overviewController.js"></script>
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="app/bower_components/bootstrap/js/modal.js"></script>
+
   <script src="app/components/game/gameService.js"></script>
   <script src="app/components/game/riskmapEvents.js"></script>
   <script src="app/components/chat/chatController.js"></script>

@@ -1,8 +1,10 @@
 package be.kdg.model;
 
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +31,6 @@ public class Territory {
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 
-    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @ManyToOne
     @JoinColumn(name= "gameId")
     private Game game;
@@ -57,6 +58,14 @@ public class Territory {
 
     public void setNeighbourTerritories(Set<Territory> neighbourTerritories) {
         this.neighbourTerritories = neighbourTerritories;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public Integer getGameKey() {

@@ -2,11 +2,12 @@
 
 angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
     function ($http, $q) {
-        var hosturl = "http://localhost:8080/BlitzRisk/api/";
+        var hosturl = 'api/';
         var token = null;
         var isLoggedIn = false;
         var username;
         var password;
+
 
         function logMeIn() {
             var deferred = $q.defer();  //maak promise
@@ -14,8 +15,10 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             $http.get(hosturl + 'login', {headers: {'name': username, 'password': passwordHash}})
                 .success(function (data) {
                     token = data;
-                    deferred.resolve(data);
                     isLoggedIn = true;
+
+                    deferred.resolve(data);
+
 
                 }).
                 error(function () {
@@ -37,14 +40,12 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             },
             logOut: function logOut() {
                 token = null;
+                isLoggedIn = false;
+                username = null;
+
             },
             getToken: function () {
-                var deferred = $q.defer();
-                if (token != null) {
-                    deferred.resolve(token);
-                } else {
-                    return logMeIn();
-                }
+               return token;
 
             },
             authenticate: function (pass) {
@@ -85,9 +86,8 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 return deferred.promise;
 
             },
-            getUsers: function () {
-                return $http.get('http://localhost:8080/BlitzRisk/api/users');
-
+            getUserName: function (){
+                return username;
             },
             register: function(name, pass, email){
                 var passwordHash = hashPassword(pass);

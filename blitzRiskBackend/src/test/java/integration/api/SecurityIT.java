@@ -1,6 +1,6 @@
 package integration.api;
 
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +22,11 @@ import static com.jayway.restassured.RestAssured.given;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SecurityIT {
 
-    private final String URL = MyServerConfiguration.URL + "api/";
+    private final String URL = MyServerConfiguration.getURL() + "api/";
 
 
     @Autowired
-    public UserManagerService userService;
+    public UserService userService;
 
     @Before
     public void setUp() {

@@ -22,7 +22,7 @@ public class TurnService {
         return turn;
     }
 
-    public void executedTurn(Turn turn) throws IllegalMoveException {
+    public void executeTurn(Turn turn) throws IllegalMoveException {
 
         Player player = turn.getPlayer();
         for (Move move : turn.getMoves()) {
@@ -43,7 +43,6 @@ public class TurnService {
 
             Move calculatedMove = calculateMove(move);
         }
-        //TODO: denken over replay !!
     }
 
     public Move calculateMove(Move move) {
