@@ -2,10 +2,7 @@ package be.kdg.services;
 
 import be.kdg.dao.GameDao;
 import be.kdg.dao.PlayerDao;
-import be.kdg.model.Game;
-import be.kdg.model.InvitationStatus;
-import be.kdg.model.Player;
-import be.kdg.model.User;
+import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +19,9 @@ public class PlayerService {
 
     @Autowired
     PlayerDao playerDao;
+
+    @Autowired
+    TerritoryService territoryService;
 
     @Autowired
     GameDao gameDao;
@@ -54,14 +54,14 @@ public class PlayerService {
             }
         }
 
-        if(everyoneAccepted && gamePlayers.size() > 0){
+        if(everyoneAccepted && gamePlayers.size() > 1){
             Game game = player.getGame();
             gameDao.saveGame(game);
-            game.assignRandomTerritories();
+            game.assignTerritoriesToPlayers();
             game.setStarted(true);
             gameDao.updateGame(game);
         }
-
-
     }
+
+
 }
