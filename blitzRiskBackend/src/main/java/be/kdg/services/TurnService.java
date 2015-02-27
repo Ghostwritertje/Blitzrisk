@@ -105,55 +105,19 @@ public class TurnService {
     }
 
     public void addReinforcements(Player player, List<Move> moves) throws IllegalMoveException{
-        List <Reinforcement> reinforcements = new ArrayList<>();
         for(Move move: moves) {
-            Reinforcement reinforcement = new Reinforcement();
             if (move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
-            reinforcement.setTerritory(move.getOriginTerritory());
-            reinforcement.setNumberOfUnits(move.getNumberOfUnitsToAttack());
         }
         int reinforcementsTotal = 0;
-        for (Reinforcement reinforcement : reinforcements) {
-            if(!reinforcement.getTerritory().getPlayer().equals(player)) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
-            reinforcementsTotal += reinforcement.getNumberOfUnits();
+        for (Move move : moves) {
+            if(!move.getOriginTerritory().getPlayer().equals(player)) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
+            reinforcementsTotal += move.getNumberOfUnitsToAttack();
         }
         if (reinforcementsTotal > (int) calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
 
-        for(Reinforcement reinforcement : reinforcements){
-            int numberOfUnits = reinforcement.getNumberOfUnits() + reinforcement.getTerritory().getNumberOfUnits();
-            reinforcement.getTerritory().setNumberOfUnits(numberOfUnits);
-
-
-        }
-    }
-
-    private class Reinforcement{
-        private Territory territory;
-        private Integer numberOfUnits;
-        private Turn turn;
-
-        public Territory getTerritory() {
-            return territory;
-        }
-
-        public void setTerritory(Territory territory) {
-            this.territory = territory;
-        }
-
-        public Integer getNumberOfUnits() {
-            return numberOfUnits;
-        }
-
-        public void setNumberOfUnits(Integer numberOfUnits) {
-            this.numberOfUnits = numberOfUnits;
-        }
-
-        public Turn getTurn() {
-            return turn;
-        }
-
-        public void setTurn(Turn turn) {
-            this.turn = turn;
+        for(Move move : moves){
+            int numberOfUnits = move.getNumberOfUnitsToAttack() + move.getOriginTerritory().getNumberOfUnits();
+            move.getOriginTerritory().setNumberOfUnits(numberOfUnits);
         }
     }
 }
