@@ -101,16 +101,24 @@ public class InitilizeBoardIT {
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/overview"));
 
-        //create game
+        //user 1: create game
         element = driver.findElement(By.id("createGameBtn"));
         element.click();
 
         //add user 2
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("newUserTxt")));
-        element = driver.findElement(By.id("newUserTxt"));
-        element.sendKeys("speler2");
-        element = driver.findElement(By.id("addPlayerBtn"));
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElements(By.className("newUserTxt")).size() > 0);
+        List<WebElement> elements = driver.findElements(By.className("newUserTxt"));
+        for (WebElement e : elements) {
+            e.sendKeys("speler2");
+        }
+        (new WebDriverWait(driver, 25)).until((WebDriver d) -> d.findElements(By.className("addPlayerBtn")).size() > 0);
+
+        element = driver.findElement(By.className("addPlayerBtn"));
         element.click();
+        elements = driver.findElements(By.className("addPlayerBtn"));
+        for (WebElement e : elements) {
+            element.click();
+        }
 
 
         //Log in user 2
@@ -123,35 +131,36 @@ public class InitilizeBoardIT {
         element2.sendKeys(Keys.ENTER);
 
         //user 2: accept game
-        (new WebDriverWait(driver2, 5)).until((WebDriver d) -> d.findElements(By.className("acceptGameBtns")));
-        List<WebElement> elements = driver2.findElements(By.className("acceptGameBtns"));
-        for (WebElement e : elements) {
-            e.click();
-        }
+        //gameHeader
+        (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElements(By.className("gameHeader")).size() > 0);
+        elements = driver2.findElements(By.className("gameHeader"));
+        elements.get(0).click();
+
+
+        (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElements(By.className("acceptButton")).size() > 0);
+        elements = driver2.findElements(By.className("acceptButton"));
+        elements.get(0).click();
+
 
         //user 1: accept game
-        element = driver.findElement(By.id("overviewTab"));
-        element.click();
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElements(By.className("acceptGameBtns")));
-        elements = driver.findElements(By.className("acceptGameBtns"));
-        for (WebElement e : elements) {
-            e.click();
-        }
+
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElements(By.className("acceptButton")).size() > 0);
+        elements = driver.findElements(By.className("acceptButton"));
+        elements.get(0).click();
+
 
         //user 1: go into game
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElements(By.className("acceptedGames")).size() > 0);
-        elements = driver.findElements(By.className("acceptedGames"));
-        for (WebElement e : elements) {
-            e.click();
-        }
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElements(By.className("playButton")).size() > 0);
+        elements = driver.findElements(By.className("playButton"));
+        elements.get(0).click();
+
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/game"));
 
         //user 2: go into game
-        (new WebDriverWait(driver2, 5)).until((WebDriver d) -> d.findElements(By.className("acceptedGames")).size() > 0);
-        elements = driver2.findElements(By.className("acceptedGames"));
-        for (WebElement e : elements) {
-            e.click();
-        }
+        (new WebDriverWait(driver2, 25)).until((WebDriver d) -> d.findElements(By.className("playButton")).size() > 0);
+        elements = driver2.findElements(By.className("playButton"));
+        elements.get(0).click();
+
         (new WebDriverWait(driver2, 25)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/game"));
 
 

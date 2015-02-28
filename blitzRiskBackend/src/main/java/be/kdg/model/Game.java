@@ -1,6 +1,9 @@
 package be.kdg.model;
 
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -22,6 +25,7 @@ public class Game {
 
     //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Player> players = new ArrayList<>();
 
     //  @Cascade(CascadeType.PERSIST)

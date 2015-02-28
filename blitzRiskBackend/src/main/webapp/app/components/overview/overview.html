@@ -19,7 +19,7 @@
                 <p class="list-group-item list-group-item-success">Games</p>
 
                 <div ng-repeat="game in games">
-                    <h5 ng-click="selectGame(game.id)" class="list-group-item list-group-item-info">Game: {{game.id}}
+                    <h5 ng-click="selectGame(game.id)" class="list-group-item list-group-item-info gameHeader">Game: {{game.id}}
                         <span class="badge" ng-if="!game.started">waiting for players</span>
                         <button ng-click="enterGame(game.id)" ng-if="game.started"
                                 class="btn btn-success playButton btn-xs" type="button">Play
@@ -36,13 +36,13 @@
                         </button>
 
                     </div>
-                    <div  ng-if="selectedGameId == game.id" class="input-group">
+                    <div  ng-show="selectedGameId == game.id" class="input-group">
 
-                        <input id="newUserTxt" ng-model="newUser" type="text" class="form-control">
+                        <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
                         <span class="input-group-btn">
-                         <button id="addPlayerBtn" ng-click="addPlayer()" class="btn btn-default" type="button">Add
+                         <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="button">Add
                          </button>
-                            <button ng-click="addRandomPlayer()" class="btn btn-default" type="button">Add Random
+                            <button ng-click="addRandomPlayer(game.id)" class="btn btn-default" type="button">Add Random
                             </button>
 
 

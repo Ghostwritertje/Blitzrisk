@@ -68,12 +68,12 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
             getCurrentGame: function () {
                 return $http.get('api/game/' + currentGameId, {headers: {'X-Auth-Token': LoginService.getToken()}})
             },
-            invitePlayerToGame: function (username) {
-                return $http.post('api/game/' + currentGameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+            invitePlayerToGame: function (gameId, username) {
+                return $http.post('api/game/' + gameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
 
             },
-            invitRandomPlayerToGame : function() {
-                return $http.post('api/game/' + currentGameId + '/invite-random', null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+            invitRandomPlayerToGame : function(gameId) {
+                return $http.post('api/game/' + gameId + '/invite-random', null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             }
         }
     }]);
