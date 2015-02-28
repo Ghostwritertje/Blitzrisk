@@ -32,8 +32,8 @@ public class Game {
 
 
 
-    //@OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<Territory> territories = new ArrayList<>();
 
     public List<Player> getPlayers() {
@@ -92,7 +92,6 @@ public class Game {
     }
 
     public void assignTerritoriesToPlayers() {
-
         Collections.shuffle(territories);
         int numberOfTerritoriesToDivide = territories.size();
         while (numberOfTerritoriesToDivide % players.size() != 0) {
