@@ -30,6 +30,11 @@ public class TurnController {
     @Autowired
     private PlayerService playerService;
 
+    @RequestMapping(value = "/createTurn", method = RequestMethod.GET, produces = "application/text")
+    public String createTurn(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
+        return "" +  turnService.createTurn(Integer.parseInt(playerId));
+    }
+
     @RequestMapping(value = "/numberOfReinforcements", method = RequestMethod.GET, produces = "application/text")
     public String numberOfReinforcements(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
         return "" +  turnService.calculateNumberOfReinforcements(playerId);

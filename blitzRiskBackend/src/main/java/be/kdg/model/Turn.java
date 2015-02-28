@@ -31,6 +31,10 @@ public class Turn {
     @JoinColumn(name = "playerId")
     private Player player;
 
+    public Integer getId() {
+        return Id;
+    }
+
     public Integer getNumber() {
         return number;
     }

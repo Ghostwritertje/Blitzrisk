@@ -37,8 +37,10 @@ public class TurnService {
         return turnDao.getTurnById(turnId);
     }
 
-    public Turn createTurn(Game game, Player player) {
+    public int createTurn(int playerId) {
+        Player player = playerDao.getPlayerById(playerId);
         Turn turn = new Turn();
+        Game game = player.getGame();
         turn.setGame(game);
         turn.setPlayer(player);
         turnDao.updateTurn(turn);
@@ -46,7 +48,7 @@ public class TurnService {
         gameDao.updateGame(game);
         player.addTurn(turn);
         playerDao.updatePlayer(player);
-        return turn;
+        return turn.getId();
     }
 
     public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
