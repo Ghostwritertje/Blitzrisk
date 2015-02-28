@@ -16,7 +16,7 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <mvc:annotation-driven />
+    <mvc:annotation-driven/>
     <tx:annotation-driven transaction-manager="transactionManager"/>
     <context:component-scan base-package="be.kdg"/>
     <context:annotation-config/>
@@ -33,15 +33,21 @@
             create-session="stateless"
             entry-point-ref="unauthorizedEntryPoint"
             authentication-manager-ref="authenticationManager">
-        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
-        <security:intercept-url pattern="/api/*" access="permitAll" />
-        <security:intercept-url method="GET" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="PUT" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="POST" pattern="/api/secured/**" access="hasRole('user')" />
-        <security:intercept-url method="DELETE" pattern="/api/secured/**" access="hasRole('admin')" />
+        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
+
+        <!--        Chatserver met Websocket ondersteunt geen custom header  -->
+        <security:intercept-url method="GET" pattern="/api/chat/**" access="permitAll"/>
+
+
+        <security:intercept-url method="PUT" pattern="/api/user/*" access="permitAll"/>
+        <security:intercept-url method="GET" pattern="/api/login" access="permitAll"/>
+        <security:intercept-url method="GET" pattern="/api/**" access="hasRole('user')"/>
+        <security:intercept-url method="PUT" pattern="/api/**" access="hasRole('user')"/>
+        <security:intercept-url method="POST" pattern="/api/**" access="hasRole('user')"/>
+        <security:intercept-url method="DELETE" pattern="/api/**" access="hasRole('user')"/>
     </security:http>
 
-    <security:authentication-manager  id="authenticationManager">
+    <security:authentication-manager id="authenticationManager">
         <security:authentication-provider user-service-ref="userManagerService">
         </security:authentication-provider>
     </security:authentication-manager>
@@ -52,16 +58,16 @@
     <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService"></bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
-        <constructor-arg ref="userManagerService" />
+        <constructor-arg ref="userManagerService"/>
     </bean>
-    <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint" />
+    <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint"/>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/BlitzRisk" />
-        <property name="username" value="blitzrisk" />
-        <property name="password" value="blitzrisk" />
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/BlitzRisk"/>
+        <property name="username" value="blitzrisk"/>
+        <property name="password" value="blitzrisk"/>
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -73,7 +79,7 @@
                 <!--<prop key="hibernate.hbm2ddl.auto">create</prop>-->
             </props>
         </property>
-        <property name="packagesToScan" value="be.kdg.model" />
+        <property name="packagesToScan" value="be.kdg.model"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

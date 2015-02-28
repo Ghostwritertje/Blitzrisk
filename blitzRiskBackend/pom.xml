@@ -2,15 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>be.kdg</groupId>
-    <artifactId>blitzRiskBackend</artifactId>
+    <artifactId>BlitzRisk</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>blitzRiskBackend</name>
+    <name>BlitzRisk</name>
     <url>http://maven.apache.org</url>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.1.4.RELEASE</spring.version>
+        <jacoco.agent.path>${basedir}/lib/jacocoagent.jar
+        </jacoco.agent.path>
     </properties>
     <dependencies>
         <dependency>
@@ -152,11 +154,11 @@
             <type>jar</type>
         </dependency>
         <!-- gaf fouten -->
-<!--        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.5.0</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                    <version>2.5.0</version>
+                </dependency>-->
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
@@ -208,9 +210,9 @@
         </dependency>-->
 
         <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-websocket</artifactId>
-        <version>8.1.16.v20140903</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-websocket</artifactId>
+            <version>8.1.16.v20140903</version>
         </dependency>
         <!--<dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
@@ -274,9 +276,17 @@
             <artifactId>spring-websocket</artifactId>
             <version>4.1.4.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.3.201502191951</version>
+        </dependency>
+
+
     </dependencies>
     <reporting>
         <plugins>
+            <!-- Compiler plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -286,22 +296,20 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!-- Cobertura plugin-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.6</version>
 
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.17</version>
-            </plugin>
+            <!-- Findbugs plugin-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
+            <!-- Javadoc plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -314,6 +322,129 @@
     </reporting>
     <build>
         <plugins>
+            <!-- Cargo Plugin -->
+            <plugin>
+                <!-- Cargo plugin starts new Jetty Server -->
+                <!-- Voert Integration tests uit en maakt er een exec van -->
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.4.12</version>
+                <configuration>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>9090</cargo.servlet.port>
+                            <cargo.jvmargs>
+                                -javaagent:${jacoco.agent.path}=destfile=${basedir}/target/coverage-reports/jacoco-it.exec
+                            </cargo.jvmargs>
+                        </properties>
+                    </configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Surefire Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+            </plugin>
+            <!-- Jacoco plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.3.201502191951</version>
+                <configuration>
+                    <fileSets>
+                        <!-- Filesets needed to merge integration-exec and unit-exec into 1 exec -->
+                        <fileSet>
+                            <directory>${basedir}/target/coverage-reports/</directory>
+                            <includes>
+                                <include>*.exec</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
+                </configuration>
+                <executions>
+
+                    <execution>
+                        <!-- This execution analyses the unit tests into an exec. -->
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Merging of both execs into 1 exec-->
+                        <id>merge</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${basedir}/target/coverage-reports/jacoco-merged.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- This execution transforms the Unit testresults into a html-page -->
+
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                            <outputDirectory>${basedir}/target/site/jacoco-unit</outputDirectory>
+
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <!-- This execution transforms the Integration testresults into a html-page -->
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-it.exec</dataFile>
+                            <outputDirectory>${basedir}/target/site/jacoco-it</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report-merge</id>
+                        <!-- Reporting of merge exec into html-page -->
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${basedir}/target/coverage-reports/jacoco-merged.exec</dataFile>
+                            <outputDirectory>${basedir}/target/site/jacoco-merged</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <!-- Tomcat plugin -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
@@ -326,7 +457,7 @@
                     <path>/BlitzRisk</path>
                 </configuration>
             </plugin>
-
+            <!-- Cobertura plugin-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -339,7 +470,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
+            <!-- Failsafe plugin-->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.17</version>
@@ -351,59 +482,46 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- alleen gebruiken als je op jetty gaat deployen -->
+            <!-- Replacer plugin -->
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <!--<version>9.0.0.v20130308</version>-->
-                <version>9.1.1.v20140108</version>
-                <configuration>
-                    <httpConnector>
-                        <port>9999</port>
-                    </httpConnector>
-                    <stopKey>STOP</stopKey>
-                    <stopPort>8007</stopPort>
-                    <scanIntervalSeconds>0</scanIntervalSeconds>
-                    <webApp>
-                        <contextPath>/BlitzRisk</contextPath>
-                    </webApp>
-                </configuration>
+                <!-- Changes port.xml to 9090 when deploying to Jetty -->
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
                 <executions>
                     <execution>
-                        <id>start-jetty</id>
+                        <id>pre-integration</id>
+                        <configuration>
+                       <file>target/test-classes/port.txt</file>
+                            <replacements>
+                                <replacement>
+                                    <token>8080</token>
+                                    <value>9090</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>stop</goal>
-                            <goal>start</goal>
+                            <goal>replace</goal>
                         </goals>
-                        <configuration>
-                            <stopKey>STOP</stopKey>
-                            <stopPort>8007</stopPort>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <daemon>true</daemon>
-                        </configuration>
                     </execution>
                     <execution>
-                        <id>stop-jetty</id>
+                        <id>post-integration</id>
+                        <configuration>
+                            <file>target/test-classes/port.txt</file>
+                            <replacements>
+                                <replacement>
+                                    <token>9090</token>
+                                    <value>8080</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>stop</goal>  <!-- Jetty crasht bij stop, dit is gekende bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=438500) -->
-
+                            <goal>replace</goal>
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>5.0.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-commons</artifactId>
-                        <version>5.0.2</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

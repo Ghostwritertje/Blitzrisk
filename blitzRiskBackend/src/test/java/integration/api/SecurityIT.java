@@ -22,7 +22,7 @@ import static com.jayway.restassured.RestAssured.given;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SecurityIT {
 
-    private final String URL = MyServerConfiguration.URL + "api/";
+    private final String URL = MyServerConfiguration.getURL() + "api/";
 
 
     @Autowired
