@@ -135,11 +135,17 @@ public class TurnService {
         return move;
     }
 
-    public double calculateNumberOfReinforcements(Player player) {
+    public int calculateNumberOfReinforcements(Player player) {
         double territoriesNo = (double) player.getTerritories().size();
         territoriesNo = Math.ceil(territoriesNo/3);
         if (territoriesNo < 3) return 3;
-        else return territoriesNo;
+        else return (int) territoriesNo;
+    }
+
+    public int calculateNumberOfReinforcements(String playerIdStr) {
+        int playerId = Integer.parseInt(playerIdStr);
+        Player player = playerDao.getPlayerById(playerId);
+        return calculateNumberOfReinforcements(player);
     }
 
     public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
