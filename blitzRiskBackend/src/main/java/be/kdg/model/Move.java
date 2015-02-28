@@ -32,6 +32,10 @@ public class Move {
     private Integer destinationTerritoryStartingNrUnits;
     private Integer destinationTerritoryRemainingNrUnits;
 
+    public Integer getId() {
+        return Id;
+    }
+
     public Turn getTurn() {
         return turn;
     }

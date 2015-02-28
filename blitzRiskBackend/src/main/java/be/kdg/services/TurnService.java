@@ -3,10 +3,12 @@ package be.kdg.services;
 import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
+import be.kdg.wrappers.MoveWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,10 @@ public class TurnService {
 
     @Autowired
     private PlayerDao playerDao;
+
+    public Turn getTurn(int turnId) {
+        return turnDao.getTurnById(turnId);
+    }
 
     public Turn createTurn(Game game, Player player) {
         Turn turn = new Turn();

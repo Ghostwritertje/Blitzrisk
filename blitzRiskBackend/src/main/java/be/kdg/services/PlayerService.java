@@ -38,6 +38,10 @@ public class PlayerService {
         return player;
     }
 
+    public Player getPlayer (int playerId) {
+        return playerDao.getPlayerById(playerId);
+    }
+
     public void save(Player player) {
         playerDao.savePlayer(player);
     }
