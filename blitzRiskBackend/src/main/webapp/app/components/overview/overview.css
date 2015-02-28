@@ -1,3 +1,13 @@
 #overviewContainer {
     padding-top: 5em;
 }
+
+.playButton {
+    float: right;
+    
+
+}
+
+.acceptButton {
+    float: right;
+}

@@ -35,11 +35,15 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
 
                 var username = LoginService.getUserName();
 
-                $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
+              /*  $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         deferred.resolve(data);
                     });
-
+*/
+                $http.get('api/user/' + username + '/games', {headers: {'X-Auth-Token': LoginService.getToken()}})
+                    .success(function (data) {
+                        deferred.resolve(data);
+                    });
                 return deferred.promise;
 
             },

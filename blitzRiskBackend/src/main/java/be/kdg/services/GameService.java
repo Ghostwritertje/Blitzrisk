@@ -144,4 +144,11 @@ public class GameService {
     public Game getGame(int gameId) {
         return gameDao.getGame(gameId);
     }
+
+    @Transactional
+    public List<Game> getGames(String username) {
+        User user = userDao.loadUserByUsername(username);
+
+        return   gameDao.getGamesForUser(user);
+    }
 }
