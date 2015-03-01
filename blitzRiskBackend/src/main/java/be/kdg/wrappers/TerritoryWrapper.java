@@ -1,12 +1,6 @@
 package be.kdg.wrappers;
 
-import be.kdg.model.Game;
-import be.kdg.model.Player;
 import be.kdg.model.Territory;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Alexander on 16/2/2015.
@@ -15,13 +9,15 @@ public class TerritoryWrapper {
     private Integer Id;
     private Integer numberOfUnits;
     private Integer key;
-    private PlayerWrapper playerWrapper;
+    private Integer playerId;
 
     public TerritoryWrapper(Territory territory) {
         Id = territory.getId();
         this.numberOfUnits = territory.getNumberOfUnits();
-        this.key = territory.getKey();
-        this.playerWrapper = new PlayerWrapper(territory.getPlayer());
+        this.key = territory.getGameKey();
+        if (territory.getPlayer() != null) {
+            this.playerId = territory.getPlayer().getId();
+        }
     }
 
     public Integer getId() {
@@ -48,11 +44,11 @@ public class TerritoryWrapper {
         this.key = key;
     }
 
-    public PlayerWrapper getPlayerWrapper() {
-        return playerWrapper;
+    public Integer getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerWrapper(PlayerWrapper playerWrapper) {
-        this.playerWrapper = playerWrapper;
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
     }
 }

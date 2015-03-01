@@ -1,6 +1,10 @@
 package be.kdg.model;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,12 +19,14 @@ public class Territory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private Integer numberOfUnits;
-    private Integer key;
+    private Integer gameKey;
 
+    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
 
+    //@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
@@ -54,12 +60,20 @@ public class Territory {
         this.neighbourTerritories = neighbourTerritories;
     }
 
-    public Integer getKey() {
-        return key;
+    public Game getGame() {
+        return game;
     }
 
-    public void setKey(Integer gameId) {
-        this.key = gameId;
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Integer getGameKey() {
+        return gameKey;
+    }
+
+    public void setGameKey(Integer gameId) {
+        this.gameKey = gameId;
     }
 
     public void addNeighbour(Territory territory) {

@@ -1,6 +1,6 @@
 package integration.web;
 
-import be.kdg.services.UserManagerService;
+import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class ChangeProfileIT {
     private static WebDriver driver;
 
     @Autowired
-    public UserManagerService userService;
+    public UserService userService;
 
     @BeforeClass
     public static void insertUser() {

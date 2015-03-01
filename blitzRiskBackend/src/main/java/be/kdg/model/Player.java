@@ -1,6 +1,11 @@
 package be.kdg.model;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +22,12 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private Integer color;
+    //InvitationStatus invitationStatus = InvitationStatus.PENDING;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
+    InvitationStatus invitationStatus;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 
@@ -66,5 +75,13 @@ public class Player {
 
     public Integer getId() {
         return Id;
+    }
+
+    public InvitationStatus getInvitationStatus() {
+        return invitationStatus;
+    }
+
+    public void setInvitationStatus(InvitationStatus invitationStatus) {
+        this.invitationStatus = invitationStatus;
     }
 }

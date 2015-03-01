@@ -11,18 +11,24 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
         function logMeIn() {
             var deferred = $q.defer();  //maak promise
-
-            $http.get(hosturl + 'login', {headers: {'name': username, 'password': password}})
+            var passwordHash = hashPassword(password);
+            $http.get(hosturl + 'login', {headers: {'name': username, 'password': passwordHash}})
                 .success(function (data) {
                     token = data;
-                    deferred.resolve(data);
                     isLoggedIn = true;
+
+                    deferred.resolve(data);
+
 
                 }).
                 error(function () {
                     deferred.reject('Wrong log in details');
                 });
             return deferred.promise;
+        }
+
+        function hashPassword(password){
+            return CryptoJS.SHA256(password).toString()
         }
 
         return {
@@ -34,14 +40,12 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
             },
             logOut: function logOut() {
                 token = null;
+                isLoggedIn = false;
+                username = null;
+
             },
             getToken: function () {
-                var deferred = $q.defer();
-                if (token != null) {
-                    deferred.resolve(token);
-                } else {
-                    return logMeIn();
-                }
+               return token;
 
             },
             authenticate: function (pass) {
@@ -82,12 +86,12 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 return deferred.promise;
 
             },
-            getUsers: function () {
-                return $http.get('api/users');
-
+            getUserName: function (){
+                return username;
             },
-            register: function (name, pass, email) {
-                return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email, 'password': pass}});
+            register: function(name, pass, email){
+                var passwordHash = hashPassword(pass);
+                return $http.put(hosturl + 'user/' + name, null, {headers: {'email': email,'password' : passwordHash }});
             },
             isLoggedIn: function () {
                 return isLoggedIn;

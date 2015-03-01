@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by user jorandeboever
@@ -29,8 +27,8 @@ public class User implements UserDetails {
    @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Player> players = new HashSet<Player>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Player> players = new ArrayList<Player>();
 
     public String getName() {
         return name;
@@ -48,6 +46,10 @@ public class User implements UserDetails {
         authorities.add(new SimpleGrantedAuthority("user"));
 
         return authorities;
+    }
+
+    public Integer getId() {
+        return Id;
     }
 
     public String getPassword() {
@@ -90,4 +92,6 @@ public class User implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

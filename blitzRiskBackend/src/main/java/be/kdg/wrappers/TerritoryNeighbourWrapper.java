@@ -5,7 +5,6 @@ import be.kdg.model.Territory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Gunther Claessens.
@@ -15,10 +14,10 @@ public class TerritoryNeighbourWrapper {
     private List<Integer> neighbours = new ArrayList<Integer>();
 
     public TerritoryNeighbourWrapper(Territory territory){
-        this.territoryKey = territory.getKey();
+        this.territoryKey = territory.getGameKey();
         for (Iterator<Territory> i = territory.getNeighbourTerritories().iterator(); i.hasNext();){
             Territory ter = i.next();
-            this.neighbours.add(ter.getKey());
+            this.neighbours.add(ter.getGameKey());
         }
     }
 

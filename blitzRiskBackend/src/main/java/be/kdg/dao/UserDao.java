@@ -16,9 +16,8 @@ import java.util.List;
  * Created by Marlies on 4/01/2015.
  */
 
-@Service("userService")
-
-public class UserService {
+@Service("userDao")
+public class UserDao {
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -32,17 +31,6 @@ public class UserService {
         query.setParameter("username", username);
         query.setParameter("password", password);
         User user = (User) query.uniqueResult();
-        return user;
-    }
-
-    public User checkLoginByEmail(String email, String password) {
-        //Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        //Transaction tx = session.beginTransaction();
-        Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.email = :email and u.password = :password");
-        query.setParameter("email", email);
-        query.setParameter("password", password);
-        User user = (User) query.uniqueResult();
-        //tx.commit();
         return user;
     }
 
@@ -64,6 +52,12 @@ public class UserService {
         return (User) query.uniqueResult();
     }
 
+    public User loadUserById(int id) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :id");
+        query.setParameter("id", id);
+        return (User) query.uniqueResult();
+    }
+
     public List<User> findall() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
         return criteria.list();
@@ -74,6 +68,7 @@ public class UserService {
         query.setParameter("username", username);
         User user = (User) query.uniqueResult();
         sessionFactory.getCurrentSession().delete(user);
+        //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!removing!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     public void changePassword(String username, String newPassword) {
