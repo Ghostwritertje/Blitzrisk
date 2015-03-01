@@ -10,21 +10,28 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
         var currentGameId = null;
         var territoryLayout = null;
 
-        function loadTerritoryLayout(){
-            return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data;});
+        /*function loadTerritoryLayout(){
+            alert("loadterritorie");
+            return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data; alert("success"+data+ "data 1" + data[1].territoryKey + "datat eagain" + data.data + "data test" +data.data[1].territoryKey);});
         }
-        loadTerritoryLayout();
+        loadTerritoryLayout();*/
 
         return {
+            loadTerritoryLayout: function(){
+                alert("loadterritorie");
+                var defer = $q.defer();
+                $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){ defer.resolve(data); territoryLayout = data; alert("success data 1" + data[1].territoryKey +  "data test" +data.data[1].territoryKey);}).error(function(data, status){defer.reject(status)});
+                return defer.promise;
+            },
             getTerritoryLayout: function () {
                 var defer = $q.defer();
                 if(territoryLayout == null){
                     loadTerritoryLayout().then(function(territoryLayout){defer.resolve(territoryLayout);});
-                    //alert("t1");
+                    alert("t1");
                 }else{
                     defer.resolve(territoryLayout);
-                    //alert("t2");
-                    //alert(territoryLayout[2].territoryKey);
+                    alert("t2");
+                    alert(territoryLayout[2].territoryKey);
                 }
                 return defer.promise;
 

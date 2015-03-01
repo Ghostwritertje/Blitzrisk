@@ -31,7 +31,7 @@ import static org.junit.Assert.assertThat;
  */
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class GameIt {
+public class GameIT {
     private final String URL = MyServerConfiguration.getURL() + "api/";
 
 
