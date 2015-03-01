@@ -15,32 +15,60 @@
             </ul>
         </div>
         <div class="col-sm-4">
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-success">Invitations</li>
-                <li ng-repeat="player in players" ng-if="player.invitationStatus == 'PENDING'" class="list-group-item">
-                    <span>{{player.gameId}}</span>
-                    <button ng-click="acceptGame(player.id)" class="btn btn-info btn-xs acceptGameBtns" style="float: right;">
-                        Accept
-                    </button>
-                </li>
-                <li class="list-group-item list-group-item-info">My Games</li>
-                <li ng-repeat="player in players" ng-if="player.invitationStatus == 'ACCEPTED'" class="list-group-item">
-                    <div  class="acceptedGames" ng-click="enterLobby(player.gameId)"><span >{{player.gameId}}</span>
-                        <button ng-click="go('/game')" class="btn btn-success btn-xs" style="float: right;">Play
+            <div class="list-group">
+                <p class="list-group-item list-group-item-success">Games</p>
+
+                <div ng-repeat="game in games">
+                    <h5 ng-click="selectGame(game.id)" class="list-group-item list-group-item-info gameHeader">Game: {{game.id}}
+                        <span class="badge" ng-if="!game.started">waiting for players</span>
+                        <button ng-click="enterGame(game.id)" ng-if="game.started"
+                                class="btn btn-success playButton btn-xs" type="button">Play
                         </button>
+                    </h5>
+
+                    <div ng-if="selectedGameId == game.id" class="list-group-item" ng-repeat="player in game.players">
+                        {{player.username}}
+                        <span ng-if="player.username != myUsername || player.invitationStatus != 'PENDING'"
+                              class="badge">{{player.invitationStatus}}</span>
+                        <button ng-click="acceptGame(player.id)"
+                                ng-if="player.username == myUsername && player.invitationStatus == 'PENDING'"
+                                class="btn btn-primary btn-xs acceptButton" type="button">Accept
+                        </button>
+
                     </div>
-                </li>
+                    <div  ng-show="selectedGameId == game.id" class="input-group">
 
-            </ul>
-            <button id="createGameBtn" ng-click="createNewGame()" class="btn btn-default btn-md">Create new Game</button>
+                        <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
+                        <span class="input-group-btn">
+                         <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="button">Add
+                         </button>
+                            <button ng-click="addRandomPlayer(game.id)" class="btn btn-default" type="button">Add Random
+                            </button>
 
+
+                        </span>
+                    </div>
+
+                    <!--   <button ng-click="acceptGame(player.id)" class="btn btn-info btn-xs acceptGameBtns" style="float: right;">
+                           Accept
+                       </button>-->
+
+                </div>
+
+
+            </div>
+
+            <button id="createGameBtn" ng-click="createNewGame()" class="btn btn-default btn-md">Create new Game
+            </button>
         </div>
-        <div class="col-sm-4">
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-success">Recently Played</li>
-                <li ng-repeat="friend in recentlyPlayed" class="list-group-item">{{friend.name}}</li>
-            </ul>
-        </div>
+
+
+        <!-- <div class="col-sm-4">
+             <ul class="list-group">
+                 <li class="list-group-item list-group-item-success">Recently Played</li>
+                 <li ng-repeat="friend in recentlyPlayed" class="list-group-item">{{friend.name}}</li>
+             </ul>
+         </div>-->
     </div>
 </section>
 
