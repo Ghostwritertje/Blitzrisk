@@ -160,14 +160,14 @@ public class TurnService {
 
     public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
         for(Move move: moves) {
-            if (!move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement - origin: " + move.getOriginTerritory().getId() + " - destination: " + move.getDestinationTerritory().getId());
+            if (!move.getDestinationTerritory().getId().equals(move.getOriginTerritory().getId())) throw new IllegalMoveException("incorrect reinforecement - origin: " + move.getOriginTerritory().getId() + " - destination: " + move.getDestinationTerritory().getId());
         }
         int reinforcementsTotal = 0;
         for (Move move : moves) {
-            if(!move.getOriginTerritory().getPlayer().equals(player)) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
+            if(!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
             reinforcementsTotal += move.getNumberOfUnitsToAttack();
         }
-        if (reinforcementsTotal > (int) calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
+        if (reinforcementsTotal >  calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
 
 
         for(Move move : moves){

@@ -9,6 +9,7 @@ import be.kdg.services.PlayerService;
 import be.kdg.services.TerritoryService;
 import be.kdg.services.TurnService;
 import be.kdg.wrappers.MoveWrapper;
+import be.kdg.wrappers.UpdatedTerritoriesWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +57,7 @@ public class TurnController {
 
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public List<MoveWrapper> reinforce(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+    public List<UpdatedTerritoriesWrapper> reinforce(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
         Player player = playerService.getPlayer(Integer.parseInt(playerId));
         List<Move> moves = new ArrayList<>();
         for (MoveWrapper moveWrapper: moveWrappers) {
@@ -80,9 +81,9 @@ public class TurnController {
 
 
 
-        List <MoveWrapper> newMoveWrappers = new ArrayList<>();
+        List <UpdatedTerritoriesWrapper> newMoveWrappers = new ArrayList<>();
         for (Move move: moves) {
-            MoveWrapper moveWrapper = new MoveWrapper(move);
+            UpdatedTerritoriesWrapper moveWrapper = new UpdatedTerritoriesWrapper(move.getOriginTerritory());
             newMoveWrappers.add(moveWrapper);
         }
         return newMoveWrappers;

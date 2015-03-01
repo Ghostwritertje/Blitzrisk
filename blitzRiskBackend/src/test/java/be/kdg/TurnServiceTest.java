@@ -4,7 +4,9 @@ import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
 import be.kdg.services.TurnService;
+import com.google.common.collect.Lists;
 import junit.framework.Assert;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +44,8 @@ public class TurnServiceTest {
     private @Mock Query query;
     private @Mock User user;
 
+    private Hibernate hibernate;
+
     @Autowired
     private TerritoryDao territoryDao;
     @Autowired
@@ -55,17 +61,7 @@ public class TurnServiceTest {
     private TurnService turnService;
 
     @Before
-    public void createGame() {
-        /*MockitoAnnotations.initMocks(this);
-        players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        players.add(player3);
-        game.setPlayers(players);
-        territoryDao.setSessionFactory(sessionFactory);
-        turnDao.setSessionFactory(sessionFactory);
-        moveDao.setSessionFactory(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);*/
+    public void createGame() throws IllegalAccessException {
         MockitoAnnotations.initMocks(this);
         territoryDao.setSessionFactory(sessionFactory);
         turnDao.setSessionFactory(sessionFactory);
@@ -77,16 +73,27 @@ public class TurnServiceTest {
         players = new ArrayList<>();
         for (int i = 0 ; i<3 ; i++) {
             Player player = new Player();
-             //player.setUser(user);
             players.add(player);
 
-            session.saveOrUpdate(player);
+            Class playerClass = player.getClass();
+            List<Field> fields = Lists.newArrayList(playerClass.getDeclaredFields());
+            Field playerId = fields.get(0);
+            playerId.setAccessible(true);
+            playerId.set(player, i + 1);
+
         }
 
         Territory origin = new Territory();
+        Class territoryClass = origin.getClass();
+        List<Field> fields = Lists.newArrayList(territoryClass.getDeclaredFields());
+        Field territoryId = fields.get(0);
+        territoryId.setAccessible(true);
+        territoryId.set(origin, 1);
         origin.setNumberOfUnits(2);
         origin.setPlayer(players.get(0));
+
         Territory destination = new Territory();
+        territoryId.set(destination, 2);
         destination.setNumberOfUnits(1);
         destination.setPlayer(players.get(1));
         destination.addNeighbour(origin);
@@ -94,6 +101,7 @@ public class TurnServiceTest {
         territories = new ArrayList<>();
         territories.add(origin);
         territories.add(destination);
+
         Set<Territory> playerTerritories = new HashSet<>();
         playerTerritories.add(origin);
         players.get(0).setTerritories(playerTerritories);
