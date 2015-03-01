@@ -37,6 +37,17 @@ public class LogInIT {
     public static void setUp() {
         System.setProperty("webdriver.chrome.driver", MyServerConfiguration.getChromedriverlocation());
         driver = new ChromeDriver();
+
+    }
+
+    @Before
+    public void registerUser() {
+        TestUserService.registerUser(driver, "seleniumTestUser", "seleniumTestUserpass", "seleniumTestUser@kdg.be");
+    }
+
+    @After
+    public void removerUser() {
+        userService.removeUser("seleniumTestUser");
     }
 
     @AfterClass
@@ -53,69 +64,47 @@ public class LogInIT {
 
     @Test
     public void testCorrectLogin() {
-        userService.addUser("seleniumTestUser", "seleniumTestUser", "seleniumTestUser");
-        driver.get(URL);
-        WebElement usernameElement = driver.findElement(By.id("username"));
-        usernameElement.sendKeys("seleniumTestUser");
-        WebElement passwordElement = driver.findElement(By.id("password"));
-        passwordElement.sendKeys("seleniumTestUser");
-        usernameElement.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
-        WebElement element = driver.findElement(By.id("logOut"));
-        element.click();
-        userService.removeUser("seleniumTestUser");
+        TestUserService.loginUser(driver, "seleniumTestUser", "seleniumTestUserpass");
+    }
+
+    @Test
+    public void testLoginWithEmail() {
+        TestUserService.loginUser(driver, "seleniumTestUser@kdg.be", "seleniumTestUserpass");
     }
 
     @Test
     public void testIncorrectLogin() {
         driver.get(URL);
         WebElement element = driver.findElement(By.id("username"));
-        element.sendKeys("Seleniumuser");
+        element.sendKeys("wrongSeleniumUser");
         element = driver.findElement(By.id("password"));
-        element.sendKeys("seleniumuser");
+        element.sendKeys("seleniumTestUserpass");
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
     }
 
     @Test
-    public void testRegisterNewUser() {
-        User user = new User();
-        Random random = new Random();
-        user.setName("Selenium" + random.nextInt(9999));
-        user.setPassword(user.getName());
-        user.setEmail(user.getName() + "@kdg.be");
-
+    public void testRegisterExistingUserName() {
         driver.get(URL + "#/register");
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement element = driver.findElement(By.id("username"));
-        element.sendKeys(user.getName());
+        element.sendKeys("seleniumTestUser");
         element = driver.findElement(By.id("password"));
-        element.sendKeys(user.getPassword());
+        element.sendKeys("seleniumTestUserpass");
         element = driver.findElement(By.id("email"));
-        element.sendKeys(user.getEmail());
-        element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("registerSuccess")));
-
-        driver.get(URL);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
-        element = driver.findElement(By.id("username"));
-        element.sendKeys(user.getName());
-        element = driver.findElement(By.id("password"));
-        element.sendKeys(user.getPassword());
-        element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
-         element = driver.findElement(By.id("logOut"));
-        element.click();
-
-        driver.get(URL + "#/register");
-         element = driver.findElement(By.id("username"));
-        element.sendKeys(user.getName());
-        element = driver.findElement(By.id("password"));
-        element.sendKeys(user.getPassword());
-        element = driver.findElement(By.id("email"));
-        element.sendKeys(user.getEmail());
+        element.sendKeys("newEmailForNewTestUser@kdg.be");
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
-        userService.removeUser(user.getName());
+    }
+    @Test
+    public void testRegisterExistingEmail() {
+        driver.get(URL + "#/register");
+        WebElement element = driver.findElement(By.id("username"));
+        element.sendKeys("newOriginalSeleniumTestUser");
+        element = driver.findElement(By.id("password"));
+        element.sendKeys("seleniumTestUserpass");
+        element = driver.findElement(By.id("email"));
+        element.sendKeys("seleniumTestUser@kdg.be");
+        element.sendKeys(Keys.ENTER);
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.className("errorMessage")));
     }
 }

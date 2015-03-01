@@ -34,6 +34,14 @@ public class UserDao {
         return user;
     }
 
+    public User checkLoginByEmail(String email, String password) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.email = :email and u.password = :password");
+        query.setParameter("email", email);
+        query.setParameter("password", password);
+        User user = (User) query.uniqueResult();
+        return user;
+    }
+
     public void addUser(String username, String password, String email) {
         User user = new User();
         user.setName(username);
