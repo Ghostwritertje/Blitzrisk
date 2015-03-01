@@ -1,6 +1,8 @@
 package be.kdg.model;
 
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -24,7 +26,9 @@ public class Game {
 
     private Integer playerTurn;
 
+    //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Player> players = new ArrayList<>();
 
     @OneToMany(mappedBy = "game")
@@ -35,6 +39,7 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //@OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<Territory> territories = new ArrayList<>();
+
 
     public List<Player> getPlayers() {
         return players;

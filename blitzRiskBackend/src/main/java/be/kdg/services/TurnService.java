@@ -43,6 +43,10 @@ public class TurnService {
         return createTurn(game, player);
     }
 
+    public List<Move> moves() {
+        return moveDao.findall();
+    }
+
     public Turn createTurn(Game game, Player player) {
         Turn turn = new Turn();
         turn.setGame(game);
@@ -159,7 +163,7 @@ public class TurnService {
 
     public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
         for(Move move: moves) {
-            if (!move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement");
+            if (!move.getDestinationTerritory().equals(move.getOriginTerritory())) throw new IllegalMoveException("incorrect reinforecement - origin: " + move.getOriginTerritory().getId() + " - destination: " + move.getDestinationTerritory().getId());
         }
         int reinforcementsTotal = 0;
         for (Move move : moves) {

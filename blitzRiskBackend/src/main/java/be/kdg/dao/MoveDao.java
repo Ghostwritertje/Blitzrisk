@@ -1,10 +1,13 @@
 package be.kdg.dao;
 
 import be.kdg.model.Move;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Marlies on 27/02/2015.
@@ -27,5 +30,10 @@ public class MoveDao {
 
     public void updateMove(Move move) {
         sessionFactory.getCurrentSession().saveOrUpdate(move);
+    }
+
+    public List<Move> findall() {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Move.class);
+        return criteria.list();
     }
 }

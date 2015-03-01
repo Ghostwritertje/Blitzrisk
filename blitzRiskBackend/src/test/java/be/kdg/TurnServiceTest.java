@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
  * Created by Marlies on 22/02/2015.
  */
 
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TurnServiceTest {
     private @Mock Game game;

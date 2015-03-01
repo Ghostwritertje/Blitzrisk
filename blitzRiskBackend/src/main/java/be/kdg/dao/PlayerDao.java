@@ -1,5 +1,6 @@
 package be.kdg.dao;
 
+import be.kdg.model.Game;
 import be.kdg.model.Player;
 import be.kdg.model.User;
 import org.hibernate.Criteria;
@@ -43,6 +44,11 @@ public class PlayerDao {
         Query query = sessionFactory.getCurrentSession().createQuery("from Player player where player.user = :user");
         query.setParameter("user", user);
         return  query.list();
+    }
 
+    public List<Player> getPlayersForGame(Game game) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from Player player where player.game = :game");
+        query.setParameter("game", game);
+        return  query.list();
     }
 }

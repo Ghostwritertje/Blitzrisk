@@ -8,25 +8,42 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
         var securityToken = null;
         var currentGame = null;
         var currentGameId = null;
+        var territoryLayout = null;
 
+        function loadTerritoryLayout(){
+            return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data;});
+        }
+        loadTerritoryLayout();
 
         return {
             getTerritoryLayout: function () {
-                //    return $http.get('http://localhost:8080/BlitzRisk/api/territoryLayout');
-                //  if (securityToken == null) resolveSecurityToken();
+                var defer = $q.defer();
+                if(territoryLayout == null){
+                    loadTerritoryLayout().then(function(territoryLayout){defer.resolve(territoryLayout);});
+                    //alert("t1");
+                }else{
+                    defer.resolve(territoryLayout);
+                    //alert("t2");
+                    //alert(territoryLayout[2].territoryKey);
+                }
+                return defer.promise;
 
-                return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}});
+                //return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data.data});
             },
             getGamesList: function () {
                 var deferred = $q.defer();  //maak promise
 
                 var username = LoginService.getUserName();
 
-                $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
+              /*  $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         deferred.resolve(data);
                     });
-
+*/
+                $http.get('api/user/' + username + '/games', {headers: {'X-Auth-Token': LoginService.getToken()}})
+                    .success(function (data) {
+                        deferred.resolve(data);
+                    });
                 return deferred.promise;
 
             },
@@ -51,12 +68,12 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
             getCurrentGame: function () {
                 return $http.get('api/game/' + currentGameId, {headers: {'X-Auth-Token': LoginService.getToken()}})
             },
-            invitePlayerToGame: function (username) {
-                return $http.post('api/game/' + currentGameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+            invitePlayerToGame: function (gameId, username) {
+                return $http.post('api/game/' + gameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
 
             },
-            invitRandomPlayerToGame : function() {
-                return $http.post('api/game/' + currentGameId + '/invite-random', null, {headers: {'X-Auth-Token': LoginService.getToken()}});
+            invitRandomPlayerToGame : function(gameId) {
+                return $http.post('api/game/' + gameId + '/invite-random', null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             }
         }
     }]);

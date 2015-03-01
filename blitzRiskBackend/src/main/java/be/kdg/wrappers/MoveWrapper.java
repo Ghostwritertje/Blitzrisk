@@ -17,9 +17,13 @@ public class MoveWrapper {
     public MoveWrapper (Move move) {
         id = move.getId();
         origin = move.getOriginTerritory().getId();
+        turnId = move.getTurn().getId();
         destination = move.getDestinationTerritory().getId();
         units = move.getNumberOfUnitsToAttack();
         calculatedUnits = 0;
+    }
+
+    public MoveWrapper() {
     }
 
     public int getId() {

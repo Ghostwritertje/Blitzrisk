@@ -143,4 +143,14 @@ public class GameService {
     public Game getGame(int gameId) {
         return gameDao.getGame(gameId);
     }
+
+    @Transactional
+    public List<Game> getGames(String username) {
+        User user = userDao.loadUserByUsername(username);
+        List<Game> games = gameDao.getGamesForUser(user);
+      /*  for(Game game: games){
+            game.setPlayers(playerDao.getPlayersForGame(game));
+        }*/
+        return   games;
+    }
 }

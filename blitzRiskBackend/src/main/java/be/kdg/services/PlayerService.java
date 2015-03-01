@@ -26,20 +26,21 @@ public class PlayerService {
     @Autowired
     GameDao gameDao;
 
-    public Player createPlayer (User user, Game game) {
+    public Player getPlayer(int playerId) {
+        return playerDao.getPlayerById(playerId);
+    }
+
+    public Player createPlayer(User user, Game game) {
         Player player = new Player();
         player.setUser(user);
         player.setGame(game);
         player.setColor(game.getPlayers().size());
         player.setInvitationStatus(InvitationStatus.PENDING);
+        game.addPlayer(player);
         playerDao.savePlayer(player);
-        //game.addPlayer(player);
+
         //gameDao.saveGame(game);
         return player;
-    }
-
-    public Player getPlayer (int playerId) {
-        return playerDao.getPlayerById(playerId);
     }
 
     public void save(Player player) {
@@ -52,16 +53,24 @@ public class PlayerService {
         playerDao.updatePlayer(player);
 
         //Check if game can begin
-        boolean everyoneAccepted = true;
-        List<Player> gamePlayers = player.getGame().getPlayers();
-        for(Player gamePlayer : gamePlayers){
-            if(!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)){
-                everyoneAccepted = false;
+        boolean ready = true;
+        List<Player> gamePlayers = playerDao.getPlayersForGame(player.getGame());
+        int numberOfPlayers = 0;
+        for (Player gamePlayer : gamePlayers) {
+            if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
+                ready = false;
             }
+            numberOfPlayers = numberOfPlayers + 1;
+
+
         }
 
-        if(everyoneAccepted && gamePlayers.size() > 1){
+        System.out.println(numberOfPlayers);
+
+        if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();
+            //   gameDao.saveGame(game);
+            //game.assignRandomTerritories();
             gameDao.saveGame(game);
             game.assignTerritoriesToPlayers();
             game.setStarted(true);

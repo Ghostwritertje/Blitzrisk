@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="app/components/login/login.css">
     <link rel="stylesheet" href="app/components/game/game.css">
+    <link rel="stylesheet" href="app/components/chat/chat.css">
     <link rel="stylesheet" href="app/components/register/register.css">
 </head>
 <body ng-app="blitzrisk"  >
@@ -34,17 +35,17 @@
                   <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
               </ul>
               <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
+                  <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
                   <li><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
                   <li><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
               </ul>
           </div>
       </div>
   </nav>
-
-
-  <ng-view >loading...</ng-view>
+    <ng-view>loading...</ng-view>
 
 </div>
+  <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha256.js"></script>
   <script src="app/bower_components/angular/angular.min.js"></script>
   <script src="app/bower_components/angular-route/angular-route.min.js"></script>
   <script src="app/bower_components/jquery/dist/jquery.min.js"></script>
@@ -62,10 +63,12 @@
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="app/bower_components/bootstrap/js/modal.js"></script>
 
-  <script src="app/components/game/gameService.js"></script>
+  <script src="app/components/services/gameService.js"></script>
   <script src="app/components/game/riskmapEvents.js"></script>
   <script src="app/components/chat/chatController.js"></script>
   <script src="app/components/chat/chatService.js"></script>
+
+
 
   <!-- chat libraries -->
   <script src="assets/libs/sockjs-0.3.4.js"></script>
