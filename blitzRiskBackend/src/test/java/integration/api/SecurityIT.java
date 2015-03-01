@@ -59,7 +59,6 @@ public class SecurityIT {
         get(URL + "secured/users").then().assertThat().statusCode(401);
     }
 
-
     @Test
     public void testCorrectUser() {
         String token = given().header("name", "testuser").header("password", "testuserpass").get(URL + "login").getBody().asString();

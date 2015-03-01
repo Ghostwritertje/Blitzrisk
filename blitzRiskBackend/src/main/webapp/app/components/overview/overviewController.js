@@ -11,8 +11,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
 
         $scope.newUsers = [];
 
-        $scope.games = [{"playerTurn":0,"started":false,"players":[{"id":1,"color":0,"invitationStatus":"PENDING","username":"Joran"}, {"id":2,"color":2,"invitationStatus":"PENDING","username":"Mark"}],"turns":[],"territories":[],"id":1},{"playerTurn":0,"started":false,"players":[{"id":1,"color":0,"invitationStatus":"PENDING","username":"Joran"}, {"id":2,"color":2,"invitationStatus":"PENDING","username":"Mark"}],"turns":[],"territories":[],"id":2},{"playerTurn":0,"started":false,"players":[{"id":1,"color":0,"invitationStatus":"PENDING","username":"Joran"}, {"id":2,"color":2,"invitationStatus":"PENDING","username":"Mark"}],"turns":[],"territories":[],"id":3}, {"playerTurn":0,"started":false,"players":[{"id":1,"color":0,"invitationStatus":"PENDING","username":"Joran"}, {"id":2,"color":2,"invitationStatus":"PENDING","username":"Mark"}],"turns":[],"territories":[],"id":4}];
-
+        $scope.games = [];
 
         loadGames();
 
@@ -20,7 +19,12 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
 
         $scope.go = function (path) {
             $location.path(path);
+
         };
+
+        $scope.$on('$destroy', function(){
+            $interval.cancel($scope.interval);
+        });
 
 
         $scope.createNewGame = function () {
@@ -72,8 +76,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
         function loadGames() {
             var promise = GameService.getGamesList();
             promise.then(function (payload) {
-
-                $scope.games = payload;
+                if($scope.games != payload)  $scope.games = payload;
             });
         }
 

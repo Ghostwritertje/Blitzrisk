@@ -15,9 +15,7 @@ public class TokenUtils
 
 	public static String createToken(UserDetails userDetails)
 	{
-        if(userDetails == null){
-            return "";
-        }
+
 		/* Expires in one hour */
 		long expires = System.currentTimeMillis() + 1000L * 60 * 60;
 
