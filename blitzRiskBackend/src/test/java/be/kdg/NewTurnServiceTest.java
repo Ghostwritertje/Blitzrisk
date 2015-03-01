@@ -3,7 +3,10 @@ package be.kdg;
 import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
+import be.kdg.services.GameService;
+import be.kdg.services.PlayerService;
 import be.kdg.services.TurnService;
+import be.kdg.services.UserService;
 import junit.framework.Assert;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -31,16 +34,16 @@ import static org.mockito.Mockito.when;
 
 @ContextConfiguration(locations = {"file:src/test/resources/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TurnServiceTest {
+public class NewTurnServiceTest {
     private @Mock Game game;
     private List<Player> players;
     private List<Territory> territories;
-    private @Mock SessionFactory sessionFactory;
-    private @Mock Session session;
-    private @Mock Query query;
+    //private @Mock SessionFactory sessionFactory;
+    //private @Mock Session session;
+    //private @Mock Query query;
     private @Mock User user;
 
-    @Autowired
+    /*@Autowired
     private TerritoryDao territoryDao;
     @Autowired
     private TurnDao turnDao;
@@ -49,7 +52,16 @@ public class TurnServiceTest {
     @Autowired
     private GameDao gameDao;
     @Autowired
-    private PlayerDao playerDao;
+    private PlayerDao playerDao;*/
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PlayerService playerService;
+    @Autowired
+    private GameService gameService;
+
+
 
     @Autowired
     private TurnService turnService;
@@ -67,21 +79,31 @@ public class TurnServiceTest {
         moveDao.setSessionFactory(sessionFactory);
         when(sessionFactory.getCurrentSession()).thenReturn(session);*/
         MockitoAnnotations.initMocks(this);
-        territoryDao.setSessionFactory(sessionFactory);
+        /*territoryDao.setSessionFactory(sessionFactory);
         turnDao.setSessionFactory(sessionFactory);
         moveDao.setSessionFactory(sessionFactory);
         gameDao.setSessionFactory(sessionFactory);
         playerDao.setSessionFactory(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(sessionFactory.getCurrentSession()).thenReturn(session);*/
 
-        players = new ArrayList<>();
-        for (int i = 0 ; i<3 ; i++) {
-            Player player = new Player();
-             //player.setUser(user);
-            players.add(player);
 
-            session.saveOrUpdate(player);
+        for(int i = 0; i<3; i++) {
+            userService.addUser("" + i, "" + i, i+"@test.be");
         }
+        List<User> users = userService.findall();
+        Game game = gameService.createNewGame();
+        for (User user: users) {
+            gameService.addUserToGame(user, game);
+        }
+        List<Player> playerList = game.getPlayers();
+        for(Player player: playerList) {
+            playerService.acceptGame(player.getId());
+        }
+
+        Set<Territory> territoriesPlayer1 = playerList.get(0).getTerritories();
+        Set<Territory> territoriesPlayer2 = playerList.get(1).getTerritories();
+
+
 
         Territory origin = new Territory();
         origin.setNumberOfUnits(2);
@@ -100,8 +122,6 @@ public class TurnServiceTest {
         playerTerritories = new HashSet<>();
         playerTerritories.add(destination);
         players.get(1).setTerritories(playerTerritories);
-        session.saveOrUpdate(origin);
-        session.saveOrUpdate(destination);
 
     }
 

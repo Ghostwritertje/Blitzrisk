@@ -27,7 +27,7 @@ public class Territory {
     private Player player;
 
     //@Cascade(value=CascadeType.PERSIST)
-    @OneToMany//(fetch=FetchType.EAGER)
+    @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 

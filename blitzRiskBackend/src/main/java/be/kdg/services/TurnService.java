@@ -28,9 +28,6 @@ public class TurnService {
     private TerritoryDao territoryDao;
 
     @Autowired
-    private GameDao gameDao;
-
-    @Autowired
     private PlayerDao playerDao;
 
     public Turn getTurn(int turnId) {
@@ -81,14 +78,14 @@ public class TurnService {
             if(!move.getOriginTerritory().getPlayer().equals(player)) {
                 throw new IllegalMoveException("Illegal origin territory");
             }
-
-            /*boolean isNeighbour = false;
+            //TODO: nog niet getest?
+            boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
                 if(territory.equals(move.getDestinationTerritory())) isNeighbour = true;
             }
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
-*/
+
             if (move.getDestinationTerritory().getPlayer().equals(player)) throw new IllegalMoveException("Can't attack own territory");
 
             if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");
