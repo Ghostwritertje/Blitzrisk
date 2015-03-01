@@ -19,8 +19,9 @@
                 <p class="list-group-item list-group-item-success">Games</p>
 
                 <div ng-repeat="game in games">
-                    <h5 ng-click="selectGame(game.id)" class="list-group-item list-group-item-info gameHeader">Game: {{game.id}}
-                        <span class="badge" ng-if="!game.started">waiting for players</span>
+                    <h5 ng-click="selectGame(game.id)" class="list-group-item list-group-item-info gameHeader">Game:
+                        {{game.id}}
+                        <span class="badge " ng-if="!game.started">waiting for players</span>
                         <button ng-click="enterGame(game.id)" ng-if="game.started"
                                 class="btn btn-success playButton btn-xs" type="button">Play
                         </button>
@@ -36,9 +37,11 @@
                         </button>
 
                     </div>
-                    <div  ng-show="selectedGameId == game.id" class="input-group">
+                    <div ng-show="selectedGameId == game.id" class="input-group">
+                        <div class="form-group control-group has-feedback" ng-class="{'has-success': usernameState == 2}">
 
-                        <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
+               <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
+                            </div>
                         <span class="input-group-btn">
                          <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="button">Add
                          </button>
