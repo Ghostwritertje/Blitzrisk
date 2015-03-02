@@ -28,8 +28,8 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
         }
 
         function hashPassword(password){
-            // TODO: all tests have to get changed for this xd
-          //  return CryptoJS.SHA256(password).toString()
+            // DONE: all tests have to get changed for this xd
+            return CryptoJS.SHA256(password).toString()
 
             return password;
         }
@@ -55,11 +55,13 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 return angular.equals(pass, password);
             },
             updateUser: function (name, email, pass) {
+                var encryptedpassword;
+                if(pass != null) encryptedpassword = hashPassword(pass);
                 var deferred = $q.defer();
 
                 $http.put(hosturl + 'user', {
                     'name': name,
-                    'password': pass,
+                    'password': encryptedpassword,
                     'email': email
                 }, {headers: {'X-Auth-Token': token}})
                     .success(function () {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,6 +70,7 @@ public class PlayerService {
 
         if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();
+            game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
             //   gameDao.saveGame(game);
             game.assignRandomTerritories();
             gameDao.saveGame(game);

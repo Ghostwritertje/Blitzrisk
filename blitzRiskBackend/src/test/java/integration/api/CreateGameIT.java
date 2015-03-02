@@ -1,9 +1,11 @@
-package integration.web;
+package integration.api;
 
+import be.kdg.model.Game;
 import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
 import be.kdg.services.GameService;
+import be.kdg.services.PlayerService;
 import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
 import org.junit.After;
@@ -18,8 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 /**
  * Created by user jorandeboever
@@ -27,7 +29,7 @@ import static org.junit.Assert.assertThat;
  */
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class GameControllerIT {
+public class CreateGameIT {
     private final String URL = MyServerConfiguration.getURL() + "api/";
 
 
@@ -36,6 +38,9 @@ public class GameControllerIT {
 
     @Autowired
     public GameService gameService;
+
+    @Autowired
+    public PlayerService playerService;
 
     @Before
     public void setUp() {
@@ -51,6 +56,7 @@ public class GameControllerIT {
     @After
     public void cleanUp() {
 
+
     }
 
     @Test
@@ -63,12 +69,9 @@ public class GameControllerIT {
 
     @Test
     public void testAcceptGame() {
-
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         List<Player> players = gameService.getPlayers("testgameuser");
-
         for (Player player : players) {
             if (player.getInvitationStatus().equals(InvitationStatus.PENDING))
                 given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);
@@ -78,11 +81,21 @@ public class GameControllerIT {
 
     @Test
     public void testInviteUser() {
-      //  int id = userService.getUser("testgameuser2").getId();
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        String invitedUsername = given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/testgameuser2" ).getBody().asString();
+        String invitedUsername = given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "testgameuser2").getBody().asString();
         assertEquals("testgameuser2", invitedUsername);
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
+
+    }
+
+    @Test
+    public void testInviteNonExistingUser() {
+        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "nonexistinguser");
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
+
     }
 
     @Test
@@ -90,6 +103,7 @@ public class GameControllerIT {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite-random").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
 
     }
 
@@ -98,12 +112,54 @@ public class GameControllerIT {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         given().header("X-Auth-Token", token).get(URL + "user/" + "testgameuser" + "/players").then().assertThat().statusCode(200);
+
+
     }
 
     @Test
-    public void getGame() {
+    public void testGameStartWith2Players() {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        String id = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        given().header("X-Auth-Token", token).get(URL + "game/" + id).then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "testgameuser2").then().assertThat().statusCode(200);
+
+        List<Player> players = gameService.getPlayers("testgameuser");
+        for (Player player : players) {
+            if (player.getInvitationStatus().equals(InvitationStatus.PENDING))
+                given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);
+        }
+
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
+
+
+        List<Player> playersForUser2 = gameService.getPlayers("testgameuser2");
+        for (Player player : playersForUser2) {
+            if (player.getInvitationStatus().equals(InvitationStatus.PENDING))
+                given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);
+        }
+
+        System.out.println(given().header("X-Auth-Token", token).get(URL + "game/" + gameId).getBody().asString());
+
+
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(true));
+
+    }
+
+    @Test
+    public void testGameStartWithOnly1Player() {
+        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        List<Player> players = gameService.getPlayers("testgameuser");
+
+        for (Player player : players) {
+            if (player.getInvitationStatus().equals(InvitationStatus.PENDING))
+                given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);
+        }
+        System.out.println(given().header("X-Auth-Token", token).get(URL + "game/" + gameId).getBody().asString());
+
+
+        given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
+
     }
 }

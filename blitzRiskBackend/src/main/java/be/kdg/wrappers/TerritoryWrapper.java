@@ -44,11 +44,5 @@ public class TerritoryWrapper {
         this.key = key;
     }
 
-    public Integer getPlayerId() {
-        return playerId;
-    }
 
-    public void setPlayerId(Integer playerId) {
-        this.playerId = playerId;
-    }
 }

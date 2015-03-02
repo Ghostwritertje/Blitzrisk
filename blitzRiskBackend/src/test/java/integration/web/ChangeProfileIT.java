@@ -37,24 +37,8 @@ public class ChangeProfileIT {
 
     @Before
     public void logInAsSeleniumUser() {
-
-        try {
-            userService.addUser("seleniumuser", "seleniumpass", "user@selenium.com");
-
-        } catch (IllegalArgumentException e) {
-
-        }
-        //Log in
-
-        driver.get(MyServerConfiguration.getURL());
-        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.id("username")));
-        WebElement element = driver.findElement(By.id("username"));
-        element.sendKeys("seleniumuser");
-        element = driver.findElement(By.id("password"));
-        element.sendKeys("seleniumpass");
-        element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/overview"));
-
+        TestUserService.registerUser(driver, "seleniumuser", "seleniumpass", "user@selenium.com");
+        TestUserService.loginUser(driver, "seleniumuser", "seleniumpass");
     }
 
     @AfterClass
@@ -63,20 +47,11 @@ public class ChangeProfileIT {
     }
 
     @After
-    public void removeSeleniumUsers(){
-
+    public void removeSeleniumUsers() {
         try {
             userService.removeUser("seleniumuser");
-
-        } catch (IllegalArgumentException e) {
-
-        }
-
-        try {
+        }catch (IllegalArgumentException e){
             userService.removeUser("seleniumuser2");
-
-        } catch (IllegalArgumentException e) {
-
         }
     }
 
@@ -119,17 +94,7 @@ public class ChangeProfileIT {
 
         element = driver.findElement(By.id("logOut"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
-
-        element = driver.findElement(By.id("username"));
-        element.sendKeys("seleniumuser");
-
-        element = driver.findElement(By.id("password"));
-        element.sendKeys("newPassword");
-        element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
-
-
+        TestUserService.loginUser(driver, "seleniumuser", "newPassword");
     }
 
     @Test
@@ -151,17 +116,8 @@ public class ChangeProfileIT {
 
         element = driver.findElement(By.id("logOut"));
         element.click();
-        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
 
-        element = driver.findElement(By.id("username"));
-        element.sendKeys("seleniumuser2");
-
-        element = driver.findElement(By.id("password"));
-        element.sendKeys("seleniumpass");
-        element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 20)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
-
-
+        TestUserService.loginUser(driver, "seleniumuser2", "seleniumpass");
     }
 
     @Test
@@ -199,10 +155,7 @@ public class ChangeProfileIT {
         element.sendKeys("newseleniumpass");
         element.sendKeys(Keys.ENTER);
         (new WebDriverWait(driver, 20)).until((WebDriver d) -> d.getCurrentUrl().equals(URL + "#/overview"));
-
-
     }
-
 
 
 }
