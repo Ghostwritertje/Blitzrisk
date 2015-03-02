@@ -42,7 +42,10 @@ public class PlayerService {
         player.setGame(game);
         player.setColor(game.getPlayers().size());
         player.setInvitationStatus(InvitationStatus.PENDING);
+        game.addPlayer(player);
         playerDao.savePlayer(player);
+
+        //gameDao.saveGame(game);
         return player;
     }
 
@@ -78,9 +81,8 @@ public class PlayerService {
             game.setStarted(true);
             gameDao.updateGame(game);
         }
+    }
 
-
-}
     public Player getPlayerById(int playerId) {
         return playerDao.getPlayerById(playerId);
     }

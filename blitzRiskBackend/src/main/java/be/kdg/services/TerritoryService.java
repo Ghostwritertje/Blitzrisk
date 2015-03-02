@@ -1,8 +1,11 @@
 package be.kdg.services;
 
+import be.kdg.dao.TerritoryDao;
 import be.kdg.model.Territory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +15,14 @@ import java.util.Set;
 
 @Service("territoryService")
 public class TerritoryService {
+
+    @Autowired
+    private TerritoryDao territoryDao;
+
+    @Transactional
+    public Territory getTerritory(int territoryId) {
+        return territoryDao.getTerritoryById(territoryId);
+    }
 
     public Set<Territory> getTerritories () {
 
