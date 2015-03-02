@@ -29,7 +29,7 @@ public class Game {
     private List<Player> players = new ArrayList<>();
 
     //  @Cascade(CascadeType.PERSIST)
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<Turn> turns = new ArrayList<>();
 
 

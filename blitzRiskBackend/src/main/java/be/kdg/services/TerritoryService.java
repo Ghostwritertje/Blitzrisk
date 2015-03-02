@@ -25,10 +25,11 @@ public class TerritoryService {
     }
 
     @Transactional
-    public Territory addTerritory(Territory territory) {
+    public Territory updateTerritory(Territory territory) {
         territoryDao.updateTerritory(territory);
         return territory;
     }
+
 
     @Transactional
     public void removeTerritory (Territory territory){

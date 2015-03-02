@@ -1,5 +1,6 @@
 package integration.api;
 
+import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
 import be.kdg.services.*;
 import integration.MyServerConfiguration;
@@ -14,6 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jayway.restassured.RestAssured.given;
 
 /**
  * Created by Marlies on 2/03/2015.
@@ -37,64 +40,83 @@ public class EnterTurnsIT {
     public TerritoryService territoryService;
 
     private List<Player> players;
-    private Game game;
+    private int game;
     private Territory origin;
     private Territory destination;
 
-    public void setUp() {
-        try {
+    @Before
+    public void setUp() throws IllegalUserInviteException {
+
             userService.addUser("testgameuser", "testuserpass", "testgameuser@test.be");
             userService.addUser("testgameuser2", "testuserpass", "testgameuser2@test.be");
 
-            game = gameService.createNewGame();
+            Game gameObject = gameService.createNewGame();
+            game = gameObject.getId();
 
-            gameService.addUserToGame(userService.getUser("testgameuser"), game);
-            gameService.addUserToGame(userService.getUser("testgameuser2"), game);
-            players = game.getPlayers();
+            gameService.addUserToGame(userService.getUser("testgameuser"), gameObject);
+            gameService.addUserToGame(userService.getUser("testgameuser2"), gameObject);
+            players = gameObject.getPlayers();
             for (Player player: players) {
                 player.setInvitationStatus(InvitationStatus.ACCEPTED);
             }
 
-            origin = new Territory();
+            /*origin = territoryService.getNewTerritory();
             origin.setGame(game);
             origin.setNumberOfUnits(1);
             origin.setPlayer(players.get(0));
             origin.setGameKey(game.getId());
-            destination = new Territory();
+            destination = territoryService.getNewTerritory();
             destination.setGame(game);
             destination.setNumberOfUnits(1);
             destination.setPlayer(players.get(1));
             destination.setGameKey(game.getId());
             origin.addNeighbour(destination);
             destination.addNeighbour(origin);
-            territoryService.addTerritory(origin);
-            territoryService.addTerritory(destination);
+            territoryService.updateTerritory(origin);
+            territoryService.updateTerritory(destination);*/
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        gameObject.assignRandomTerritories();
+            for(Territory territory: gameObject.getTerritories()) {
+                territoryService.updateTerritory(territory);
+            }
+
+            int i = 0;
+            destination = null;
+            boolean destinationFound = false;
+            while (!destinationFound && i < gameObject.getTerritories().size()) {
+                //List <Territory> territories = game.getTerritories();
+                origin = gameObject.getTerritories().get(i);
+                for (Territory territory : origin.getNeighbourTerritories()) {
+                    if (!territory.getPlayer().equals(origin.getPlayer())) {
+                        destination = territory;
+                        destinationFound = true;
+                    }
+
+                }
+                i++;
+            }
     }
 
-    @After
+   @After
     public void cleanUp() {
-        try {
-            turnService.removeTurns(game);
-            territoryService.removeTerritory(origin);
-            territoryService.removeTerritory(destination);
+        Game gameObject = gameService.getGame(game);
+            turnService.removeTurns(gameObject);
+            for(Territory territory: gameObject.getTerritories()) {
+                territoryService.removeTerritory(territory);
+            }
             for(Player player: players) {
                 playerService.removePlayer(player);
             }
-            gameService.removeGame(game);
+            gameService.removeGame(gameService.getGame(game));
             userService.removeUser("testgameuser");
             userService.removeUser("testgameuser2");
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     @Test
     public void askReinforcementNumber() {
+        destination.getPlayer();
+        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().header("X-Auth-Token", token, "playerId", 1).get(URL + "createTurn").then().assertThat().statusCode(201);
 
     }
 }

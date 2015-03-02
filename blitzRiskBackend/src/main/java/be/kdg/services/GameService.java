@@ -43,6 +43,8 @@ public class GameService {
        // game.setTerritories(territoryService.getTerritories());
 
         game.setPlayerTurn(0);
+
+        game.setTerritories(new ArrayList(territoryService.getTerritories()));
         gameDao.saveGame(game);
         return game;
     }

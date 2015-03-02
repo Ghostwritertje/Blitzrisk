@@ -35,7 +35,7 @@ public class TurnController {
     private PlayerService playerService;
 
     @RequestMapping(value = "/createTurn", method = RequestMethod.GET, produces = "application/text")
-    public int createTurn(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
+    public int createTurn(@RequestHeader("playerId") String playerId) {
         return  turnService.createTurn(Integer.parseInt(playerId)).getId();
     }
 
