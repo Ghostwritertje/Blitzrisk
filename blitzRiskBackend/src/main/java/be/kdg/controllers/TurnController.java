@@ -58,8 +58,31 @@ public class TurnController {
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public List<UpdatedTerritoriesWrapper> reinforce(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
-        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
-        List<Move> moves = new ArrayList<>();
+        Player player = playerService.getPlayer(Integer.parseInt(playerId));
+        List<Move> moves = getMoves(moveWrappers);
+        //try {
+            turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
+        //}
+        //catch (IllegalMoveException illegalMove) {
+            //log.info("illegalmove: "+illegalMove.getMessage());
+            //return null;
+        //}
+
+        return getUpdatedTerritories(moves);
+    }
+
+    @RequestMapping(value ="attack", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public List <UpdatedTerritoriesWrapper> attack(@RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+        List<Move> moves = getMoves(moveWrappers);
+        Player player = playerService.getPlayer(Integer.parseInt(playerId));
+        turnService.attack(moves.get(0).getTurn(), moves, player);
+        List<UpdatedTerritoriesWrapper> updatedTerritories = new ArrayList<>();
+        return updatedTerritories;
+    }
+
+    public List<Move> getMoves(List<MoveWrapper> moveWrappers) {
+        List <Move> moves = new ArrayList<>();
         for (MoveWrapper moveWrapper: moveWrappers) {
             Move move = new Move();
             Turn turn = turnService.getTurn(moveWrapper.getTurnId());
@@ -71,22 +94,16 @@ public class TurnController {
             move.setTurn(turn);
             moves.add(move);
         }
-        //try {
-            turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
-        //}
-        //catch (IllegalMoveException illegalMove) {
-            //log.info("illegalmove: "+illegalMove.getMessage());
-            //return null;
-        //}
+        return moves;
+    }
 
-
-
-        List <UpdatedTerritoriesWrapper> newMoveWrappers = new ArrayList<>();
+    public List<UpdatedTerritoriesWrapper> getUpdatedTerritories(List<Move> moves) {
+        List <UpdatedTerritoriesWrapper> updatedTerritories = new ArrayList<>();
         for (Move move: moves) {
-            UpdatedTerritoriesWrapper moveWrapper = new UpdatedTerritoriesWrapper(move.getOriginTerritory());
-            newMoveWrappers.add(moveWrapper);
+            UpdatedTerritoriesWrapper updatedTerritory = new UpdatedTerritoriesWrapper(move.getOriginTerritory());
+            updatedTerritories.add(updatedTerritory);
         }
-        return newMoveWrappers;
+        return updatedTerritories;
     }
 
 
