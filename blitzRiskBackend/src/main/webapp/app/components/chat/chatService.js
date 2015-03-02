@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskServices').service("ChatService", function ($q, $timeout, LoginService) {
+angular.module('blitzriskServices').service("ChatService", function ($q, $timeout) {
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -20,9 +20,9 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
         return listener.promise; //returns the deferred used to send messages at
     };
 
-    service.send = function (message, color) {
+    service.send = function (message, player) {
         var id = Math.floor(Math.random() * 1000000);
-        var userName = LoginService.getUserName();
+        alert("Sending " + message + " with color "  + player.color);
         socket.stomp.send(
             service.CHAT_BROKER,//send to "/app/chat"
             {priority: 9},
@@ -31,8 +31,8 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
                     // to check if the message was added by this client or by another client.
                     message: message,
                     id: id,
-                    userName: userName,
-                    color: color
+                    username: player.username,
+                    color: player.color
                 }
             )
         );
@@ -51,6 +51,8 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
             out = {};
         out.message = message.message;
         out.time = new Date(message.time); //sets the time as a Date object
+        out.username = message.username;
+        out.color = message.color;
 
         if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
             // then it means the message originated from this client, so it will set the self property to true.

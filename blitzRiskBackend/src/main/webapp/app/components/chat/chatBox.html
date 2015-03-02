@@ -5,10 +5,9 @@
     </div>
     <div ng-show="showChat" class="msg_wrap">
         <div class="msg_body">
-            <div ng-repeat="message in messages | orderBy:'tie':true" class="message.color"
+            <div ng-repeat="message in messages | orderBy:'tie':true" class="color-{{message.color}}"
                  ng-class="{'msg_a': message.self, 'msg_b' : !message.self}">{{message.message}}
             </div>
-
 
             <div class="msg_push"></div>
         </div>

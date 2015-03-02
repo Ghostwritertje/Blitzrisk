@@ -24,7 +24,7 @@ public class ChatController {
     @MessageMapping("/chat") //for websocket traffic
     @SendTo("/topic/message")
     public OutputMessage sendMessage(Message message){ //broadcast a message to /topic/message
-                                                       //when a message enters the messagebroker /app/chat
+                                                   //when a message enters the messagebroker /app/chat
         return new OutputMessage(message, new Date());
     }
 

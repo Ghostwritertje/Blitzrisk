@@ -8,17 +8,48 @@
 /* messages: array contains all received messages */
 /* max: the maximum allowed chars in a message */
 
-angular.module('blitzriskControllers').controller("ChatController", [ '$scope', 'ChatService', function ($scope, ChatService) {
+angular.module('blitzriskControllers').controller("ChatController", ['$scope', 'ChatService', 'LoginService', 'GameService', function ($scope, ChatService, LoginService, GameService) {
     $scope.showChat = false;
-   // $scope.messages = [{"message": "hallo", "self": true}, {"message": "jow", "self": false}, {"message": "how are u?", "self": true}, {"message": "Great, how are you?", "self": false}, {"message": "Really good, thanks!", "self": true}];
-     $scope.messages = [];
+    // $scope.messages = [{"message": "hallo", "self": true}, {"message": "jow", "self": false}, {"message": "how are u?", "self": true}, {"message": "Great, how are you?", "self": false}, {"message": "Really good, thanks!", "self": true}];
+    $scope.messages = [];
+    $scope.currentGame = {};
 
-    $scope.newMessage = "";
     $scope.max = 140;
+    var players;
+
+
+/*    function getCurrentPlayer(){
+        var username = LoginService.getUserName();
+        alert("My username : " + username +" \nUsers: First user: " + $scope.currentGame.players[0].username + ", Second user: " +  $scope.currentGame.players[1].username );
+        for(var player in $scope.currentGame.players){
+            if(player.username.localeCompare(username)){
+                return player;
+            }
+        }
+
+    }*/
+
+    function getPlayer() {
+        var username = LoginService.getUserName();
+        var length = players.length;
+        for (var i = 0; i < length; i++) {
+            alert("Player: " + players[i].username);
+            if (players[i].username == username) {
+                return players[i];
+            }
+        }
+    }
+
+    GameService.getCurrentGame()
+        .then(function (payload) {
+            $scope.currentGame = payload.data;
+            players = $scope.currentGame.players;
+        });
+
 
     //sending a message
     $scope.addMessage = function () { //called when form is submitted
-        ChatService.send($scope.newMessage); //forwards the message to the service
+       if($scope.newMessage.trim() !== "") ChatService.send($scope.newMessage, getPlayer()); //forwards the message to the service
         $scope.newMessage = ""; //empty the field, reset the message model
     };
 
@@ -31,6 +62,8 @@ angular.module('blitzriskControllers').controller("ChatController", [ '$scope', 
     $scope.showChatScreen = function () {
         $scope.showChat = !$scope.showChat;
     };
+
+
 
 }
 ]);

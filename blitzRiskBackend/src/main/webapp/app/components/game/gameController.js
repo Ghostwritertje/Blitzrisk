@@ -1,6 +1,12 @@
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
     function ($scope, GameService) {
+        $scope.game = {}; //
+
+        GameService.getCurrentGame()
+            .then(function (payload) {
+                $scope.game = payload.data;
+            });
 
     }
 ]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
@@ -36,8 +42,8 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             function initializeBoard() {
                 players = gameBoard.players;
                 var length = players.length;
-                for(var i = 0; i < length; i++){
-                    if(players[i].username == LoginService.getUserName()){
+                for (var i = 0; i < length; i++) {
+                    if (players[i].username == LoginService.getUserName()) {
                         thisPlayer = players[i];
                         break;
                     }
@@ -69,21 +75,21 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             }
 
             /*if (element[0].getSVGDocument() != null) {
-                alert("hier geraak ik 6");
-                loadGameBoard();
-                alert("hier geraak ik 1");
-                loadTerritoryLayout();
-            } else {
-                alert("hier geraak ik 7");
-                element.on("load", loadGameBoard);
-                alert("hier geraak ik 8");
-                element.on("load", loadTerritoryLayout);
-            }*/
+             alert("hier geraak ik 6");
+             loadGameBoard();
+             alert("hier geraak ik 1");
+             loadTerritoryLayout();
+             } else {
+             alert("hier geraak ik 7");
+             element.on("load", loadGameBoard);
+             alert("hier geraak ik 8");
+             element.on("load", loadTerritoryLayout);
+             }*/
 
 
             scope.changeTerritoryStyle = function (territory) {
                 scope.hideArrows();
-                if(isMyTerritory(territory)){
+                if (isMyTerritory(territory)) {
                     GameService.getTerritoryLayout().then(function (layout) {
                         showNeighbour(layout, territory);
                     });
@@ -106,7 +112,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var homeX = homeTerritory.attr("xcoord");
                 var homeY = homeTerritory.attr("ycoord");
                 for (var i = 0; i < lenght; i++) {
-                    if(neighbours[i] == 1){
+                    if (neighbours[i] == 1) {
 
                     }
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
@@ -115,18 +121,18 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     var arrowline = "M ".concat(homeX).concat(",").concat(homeY).concat(" ").concat(nX).concat(",").concat(nY);
                     var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i + 1)));
                     arrow.attr("d", arrowline);
-                    if(isMyTerritory(neighbours[i])){
+                    if (isMyTerritory(neighbours[i])) {
                         arrow.attr("class", "arrowToSelf");
-                    }else{
+                    } else {
                         arrow.attr("class", "arrowToEnemy");
                     }
                 }
             }
 
-            function isMyTerritory(territoryId){
+            function isMyTerritory(territoryId) {
                 var length = gameBoard.territories.length;
                 for (var i = 0; i < length; i++) {
-                    if(gameBoard.territories[i].key == territoryId && thisPlayer.id == gameBoard.territories[i].playerId){
+                    if (gameBoard.territories[i].key == territoryId && thisPlayer.id == gameBoard.territories[i].playerId) {
                         return true;
                     }
                 }

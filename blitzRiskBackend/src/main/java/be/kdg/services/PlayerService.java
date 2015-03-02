@@ -71,7 +71,6 @@ public class PlayerService {
 
         }
 
-        System.out.println(numberOfPlayers);
 
         if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();

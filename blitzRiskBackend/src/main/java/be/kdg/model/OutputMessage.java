@@ -11,7 +11,7 @@ public class OutputMessage extends Message { //is a message with a timestamp
     private Date time;
 
     public OutputMessage(Message original, Date time){
-        super(original.getId(),original.getMessage());
+        super(original.getId(),original.getMessage(), original.getUsername(), original.getColor());
         this.time=time;
     }
 

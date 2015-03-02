@@ -39,7 +39,7 @@
                     </div>
                     <div ng-show="selectedGameId == game.id" class="input-group">
 
-                   <input ng-keyup="addPlayerInput($event, game.id)" ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
+                        <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
 
                         <span class="input-group-btn">
                          <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="submit">Add
