@@ -102,10 +102,13 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 }
 
                 lenght = neighbours.length;
+                var homeTerritory = angular.element(element[0].getSVGDocument().getElementById(territoryId));
+                var homeX = homeTerritory.attr("xcoord");
+                var homeY = homeTerritory.attr("ycoord");
                 for (var i = 0; i < lenght; i++) {
-                    var homeTerritory = angular.element(element[0].getSVGDocument().getElementById(territoryId));
-                    var homeX = homeTerritory.attr("xcoord");
-                    var homeY = homeTerritory.attr("ycoord");
+                    if(neighbours[i] == 1){
+
+                    }
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
                     var nX = neighbourTerritory.attr("xcoord");
                     var nY = neighbourTerritory.attr("ycoord");
