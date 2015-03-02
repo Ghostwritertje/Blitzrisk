@@ -30,6 +30,15 @@ public class TurnService {
     @Autowired
     private PlayerDao playerDao;
 
+    public void removeTurns(Game game) {
+        for(Turn turn: game.getTurns()) {
+            for(Move move: turn.getMoves()) {
+                moveDao.removeMove(move);
+            }
+            turnDao.removeTurn(turn);
+        }
+    }
+
     public Turn getTurn(int turnId) {
         return turnDao.getTurnById(turnId);
     }

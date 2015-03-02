@@ -51,4 +51,8 @@ public class PlayerDao {
         query.setParameter("game", game);
         return  query.list();
     }
+
+    public void removePlayer(Player player) {
+        sessionFactory.getCurrentSession().delete(player);
+    }
 }

@@ -189,4 +189,9 @@ public class GameService {
         }*/
         return   games;
     }
+
+    @Transactional
+    public  void removeGame(Game game) {
+        gameDao.removeGame(game);
+    }
 }

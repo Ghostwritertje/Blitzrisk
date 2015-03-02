@@ -24,6 +24,17 @@ public class TerritoryService {
         return territoryDao.getTerritoryById(territoryId);
     }
 
+    @Transactional
+    public Territory addTerritory(Territory territory) {
+        territoryDao.updateTerritory(territory);
+        return territory;
+    }
+
+    @Transactional
+    public void removeTerritory (Territory territory){
+        territoryDao.removeTerritory(territory);
+    }
+
     public Set<Territory> getTerritories () {
 
         Set<Territory> territories = new HashSet<Territory>();

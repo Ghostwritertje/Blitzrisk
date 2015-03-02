@@ -33,6 +33,10 @@ public class PlayerService {
         return playerDao.getPlayerById(playerId);
     }
 
+    public void removePlayer(Player player) {
+        playerDao.removePlayer(player);
+    }
+
     public Player createPlayer (User user, Game game) throws IllegalUserInviteException {
         if(game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {

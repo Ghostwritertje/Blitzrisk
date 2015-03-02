@@ -36,4 +36,8 @@ public class MoveDao {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Move.class);
         return criteria.list();
     }
+
+    public void removeMove(Move move) {
+        sessionFactory.getCurrentSession().delete(move);
+    }
 }
