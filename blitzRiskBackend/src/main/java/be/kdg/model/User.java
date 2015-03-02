@@ -27,7 +27,7 @@ public class User implements UserDetails {
    @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<Player>();
 
     public String getName() {
@@ -59,6 +59,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.name;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 
     @Override

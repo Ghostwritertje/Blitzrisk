@@ -14,7 +14,7 @@ router.config(['$routeProvider',
         }).when('/game', {
             templateUrl: 'app/components/game/game.html',
             controller: 'GameController',
-            css: 'app/components/game/game.css'
+            css: ['app/components/game/game.css', 'app/components/chat/chat.css']
         }).when('/overview', {
             templateUrl: 'app/components/overview/overview.html',
             controller: 'OverviewController',
@@ -37,7 +37,7 @@ router.config(['$routeProvider',
 //If user is not logged in, he is send to log-in page
 router.run(function ($rootScope, $location, LoginService) {
     //Add pages here that users can access without logging in
-    var unsecuredPages = ['/login', '/register' ,'/overview', '/gamelobby'];
+    var unsecuredPages = ['/login', '/register' ];
 
 
     $rootScope.$on('$routeChangeStart', function (event, next, current) {

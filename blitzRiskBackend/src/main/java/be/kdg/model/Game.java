@@ -1,6 +1,9 @@
 package be.kdg.model;
 
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -22,6 +25,7 @@ public class Game {
 
     //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Player> players = new ArrayList<>();
 
     //  @Cascade(CascadeType.PERSIST)
@@ -32,6 +36,8 @@ public class Game {
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Territory> territories = new ArrayList<>();
+
+
 
     public List<Player> getPlayers() {
         return players;
@@ -54,10 +60,11 @@ public class Game {
     }
 
     public void setTerritories(List<Territory> territories) {
-        this.territories = territories;
-        for(Territory territory : territories){
+
+        for (Territory territory: territories){
             territory.setGame(this);
         }
+        this.territories = territories;
     }
 
     public Integer getPlayerTurn() {
@@ -88,17 +95,18 @@ public class Game {
         this.started = started;
     }
 
-    public void assignTerritoriesToPlayers() {
+    public void assignRandomTerritories() {
+     //   this.createTerritories();
 
         Collections.shuffle(territories);
-        int numberOfTerritoriesToDivide = territories.size();
-        while (numberOfTerritoriesToDivide % players.size() != 0) {
-            numberOfTerritoriesToDivide =- 1;
+
+        while (territories.size() % players.size() != 0) {
+            territories.remove(territories.size() - 1);
         }
         int i = 0;
-        for (int j = 0; j < numberOfTerritoriesToDivide; j++) {
-            territories.get(j).setPlayer(players.get(i++));
-            territories.get(j).setNumberOfUnits(1);
+        for (Territory territory : territories) {
+            territory.setPlayer(players.get(i++));
+            territory.setNumberOfUnits(1);
 
             if (i == players.size()) {
                 i = 0;

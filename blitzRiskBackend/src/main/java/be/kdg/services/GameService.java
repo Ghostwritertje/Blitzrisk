@@ -40,7 +40,8 @@ public class GameService {
     public Game createNewGame() {
         Game game = new Game();
        //Wordt al gedaan in constructor van game
-        game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
+       // game.setTerritories(territoryService.getTerritories());
+
         game.setPlayerTurn(0);
         gameDao.saveGame(game);
         return game;
@@ -177,5 +178,15 @@ public class GameService {
         if (inGame == false) {
             throw new UnAuthorizedActionException("You are not part of this game!");
         }
+    }
+
+    @Transactional
+    public List<Game> getGames(String username) {
+        User user = userDao.loadUserByUsername(username);
+        List<Game> games = gameDao.getGamesForUser(user);
+      /*  for(Game game: games){
+            game.setPlayers(playerDao.getPlayersForGame(game));
+        }*/
+        return   games;
     }
 }

@@ -112,6 +112,18 @@ public class GameController {
         return playerBeanList;
     }
 
+    @RequestMapping(value = "/user/{username}/games", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<GameWrapper> getGames(@PathVariable("username") String username) {
+        List<Game> games = gameService.getGames(username);
+        List<GameWrapper> gameWrapperList = new ArrayList<>();
+
+        for(Game game : games){
+            gameWrapperList.add(new GameWrapper(game));
+        }
+        return gameWrapperList;
+    }
+
     @RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<GameWrapper> getGame(@PathVariable("gameId") int gameId, @RequestHeader("X-Auth-Token") String token) {
         GameWrapper gameWrapper = null;

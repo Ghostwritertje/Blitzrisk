@@ -1,20 +1,29 @@
-<div ng-controller="chatCtrl">
-    <form ng-submit="addMessage()" name="messageForm"> <!-- send the message using websockets -->
-        <input type="text" placeholder="Compose a new message..." ng-model="message"/> <!-- bind the message
-        input to the message model -->
+<div ng-controller="ChatController" class="msg_box" style="right:290px">
+    <div ng-click="showChatScreen()" class="msg_head">Risk Chat
 
-        <!-- fancy Twitter-like feature: remaining max chars -->
-        <div class="info">
-            <span class="count" ng-bind="max - message.length" ng-class="{danger: message.length > max}">140</span>
-            <button ng-disabled="message.length > max || message.length === 0">Send</button>
+        <div ng-show="showChat" class="close">x</div>
+    </div>
+    <div ng-show="showChat" class="msg_wrap">
+        <div class="msg_body">
+            <div ng-repeat="message in messages | orderBy:'tie':true"
+                 ng-class="{'msg_a': message.self, 'msg_b' : !message.self}">{{message.message}}
+            </div>
+
+
+            <div class="msg_push"></div>
         </div>
-    </form>
+        <div class="msg_footer"><!--<input ng-model="message" class="msg_input" rows="4"/>-->
+            <form>
+                <div class="input-group">
+                    <input ng-model="newMessage" type="text" class="form-control">
+                        <span class="input-group-btn">
+                         <button ng-click="addMessage()" class="btn btn-default" type="submit">Send</button>
+                        </span>
+                </div>
+            </form>
+        </div>
 
-    <hr/>
+        <!--<button class="btn btn-primary btn-xs">Send</button>-->
 
-    <p ng-repeat="message in messages | orderBy:'time':true" class="message"> <!-- message are sorted by date,
-       with the most recent one at the top of the list -->
-        <time>{{message.time | date:'HH:mm'}}</time>
-        <span ng-class="{self: message.self}">{{message.message}}</span> <!-- apply self class if message is from yourself -->
-    </p>
+    </div>
 </div>

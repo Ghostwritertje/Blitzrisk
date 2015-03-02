@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User checkLoginByEmail(String mail, String password) {
-        return userDao.checkLogin(mail, password);
+        return userDao.checkLoginByEmail(mail, password);
     }
 
     //@Transactional

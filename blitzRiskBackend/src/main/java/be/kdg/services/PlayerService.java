@@ -2,12 +2,14 @@ package be.kdg.services;
 
 import be.kdg.dao.GameDao;
 import be.kdg.dao.PlayerDao;
+import be.kdg.model.*;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,23 +56,31 @@ public class PlayerService {
         playerDao.updatePlayer(player);
 
         //Check if game can begin
-        boolean everyoneAccepted = true;
-        List<Player> gamePlayers = player.getGame().getPlayers();
-        for(Player gamePlayer : gamePlayers){
-            if(!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)){
-                everyoneAccepted = false;
+        boolean ready = true;
+        List<Player> gamePlayers = playerDao.getPlayersForGame(player.getGame());
+        int numberOfPlayers = 0;
+        for (Player gamePlayer : gamePlayers) {
+            if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
+                ready = false;
             }
+            numberOfPlayers = numberOfPlayers + 1;
+
+
         }
 
-        if(everyoneAccepted && gamePlayers.size() > 1){
+        System.out.println(numberOfPlayers);
+
+        if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();
-            gameDao.saveGame(game);
-            game.assignTerritoriesToPlayers();
+            game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
+            //   gameDao.saveGame(game);
+            game.assignRandomTerritories();
             game.setStarted(true);
             gameDao.updateGame(game);
         }
-    }
 
+
+}
     public Player getPlayerById(int playerId) {
         return playerDao.getPlayerById(playerId);
     }
