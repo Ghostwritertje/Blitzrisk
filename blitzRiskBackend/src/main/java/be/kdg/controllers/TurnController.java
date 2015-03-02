@@ -58,7 +58,7 @@ public class TurnController {
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public List<UpdatedTerritoriesWrapper> reinforce(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
-        Player player = playerService.getPlayer(Integer.parseInt(playerId));
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         List<Move> moves = new ArrayList<>();
         for (MoveWrapper moveWrapper: moveWrappers) {
             Move move = new Move();
