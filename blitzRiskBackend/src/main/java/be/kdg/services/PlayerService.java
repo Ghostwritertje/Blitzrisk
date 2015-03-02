@@ -87,5 +87,16 @@ public class PlayerService {
         return playerDao.getPlayerById(playerId);
     }
 
+    public boolean isPlayerOfUser (User user, int playerId) {
+        List<Player> players = playerDao.getPlayersForUser(user);
+        boolean isPlayerOfUser = false;
+        for (Player player : players) {
+            if(player.getId() == (playerId)) {
+                isPlayerOfUser = true;
+            }
+        }
+        return isPlayerOfUser;
+    }
+
 
 }
