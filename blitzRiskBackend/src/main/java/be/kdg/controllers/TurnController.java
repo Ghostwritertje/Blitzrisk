@@ -91,6 +91,39 @@ public class TurnController {
         }
         return new ResponseEntity<>(newMoveWrappers ,HttpStatus.OK);
     }
+    
+    @RequestMapping(value ="attack", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public List <UpdatedTerritoriesWrapper> attack(@RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+        List<Move> moves = getMoves(moveWrappers);
+        Player player = playerService.getPlayer(Integer.parseInt(playerId));
+        turnService.attack(moves.get(0).getTurn(), moves, player);
+        List<UpdatedTerritoriesWrapper> updatedTerritories = new ArrayList<>();
+        return updatedTerritories;
+    }
 
+    public List<Move> getMoves(List<MoveWrapper> moveWrappers) {
+        List <Move> moves = new ArrayList<>();
+        for (MoveWrapper moveWrapper: moveWrappers) {
+            Move move = new Move();
+            Turn turn = turnService.getTurn(moveWrapper.getTurnId());
+            Territory origin = territoryService.getTerritory(moveWrapper.getOrigin());
+            Territory destination = territoryService.getTerritory(moveWrapper.getDestination());
+            move.setDestinationTerritory(destination);
+            move.setOriginTerritory(origin);
+            move.setNumberOfUnitsToAttack(moveWrapper.getUnits());
+            move.setTurn(turn);
+            moves.add(move);
+        }
+        return moves;
+    }
 
+    public List<UpdatedTerritoriesWrapper> getUpdatedTerritories(List<Move> moves) {
+        List <UpdatedTerritoriesWrapper> updatedTerritories = new ArrayList<>();
+        for (Move move: moves) {
+            UpdatedTerritoriesWrapper updatedTerritory = new UpdatedTerritoriesWrapper(move.getOriginTerritory());
+            updatedTerritories.add(updatedTerritory);
+        }
+        return updatedTerritories;
+    }
 }
