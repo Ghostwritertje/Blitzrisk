@@ -2,28 +2,6 @@
 angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
     function ($scope, GameService) {
 
-
-
-        $scope.testClass = function () {
-            alert("test");
-            var land = angular.element(this.getSVGDocument().getElementById("path5004"));
-            land.removeClass("neutralcolor");
-            land.addClass("player1color");
-
-        };
-        $scope.doClick = function () {
-            alert("clicked");
-        };
-
-        /*function init(){
-         alert("test");
-         var territoryLayoutPromise = GameService.getTerritoryLayout();
-         territoryLayoutPromise.then(function(data){
-         alert("jeej");
-         }).catch(function(data){alert("aaah");})
-         };
-
-         init();*/
     }
 ]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
     return {
@@ -45,18 +23,13 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 GameService.getCurrentGame()
                     .then(function (payload) {
                         gameBoard = payload.data;
-                        alert("hier geraak ik 5");
                         initializeBoard();
                     });
-                alert("geraak ik hier dan wel?");
-                //initializeBoard();
             }
 
             function loadTerritoryLayout() {
-                alert("hier geraak ik 2");
                 GameService.loadTerritoryLayout()
                     .then(function (payload) {
-                        alert("hier geraak ik 3");
                     });
             }
 
