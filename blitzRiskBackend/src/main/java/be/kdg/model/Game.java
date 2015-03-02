@@ -36,9 +36,7 @@ public class Game {
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Territory> territories = new ArrayList<>();
-
-
-
+    
     public List<Player> getPlayers() {
         return players;
     }
