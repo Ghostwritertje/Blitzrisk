@@ -63,7 +63,7 @@ public class CreateGameIT {
     public void testCreateGame() {
 
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        given().header("X-Auth-Token", token).get(URL + "createGame").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "createGame").then().assertThat().statusCode(201);
 
     }
 
@@ -121,7 +121,7 @@ public class CreateGameIT {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "testgameuser2").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "testgameuser2").then().assertThat().statusCode(202);
 
         List<Player> players = gameService.getPlayers("testgameuser");
         for (Player player : players) {
@@ -133,6 +133,7 @@ public class CreateGameIT {
 
 
         List<Player> playersForUser2 = gameService.getPlayers("testgameuser2");
+        token = given().header("name", "testgameuser2").header("password", "testuserpass").get(URL + "login").getBody().asString();
         for (Player player : playersForUser2) {
             if (player.getInvitationStatus().equals(InvitationStatus.PENDING))
                 given().header("X-Auth-Token", token).put(URL + "acceptGame/" + player.getId()).then().assertThat().statusCode(200);

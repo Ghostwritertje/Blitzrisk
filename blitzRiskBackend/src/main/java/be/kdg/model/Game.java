@@ -65,7 +65,6 @@ public class Game {
             territory.setGame(this);
         }
         this.territories = territories;
-
     }
 
     public Integer getPlayerTurn() {
