@@ -93,7 +93,7 @@ public class GameControllerIT {
     public void testInviteNonExistingUser() {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        assertNotEquals(200, given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "nonexistinguser").statusCode());
+        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "nonexistinguser").statusCode();
         given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
 
     }
