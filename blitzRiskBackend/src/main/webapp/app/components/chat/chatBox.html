@@ -1,19 +1,29 @@
+<div ng-controller="ChatController" class="msg_box" style="right:290px">
+    <div ng-click="showChatScreen()" class="msg_head">Risk Chat
 
-<div class="msg_box" style="right:290px">
-    <div class="msg_head">Risk Chat
-        <div class="close">x</div>
+        <div ng-show="showChat" class="close">x</div>
     </div>
-    <div class="msg_wrap">
-        <div class="msg_body" ng-repeat="message in messages | orderBy:'tie':true">
-            <div class="msg_a" ng-if="message.self">
-                {{message.message}}
+    <div ng-show="showChat" class="msg_wrap">
+        <div class="msg_body">
+            <div ng-repeat="message in messages | orderBy:'tie':true"
+                 ng-class="{'msg_a': message.self, 'msg_b' : !message.self}">{{message.message}}
             </div>
-            <div class="msg_b" ng-if="!message.self">{{message.message}}</div>
-            <div class="msg_a">This is from A	</div>
-            <div class="msg_b">This is from B, and its amazingly kool nah... i know it even i liked it :)</div>
-            <div class="msg_a">Wow, Thats great to hear from you man </div>
+
+
             <div class="msg_push"></div>
         </div>
-        <div class="msg_footer"><textarea class="msg_input" rows="4"></textarea></div>
+        <div class="msg_footer"><!--<input ng-model="message" class="msg_input" rows="4"/>-->
+            <form>
+                <div class="input-group">
+                    <input ng-model="newMessage" type="text" class="form-control">
+                        <span class="input-group-btn">
+                         <button ng-click="addMessage()" class="btn btn-default" type="submit">Send</button>
+                        </span>
+                </div>
+            </form>
+        </div>
+
+        <!--<button class="btn btn-primary btn-xs">Send</button>-->
+
     </div>
 </div>

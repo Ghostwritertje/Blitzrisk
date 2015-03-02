@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class GameControllerIT {
+public class CreateGameIT {
     private final String URL = MyServerConfiguration.getURL() + "api/";
 
 
@@ -93,7 +93,7 @@ public class GameControllerIT {
     public void testInviteNonExistingUser() {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         String gameId = given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "nonexistinguser").statusCode();
+        given().header("X-Auth-Token", token).post(URL + "game/" + gameId + "/invite/" + "nonexistinguser");
         given().header("X-Auth-Token", token).get(URL + "game/" + gameId).then().body("started", equalTo(false));
 
     }

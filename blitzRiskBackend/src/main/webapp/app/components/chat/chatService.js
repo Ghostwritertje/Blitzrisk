@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskServices').service("ChatService",function($q, $timeout){
+angular.module('blitzriskServices').service("ChatService", function ($q, $timeout) {
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -16,20 +16,20 @@ angular.module('blitzriskServices').service("ChatService",function($q, $timeout)
     service.CHAT_BROKER = "/blitzrisk/chat";
 
     /* PUBLIC FUNCTIONS */
-    service.receive = function() {
+    service.receive = function () {
         return listener.promise; //returns the deferred used to send messages at
-    }
+    };
 
-    service.send = function(message){
-        var id = Math.floor(Math.random()*1000000);
+    service.send = function (message) {
+        var id = Math.floor(Math.random() * 1000000);
         socket.stomp.send(
             service.CHAT_BROKER,//send to "/app/chat"
-            { priority: 9 },
+            {priority: 9},
             JSON.stringify(
                 { //stringified JSON with ID, so that it can be used by the getMessage() function
-                            // to check if the message was added by this client or by another client.
-                message: message,
-                id: id
+                    // to check if the message was added by this client or by another client.
+                    message: message,
+                    id: id
                 }
             )
         );
@@ -37,34 +37,34 @@ angular.module('blitzriskServices').service("ChatService",function($q, $timeout)
     };
 
     /* PRIVATE FUNCTIONS */
-    var reconnect = function(){ //reconnect after 30 seconds
-        $timeout(function(){
+    var reconnect = function () { //reconnect after 30 seconds
+        $timeout(function () {
             initialize();
         }, this.RECONNECT_TIMEOUT);
     };
 
-    var getMessage = function(data) { //translates the websocket data body (payload) to the model required by the controller
+    var getMessage = function (data) { //translates the websocket data body (payload) to the model required by the controller
         var message = JSON.parse(data),//parse the JSON string to an object
-        out = {};
+            out = {};
         out.message = message.message;
         out.time = new Date(message.time); //sets the time as a Date object
 
-        if(_.contains(messageIds, message.id)){ //If the message ID is listed in the messageIds array,
-        // then it means the message originated from this client, so it will set the self property to true.
+        if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
+            // then it means the message originated from this client, so it will set the self property to true.
             out.self = true;
             messageIds = _.remove(messageIds, message.id); //remove id so it is available again
         }
         return out;
     };
 
-    var startListener = function() { //listens to /topic/message topic on which all messages will be received.
-        socket.stomp.subscribe(service.CHAT_TOPIC, function(data){ // /topic/message
+    var startListener = function () { //listens to /topic/message topic on which all messages will be received.
+        socket.stomp.subscribe(service.CHAT_TOPIC, function (data) { // /topic/message
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
         });
-        service.send("aah");
+     //   service.send("aah");
     };
 
-    var initialize = function(){
+    var initialize = function () {
         socket.client = new SockJS(service.SOCKET_URL); //setup SocksJS websocket client "/spring-ng-chat2/chat"
         socket.stomp = Stomp.over(socket.client); //SocksJS websocket client will be used for the Stomp.js websocket client,
         //allows JSON + subscribe to topic + publish topic
