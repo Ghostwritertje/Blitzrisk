@@ -35,8 +35,7 @@ public class Player {
     @JoinColumn(name = "gameId")
     private Game game;
 
-    //@OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
-    @OneToMany(mappedBy = "player")
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<Territory> territories = new HashSet<Territory>();
 
     @OneToMany(mappedBy = "player")

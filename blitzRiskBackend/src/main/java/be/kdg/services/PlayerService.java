@@ -70,9 +70,9 @@ public class PlayerService {
         if (ready && numberOfPlayers > 1) {
             Game game = player.getGame();
             //   gameDao.saveGame(game);
-            //game.assignRandomTerritories();
+            game.assignRandomTerritories();
             gameDao.saveGame(game);
-            game.assignTerritoriesToPlayers();
+            //game.assignTerritoriesToPlayers();
             game.setStarted(true);
             gameDao.updateGame(game);
         }

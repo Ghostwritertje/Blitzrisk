@@ -37,8 +37,9 @@ public class GameService {
     @Transactional
     public Game createNewGame() {
         Game game = new Game();
-       //Wordt al gedaan in constructor van game
-        game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
+        //Wordt al gedaan in constructor van game
+        // game.setTerritories(territoryService.getTerritories());
+
         game.setPlayerTurn(0);
         gameDao.saveGame(game);
         return game;
