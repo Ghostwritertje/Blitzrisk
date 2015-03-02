@@ -17,6 +17,34 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             angular.element(document).ready(function () {
                 loadGameBoard();
                 loadTerritoryLayout();
+                var regiontext = angular.element(element[0].getSVGDocument().getElementById("19-text"));
+                regiontext.attr("coord", "dit werkt");
+                //regiontext.nodeValue = "2";
+                /*function clickRegion(regionid) {
+                    //Android.clickRegion(regionid);
+                    //document.getElementById("mysvg").getElementById(regionid).className='player1color';
+                    // Get the Object by ID
+                    var a = document.getElementById("mysvg");
+                    // Get the SVG document inside the Object tag
+                    var svgDoc = a.contentDocument;
+                    // Get one of the SVG items by ID;
+                    //var qty = parseInt(document.getElementById("qty").value);
+                    var svgItem = svgDoc.getElementById(regionid);
+                    // Set the colour to something else
+                    //svgItem.attr("class","player1color");
+
+                    //svgItem.setAttribute('class','player1color');
+                    var l = document.getElementById('thecolor')
+                    var thecolor = l.options[l.selectedIndex].text;
+                    svgItem.setAttribute('class',thecolor);
+                    svgItem.innerHTML = 'AA';
+                    //svgItem.setAttribute('fill',thecolor);
+
+                    console.log("onload executed");
+                    console.log(svgDoc.getElementById(regionid).getAttribute("xcoord"));
+
+                }*/
+                alert("text change");
             });
 
             function loadGameBoard() {
@@ -68,19 +96,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 }
             }
 
-            /*if (element[0].getSVGDocument() != null) {
-                alert("hier geraak ik 6");
-                loadGameBoard();
-                alert("hier geraak ik 1");
-                loadTerritoryLayout();
-            } else {
-                alert("hier geraak ik 7");
-                element.on("load", loadGameBoard);
-                alert("hier geraak ik 8");
-                element.on("load", loadTerritoryLayout);
-            }*/
-
-
             scope.changeTerritoryStyle = function (territory) {
                 scope.hideArrows();
                 if(isMyTerritory(territory)){
@@ -105,21 +120,36 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var homeTerritory = angular.element(element[0].getSVGDocument().getElementById(territoryId));
                 var homeX = homeTerritory.attr("xcoord");
                 var homeY = homeTerritory.attr("ycoord");
+                var arrowId = 1;
                 for (var i = 0; i < lenght; i++) {
-                    if(neighbours[i] == 1){
-
-                    }
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
-                    var nX = neighbourTerritory.attr("xcoord");
-                    var nY = neighbourTerritory.attr("ycoord");
-                    var arrowline = "M ".concat(homeX).concat(",").concat(homeY).concat(" ").concat(nX).concat(",").concat(nY);
-                    var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i + 1)));
-                    arrow.attr("d", arrowline);
-                    if(isMyTerritory(neighbours[i])){
-                        arrow.attr("class", "arrowToSelf");
+                    var nX = null;
+                    var nY = null;
+                    if(neighbours[i] == 1 && territoryId == 30){
+                        drawArrow(arrowId, homeX, homeY, "1533.75", homeY, 1);
+                        arrowId++;
+                        drawArrow(arrowId, "0", neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 1);
+                        arrowId++;
+                    }else if(neighbours[i] == 30 && territoryId == 1){
+                        drawArrow(arrowId, homeX, homeY, "0", homeY, 30);
+                        arrowId++;
+                        drawArrow(arrowId,  "1533.75",  neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 30);
+                        arrowId++;
                     }else{
-                        arrow.attr("class", "arrowToEnemy");
+                        drawArrow(arrowId, homeX, homeY, neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), neighbours[i]);
+                        arrowId++;
                     }
+                }
+            }
+
+            function drawArrow(arrowId, fromX, fromY, toX, toY, destinationTerritoryId){
+                var arrowline = "M ".concat(fromX).concat(",").concat(fromY).concat(" ").concat(toX).concat(",").concat(toY);
+                var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(arrowId)));
+                arrow.attr("d", arrowline);
+                if(isMyTerritory(destinationTerritoryId)){
+                    arrow.attr("class", "arrowToSelf");
+                }else{
+                    arrow.attr("class", "arrowToEnemy");
                 }
             }
 
