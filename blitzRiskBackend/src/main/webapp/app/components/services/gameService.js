@@ -10,17 +10,11 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
         var currentGameId = null;
         var territoryLayout = null;
 
-        /*function loadTerritoryLayout(){
-            alert("loadterritorie");
-            return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data; alert("success"+data+ "data 1" + data[1].territoryKey + "datat eagain" + data.data + "data test" +data.data[1].territoryKey);});
-        }
-        loadTerritoryLayout();*/
-
         return {
             loadTerritoryLayout: function(){
                 alert("loadterritorie");
                 var defer = $q.defer();
-                $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){ defer.resolve(data); territoryLayout = data; alert("success data 1" + data[1].territoryKey +  "data test" +data.data[1].territoryKey);}).error(function(data, status){defer.reject(status)});
+                $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){ defer.resolve(data); territoryLayout = data;}).error(function(data, status){defer.reject(status)});
                 return defer.promise;
             },
             getTerritoryLayout: function () {
@@ -34,19 +28,12 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                     alert(territoryLayout[2].territoryKey);
                 }
                 return defer.promise;
-
-                //return $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){territoryLayout = data.data});
             },
             getGamesList: function () {
                 var deferred = $q.defer();  //maak promise
 
                 var username = LoginService.getUserName();
 
-              /*  $http.get('api/user/' + username + '/players', {headers: {'X-Auth-Token': LoginService.getToken()}})
-                    .success(function (data) {
-                        deferred.resolve(data);
-                    });
-*/
                 $http.get('api/user/' + username + '/games', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         deferred.resolve(data);
@@ -64,12 +51,6 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                 return $http.put('api/acceptGame/' + playerId, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             },
             setCurrentGame: function (gameId) {
-                /*var deferred = $q.defer();
-                 $http.get('api/game/' + gameId, {headers: {'X-Auth-Token': securityToken}}).success(function (data){
-                 currentGame = data;
-                 deferred.resolve();
-                 });
-                 return deferred.promise;*/
                 currentGameId = gameId;
             },
             getCurrentGame: function () {
