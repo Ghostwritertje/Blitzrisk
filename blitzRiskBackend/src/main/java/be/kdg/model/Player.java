@@ -29,11 +29,11 @@ public class Player {
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gameId")
     private Game game;
 
-    @OneToMany(mappedBy = "player")
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<Territory> territories = new HashSet<Territory>();
 
     @OneToMany(mappedBy = "player")
@@ -81,5 +81,17 @@ public class Player {
 
     public void setInvitationStatus(InvitationStatus invitationStatus) {
         this.invitationStatus = invitationStatus;
+    }
+
+    public List<Turn> getTurns() {
+        return turns;
+    }
+
+    public void setTurns(List<Turn> turns) {
+        this.turns = turns;
+    }
+
+    public void addTurn(Turn turn) {
+        turns.add(turn);
     }
 }

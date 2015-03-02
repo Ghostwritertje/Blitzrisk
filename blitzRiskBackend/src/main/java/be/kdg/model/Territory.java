@@ -21,16 +21,17 @@ public class Territory {
     private Integer numberOfUnits;
     private Integer gameKey;
 
-    @Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    //@Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
 
-    //@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
+    //@Cascade(value=CascadeType.PERSIST)
     @OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 
+    //@Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name= "gameId")
     private Game game;

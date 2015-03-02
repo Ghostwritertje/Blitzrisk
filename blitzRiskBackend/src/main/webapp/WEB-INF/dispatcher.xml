@@ -47,7 +47,7 @@
         <security:intercept-url method="DELETE" pattern="/api/**" access="hasRole('user')"/>
     </security:http>
 
-    <security:authentication-manager  id="authenticationManager">
+    <security:authentication-manager id="authenticationManager">
         <security:authentication-provider user-service-ref="userServiceImpl">
         </security:authentication-provider>
     </security:authentication-manager>

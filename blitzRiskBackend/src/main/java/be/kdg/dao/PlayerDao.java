@@ -22,6 +22,10 @@ public class PlayerDao {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
     public void savePlayer(Player player) {
         sessionFactory.getCurrentSession().save(player);
     }
