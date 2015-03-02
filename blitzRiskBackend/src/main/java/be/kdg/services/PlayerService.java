@@ -58,28 +58,6 @@ public class PlayerService {
         player.setInvitationStatus(InvitationStatus.ACCEPTED);
         playerDao.updatePlayer(player);
 
-        //Check if game can begin
-        boolean ready = true;
-        List<Player> gamePlayers = playerDao.getPlayersForGame(player.getGame());
-        int numberOfPlayers = 0;
-        for (Player gamePlayer : gamePlayers) {
-            if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
-                ready = false;
-            }
-            numberOfPlayers = numberOfPlayers + 1;
-
-
-        }
-
-
-        if (ready && numberOfPlayers > 1) {
-            Game game = player.getGame();
-            game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
-            //   gameDao.saveGame(game);
-            game.assignRandomTerritories();
-            game.setStarted(true);
-            gameDao.updateGame(game);
-        }
     }
 
     public Player getPlayerById(int playerId) {

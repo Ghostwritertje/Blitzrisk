@@ -31,6 +31,7 @@ public class TestUserService {
 
     public static void loginUser(WebDriver driver, String username, String password){
         driver.get(MyServerConfiguration.getURL() + "#/login");
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement usernameElement = driver.findElement(By.id("username"));
         usernameElement.sendKeys(username);
         WebElement passwordElement = driver.findElement(By.id("password"));

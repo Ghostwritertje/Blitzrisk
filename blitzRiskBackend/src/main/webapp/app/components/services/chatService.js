@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskServices').service("ChatService", function ($q, $timeout) {
+angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'GameService', function ($q, $timeout, GameService) {
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -10,6 +10,8 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
         },
         messageIds = [];
 
+    service.gameId = 0;
+
     service.RECONNECT_TIMEOUT = 30000; //30 seconds
     service.SOCKET_URL = "/BlitzRisk/api/chat";
     service.CHAT_TOPIC = "/topic/message";
@@ -17,14 +19,15 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
 
     /* PUBLIC FUNCTIONS */
     service.receive = function () {
+        service.subscription.unsubscribe(); // stops listening to previous chatroom
+        startListener();  //starts listening again
         return listener.promise; //returns the deferred used to send messages at
     };
 
     service.send = function (message, player) {
         var id = Math.floor(Math.random() * 1000000);
-        alert("Sending " + message + " with color "  + player.color);
         socket.stomp.send(
-            service.CHAT_BROKER,//send to "/app/chat"
+            '/blitzrisk/notify/' + service.gameId,    //send to "/app/chat"
             {priority: 9},
             JSON.stringify(
                 { //stringified JSON with ID, so that it can be used by the getMessage() function
@@ -63,7 +66,7 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
     };
 
     var startListener = function () { //listens to /topic/message topic on which all messages will be received.
-        socket.stomp.subscribe(service.CHAT_TOPIC, function (data) { // /topic/message
+        service.subscription = socket.stomp.subscribe("/topic/push/" + service.gameId, function (data) { // /topic/message
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
         });
         //   service.send("aah");
@@ -81,4 +84,4 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
     initialize(); //happens exactly once because an AngularJS service is a Singleton. Each time the same instance is
     //returned.
     return service;
-});
+}]);
