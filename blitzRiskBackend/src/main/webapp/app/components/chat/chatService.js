@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskServices').service("ChatService", function ($q, $timeout) {
+angular.module('blitzriskServices').service("ChatService", function ($q, $timeout, LoginService) {
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -20,8 +20,9 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
         return listener.promise; //returns the deferred used to send messages at
     };
 
-    service.send = function (message) {
+    service.send = function (message, color) {
         var id = Math.floor(Math.random() * 1000000);
+        var userName = LoginService.getUserName();
         socket.stomp.send(
             service.CHAT_BROKER,//send to "/app/chat"
             {priority: 9},
@@ -29,7 +30,9 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
                 { //stringified JSON with ID, so that it can be used by the getMessage() function
                     // to check if the message was added by this client or by another client.
                     message: message,
-                    id: id
+                    id: id,
+                    userName: userName,
+                    color: color
                 }
             )
         );
@@ -61,7 +64,7 @@ angular.module('blitzriskServices').service("ChatService", function ($q, $timeou
         socket.stomp.subscribe(service.CHAT_TOPIC, function (data) { // /topic/message
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
         });
-     //   service.send("aah");
+        //   service.send("aah");
     };
 
     var initialize = function () {

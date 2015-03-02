@@ -38,18 +38,19 @@
 
                     </div>
                     <div ng-show="selectedGameId == game.id" class="input-group">
-                        <div class="form-group control-group has-feedback" ng-class="{'has-success': usernameState == 2}">
 
-               <input ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
-                            </div>
+                   <input ng-keyup="addPlayerInput($event, game.id)" ng-model="newUsers[game.id]" type="text" class="form-control newUserTxt">
+
                         <span class="input-group-btn">
-                         <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="button">Add
+                         <button ng-click="addPlayer(game.id)" class="addPlayerBtn btn btn-default" type="submit">Add
                          </button>
-                            <button ng-click="addRandomPlayer(game.id)" class="btn btn-default" type="button">Add Random
-                            </button>
+
+                        <button ng-click="addRandomPlayer(game.id)" class="btn btn-default" type="button">Add Random
+                        </button>
 
 
                         </span>
+
                     </div>
 
                     <!--   <button ng-click="acceptGame(player.id)" class="btn btn-info btn-xs acceptGameBtns" style="float: right;">
