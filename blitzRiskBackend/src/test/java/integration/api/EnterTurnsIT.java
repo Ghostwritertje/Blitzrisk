@@ -3,9 +3,9 @@ package integration.api;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
 import be.kdg.services.*;
+import com.jayway.restassured.http.ContentType;
 import integration.MyServerConfiguration;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,24 +58,9 @@ public class EnterTurnsIT {
             players = gameObject.getPlayers();
             for (Player player: players) {
                 player.setInvitationStatus(InvitationStatus.ACCEPTED);
+                //playerService.save(player);
             }
-
-            /*origin = territoryService.getNewTerritory();
-            origin.setGame(game);
-            origin.setNumberOfUnits(1);
-            origin.setPlayer(players.get(0));
-            origin.setGameKey(game.getId());
-            destination = territoryService.getNewTerritory();
-            destination.setGame(game);
-            destination.setNumberOfUnits(1);
-            destination.setPlayer(players.get(1));
-            destination.setGameKey(game.getId());
-            origin.addNeighbour(destination);
-            destination.addNeighbour(origin);
-            territoryService.updateTerritory(origin);
-            territoryService.updateTerritory(destination);*/
-
-        gameObject.assignRandomTerritories();
+            gameObject.assignRandomTerritories();
             for(Territory territory: gameObject.getTerritories()) {
                 territoryService.updateTerritory(territory);
             }
@@ -84,7 +69,6 @@ public class EnterTurnsIT {
             destination = null;
             boolean destinationFound = false;
             while (!destinationFound && i < gameObject.getTerritories().size()) {
-                //List <Territory> territories = game.getTerritories();
                 origin = gameObject.getTerritories().get(i);
                 for (Territory territory : origin.getNeighbourTerritories()) {
                     if (!territory.getPlayer().equals(origin.getPlayer())) {
@@ -114,9 +98,9 @@ public class EnterTurnsIT {
 
     @Test
     public void askReinforcementNumber() {
-        destination.getPlayer();
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        given().header("X-Auth-Token", token, "playerId", 1).get(URL + "createTurn").then().assertThat().statusCode(201);
-
+        given().contentType(ContentType.TEXT).headers("X-Auth-Token", token, "playerId", "1").get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
     }
+
+
 }
