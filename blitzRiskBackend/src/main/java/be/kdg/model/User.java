@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String name;
     private String password;
 
-   @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)

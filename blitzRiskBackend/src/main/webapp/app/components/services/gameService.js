@@ -12,7 +12,6 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
 
         return {
             loadTerritoryLayout: function(){
-                alert("loadterritorie");
                 var defer = $q.defer();
                 $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){ defer.resolve(data); territoryLayout = data;}).error(function(data, status){defer.reject(status)});
                 return defer.promise;
@@ -21,11 +20,8 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                 var defer = $q.defer();
                 if(territoryLayout == null){
                     loadTerritoryLayout().then(function(territoryLayout){defer.resolve(territoryLayout);});
-                    alert("t1");
                 }else{
                     defer.resolve(territoryLayout);
-                    alert("t2");
-                    alert(territoryLayout[2].territoryKey);
                 }
                 return defer.promise;
             },

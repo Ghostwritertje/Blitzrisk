@@ -24,6 +24,10 @@ public class TerritoryWrapper {
         return Id;
     }
 
+    public Integer getPlayerId() {
+        return playerId;
+    }
+
     public void setId(Integer id) {
         Id = id;
     }

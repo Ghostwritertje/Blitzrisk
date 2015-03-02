@@ -51,7 +51,7 @@ public class GameDao {
         Query query = sessionFactory.getCurrentSession().createQuery("from Game where id = :id");
         query.setParameter("id", gameId);
         return (Game) query.uniqueResult();
-      //  return (Game) sessionFactory.getCurrentSession().get(Game.class, gameId);
+        //  return (Game) sessionFactory.getCurrentSession().get(Game.class, gameId);
     }
 
     public void removeGame(Game game) {

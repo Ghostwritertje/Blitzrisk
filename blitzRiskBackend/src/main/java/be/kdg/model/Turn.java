@@ -1,12 +1,8 @@
 package be.kdg.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by user jorandeboever
@@ -34,6 +30,10 @@ public class Turn {
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
+
+    public Integer getId() {
+        return Id;
+    }
 
     public Integer getNumber() {
         return number;
