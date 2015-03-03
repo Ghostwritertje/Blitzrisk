@@ -261,7 +261,7 @@ public class TerritoryService {
 
         northernEurope.addNeighbour(greatBritain);
         northernEurope.addNeighbour(westernEurope);
-        northernEurope.addNeighbour(southAfrica);
+        northernEurope.addNeighbour(southernEurope);
         northernEurope.addNeighbour(ukraine);
         northernEurope.addNeighbour(scandinavia);
 

@@ -47,14 +47,14 @@ public class EnterTurnsIT {
     @Before
     public void setUp() throws IllegalUserInviteException {
 
-            userService.addUser("testgameuser", "testuserpass", "testgameuser@test.be");
-            userService.addUser("testgameuser2", "testuserpass", "testgameuser2@test.be");
+            userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
+            userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
 
             Game gameObject = gameService.createNewGame();
             game = gameObject.getId();
 
-            gameService.addUserToGame(userService.getUser("testgameuser"), gameObject);
-            gameService.addUserToGame(userService.getUser("testgameuser2"), gameObject);
+            gameService.addUserToGame(userService.getUser("turntestgameuser"), gameObject);
+            gameService.addUserToGame(userService.getUser("turntestgameuser2"), gameObject);
             players = gameObject.getPlayers();
             for (Player player: players) {
                 player.setInvitationStatus(InvitationStatus.ACCEPTED);
@@ -92,21 +92,21 @@ public class EnterTurnsIT {
                 playerService.removePlayer(player);
             }
             gameService.removeGame(gameService.getGame(game));
-            userService.removeUser("testgameuser");
-            userService.removeUser("testgameuser2");
+            userService.removeUser("turntestgameuser");
+            userService.removeUser("turntestgameuser2");
     }
 
     @Test
     public void askReinforcementNumber() {
-        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.TEXT).headers("X-Auth-Token", token, "playerId", "1").get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.TEXT).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
     }
 
     @Test
     public void reinforce() {
         Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
-        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
                 .request().body(moveWrapperList)

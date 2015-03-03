@@ -108,10 +108,10 @@ public class CreateGameIT {
     }
 
     @Test
-    public void testGetPlayersForUser() {
+    public void testGetGamesForUser() {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
-        given().header("X-Auth-Token", token).get(URL + "user/" + "testgameuser" + "/players").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "user/" + "testgameuser" + "/games").then().assertThat().statusCode(200);
 
 
     }

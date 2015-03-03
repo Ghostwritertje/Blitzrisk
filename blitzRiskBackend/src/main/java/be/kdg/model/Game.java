@@ -29,14 +29,14 @@ public class Game {
     private List<Player> players = new ArrayList<>();
 
     //  @Cascade(CascadeType.PERSIST)
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game")
     private List<Turn> turns = new ArrayList<>();
 
 
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Territory> territories = new ArrayList<>();
-    
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -95,7 +95,7 @@ public class Game {
     }
 
     public void assignRandomTerritories() {
-     //   this.createTerritories();
+        //   this.createTerritories();
 
         Collections.shuffle(territories);
 
