@@ -1,29 +1,35 @@
 package be.kdg.controllers;
 
 import be.kdg.model.Message;
-import be.kdg.model.OutputMessage;
+import be.kdg.model.Player;
+import be.kdg.services.MessageService;
+import be.kdg.wrappers.MessageWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
- * Created by vman on 7/02/2015.
+ * Handles the chat.
  */
 @Controller
-@RequestMapping("/") //context root, mapped to ViewApplication(), so that index.jsp is used as the view
+@RequestMapping("/")
 public class ChatController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    @Autowired
+    private MessageService messageService;
 
+/*
     @RequestMapping(method = RequestMethod.GET) //for the HTML Angular page that contains our application
     public String viewApplication() {
         return "index";
@@ -35,15 +41,33 @@ public class ChatController {
         MessageHeaderAccessor accessor = new MessageHeaderAccessor();
         accessor.setHeader("foo", "bar");
         return new OutputMessage(message, new Date());
-    }
+    }*/
 
     @MessageMapping("/notify/{gameId}") //for websocket traffic
-    //  @SendTo("/topic/message")
-    public void sendNewMessage(@DestinationVariable int gameId, Message message) { //broadcast a message to /topic/message
+    public void sendNewMessage(@DestinationVariable int gameId, MessageWrapper message) { //broadcast a message to /topic/message
         //when a message enters the messagebroker /app/chat
-        Message outputMessage = new OutputMessage(message, new Date());
+        message.setTime(new Date());
+        messageService.saveMessage(message.getMessage(), message.getTime(), message.getPlayer().getId());
 
-        template.convertAndSend("/topic/push/" + gameId, outputMessage );
+        template.convertAndSend("/topic/push/" + gameId, message);
+    }
+
+    @SubscribeMapping("/notify/{gameId}")
+    public List<MessageWrapper> chatInit(@DestinationVariable int gameId) {
+        List<MessageWrapper> messages = new ArrayList<>();
+        Player player = new Player();
+        player.setColor(5);
+        Message message = new Message();
+        message.setMessage("Welcome");
+        message.setPlayer(player);
+        messages.add( new MessageWrapper(message));
+        return messages;
+
+        /*for (Message oldMessage : messageService.getMessagesForGame(gameId)) {
+            template.convertAndSend("/topic/push/" + gameId, oldMessage);
+        }
+*/
+      //  return messages;
     }
 
 }

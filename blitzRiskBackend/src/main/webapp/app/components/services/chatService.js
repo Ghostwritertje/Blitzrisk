@@ -34,8 +34,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
                     // to check if the message was added by this client or by another client.
                     message: message,
                     id: id,
-                    username: player.username,
-                    color: player.color
+                    player: player
                 }
             )
         );
@@ -54,8 +53,8 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
             out = {};
         out.message = message.message;
         out.time = new Date(message.time); //sets the time as a Date object
-        out.username = message.username;
-        out.color = message.color;
+        out.username = message.player.username;
+        out.color = message.player.color;
 
         if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
             // then it means the message originated from this client, so it will set the self property to true.
@@ -67,7 +66,10 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
 
     var startListener = function () { //listens to /topic/message topic on which all messages will be received.
         service.subscription = socket.stomp.subscribe("/topic/push/" + service.gameId, function (data) { // /topic/message
+            alert("Message received: " + data.body);
+
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
+
         });
         //   service.send("aah");
     };
