@@ -4,6 +4,7 @@ import be.kdg.model.Message;
 import be.kdg.model.Player;
 import be.kdg.services.MessageService;
 import be.kdg.wrappers.MessageWrapper;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +25,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class ChatController {
+    private static final Logger logger = Logger.getLogger(ChatController.class);//gets logger "be.kdg.controllers.ChatController"
+
     @Autowired
     private SimpMessagingTemplate template;
 
@@ -46,28 +50,26 @@ public class ChatController {
     @MessageMapping("/notify/{gameId}") //for websocket traffic
     public void sendNewMessage(@DestinationVariable int gameId, MessageWrapper message) { //broadcast a message to /topic/message
         //when a message enters the messagebroker /app/chat
+        logger.info("Message (" + message.getMessage() + ") has been send in game (" + gameId + ")");
         message.setTime(new Date());
         messageService.saveMessage(message.getMessage(), message.getTime(), message.getPlayer().getId());
 
-        template.convertAndSend("/topic/push/" + gameId, message);
+        template.convertAndSend("/blitzrisk/topic/push/" + gameId, message);
     }
 
-    @SubscribeMapping("/notify/{gameId}")
+    @SubscribeMapping("/topic/push/{gameId}")
     public List<MessageWrapper> chatInit(@DestinationVariable int gameId) {
+        logger.info("User has subscribed!");
+
         List<MessageWrapper> messages = new ArrayList<>();
-        Player player = new Player();
-        player.setColor(5);
-        Message message = new Message();
-        message.setMessage("Welcome");
-        message.setPlayer(player);
-        messages.add( new MessageWrapper(message));
+
+        for (Message oldMessage : messageService.getMessagesForGame(gameId)) {
+            messages.add(new MessageWrapper(oldMessage));
+        }
+
         return messages;
 
-        /*for (Message oldMessage : messageService.getMessagesForGame(gameId)) {
-            template.convertAndSend("/topic/push/" + gameId, oldMessage);
-        }
-*/
-      //  return messages;
+        //  return messages;
     }
 
 }

@@ -64,7 +64,10 @@ angular.module('blitzriskControllers').controller("ChatController", ['$scope', '
     function addListener() {
         ChatService.receive().then(null, null, function (message) { //runs a deferred. Each time a message is received,
             //updates the progress part of the directive
-            $scope.messages.push(message);
+
+
+               $scope.messages.push(message);
+
         })
     }
 

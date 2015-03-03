@@ -1,7 +1,7 @@
 /**
  * Created by vman on 7/02/2015.
  */
-angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'GameService', function ($q, $timeout, GameService) {
+angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$log', 'GameService', function ($q, $timeout, $log, GameService) {
     var service = {},
         listener = $q.defer(),
         socket = {
@@ -19,13 +19,14 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
 
     /* PUBLIC FUNCTIONS */
     service.receive = function () {
-        service.subscription.unsubscribe(); // stops listening to previous chatroom
+        if (service.subscription != null) service.subscription.unsubscribe(); // stops listening to previous chatroom
         startListener();  //starts listening again
         return listener.promise; //returns the deferred used to send messages at
     };
 
     service.send = function (message, player) {
         var id = Math.floor(Math.random() * 1000000);
+        $log.log("Player " + player.username + " sends message \'" + message);
         socket.stomp.send(
             '/blitzrisk/notify/' + service.gameId,    //send to "/app/chat"
             {priority: 9},
@@ -51,24 +52,34 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
     var getMessage = function (data) { //translates the websocket data body (payload) to the model required by the controller
         var message = JSON.parse(data),//parse the JSON string to an object
             out = {};
-        out.message = message.message;
-        out.time = new Date(message.time); //sets the time as a Date object
-        out.username = message.player.username;
-        out.color = message.player.color;
 
-        if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
-            // then it means the message originated from this client, so it will set the self property to true.
-            out.self = true;
-            messageIds = _.remove(messageIds, message.id); //remove id so it is available again
+        var isArray = message.constructor === Array;
+        $log.info("Is array? " + isArray);
+
+        if ( isArray) {
+
         }
-        return out;
+        else {
+            out.message = message.message;
+            out.time = new Date(message.time); //sets the time as a Date object
+            out.username = message.player.username;
+            out.color = message.player.color;
+
+
+            if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
+                // then it means the message originated from this client, so it will set the self property to true.
+                out.self = true;
+                messageIds = _.remove(messageIds, message.id); //remove id so it is available again
+            }
+            return out;
+        }
     };
 
     var startListener = function () { //listens to /topic/message topic on which all messages will be received.
-        service.subscription = socket.stomp.subscribe("/topic/push/" + service.gameId, function (data) { // /topic/message
-            alert("Message received: " + data.body);
+        service.subscription = socket.stomp.subscribe("/blitzrisk/topic/push/" + service.gameId, function (data) { // /topic/message
 
             listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
+
 
         });
         //   service.send("aah");
@@ -78,7 +89,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', 'G
         socket.client = new SockJS(service.SOCKET_URL); //setup SocksJS websocket client "/spring-ng-chat2/chat"
         socket.stomp = Stomp.over(socket.client); //SocksJS websocket client will be used for the Stomp.js websocket client,
         //allows JSON + subscribe to topic + publish topic
-        socket.stomp.connect({}, startListener); //when the client is connected to the websocket server, the startListener
+        socket.stomp.connect({}, null); //when the client is connected to the websocket server, the startListener
         //is called
         socket.stomp.onclose = reconnect; //if connection to server is lost -> reconnect
     };

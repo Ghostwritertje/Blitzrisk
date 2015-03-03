@@ -26,7 +26,7 @@ public class TestUserService {
         element = driver.findElement(By.id("email"));
         element.sendKeys(email);
         element.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("registerSuccess")));
+        (new WebDriverWait(driver,10)).until((WebDriver d) -> d.findElement(By.id("registerSuccess")));
     }
 
     public static void loginUser(WebDriver driver, String username, String password){
@@ -37,6 +37,6 @@ public class TestUserService {
         WebElement passwordElement = driver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
         usernameElement.sendKeys(Keys.ENTER);
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> !d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/login"));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> !d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/login"));
     }
 }

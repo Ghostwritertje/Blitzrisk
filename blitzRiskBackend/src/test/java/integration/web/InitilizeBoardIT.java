@@ -61,6 +61,8 @@ public class InitilizeBoardIT {
         TestUserService.loginUser(driver, "speler1", "test");
 
         //user 1: create game
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("createGameBtn")));
+
         WebElement element = driver.findElement(By.id("createGameBtn"));
         element.click();
 
