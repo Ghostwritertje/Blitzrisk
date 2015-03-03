@@ -5,6 +5,7 @@ import be.kdg.beans.UserBean;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,14 @@ import java.util.List;
 
 @RestController
 public class UserInfoController {
+    private static final Logger logger = Logger.getLogger(ChatController.class);
+
     @Autowired
     private UserService userService;
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
     public void register(@PathVariable("username") String username, @RequestHeader("email") String email, @RequestHeader("password") String password) {
-        System.out.println("registering...");
+        logger.info(username + " is registering");
         userService.addUser(username, password, email);
 
     }
@@ -37,6 +40,7 @@ public class UserInfoController {
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
     public ResponseEntity<String> getToken(@RequestHeader String name, @RequestHeader String password) {
+        logger.info(name + " logged in.");
 
         User verifiedUser = userService.checkLogin(name, password);
         if (verifiedUser != null) {
