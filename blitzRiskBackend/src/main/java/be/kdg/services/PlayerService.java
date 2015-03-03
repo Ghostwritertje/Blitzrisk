@@ -29,6 +29,10 @@ public class PlayerService {
     @Autowired
     GameDao gameDao;
 
+    public Player getPlayer(int playerId) {
+        return playerDao.getPlayerById(playerId);
+    }
+
     public Player createPlayer (User user, Game game) throws IllegalUserInviteException {
         if(game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {
@@ -85,6 +89,17 @@ public class PlayerService {
 
     public Player getPlayerById(int playerId) {
         return playerDao.getPlayerById(playerId);
+    }
+
+    public boolean isPlayerOfUser (User user, int playerId) {
+        List<Player> players = playerDao.getPlayersForUser(user);
+        boolean isPlayerOfUser = false;
+        for (Player player : players) {
+            if(player.getId() == (playerId)) {
+                isPlayerOfUser = true;
+            }
+        }
+        return isPlayerOfUser;
     }
 
 
