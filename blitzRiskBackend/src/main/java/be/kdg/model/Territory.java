@@ -3,6 +3,7 @@ package be.kdg.model;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -35,7 +36,6 @@ public class Territory {
     @ManyToOne
     @JoinColumn(name= "gameId")
     private Game game;
-
 
     public Integer getNumberOfUnits() {
         return numberOfUnits;

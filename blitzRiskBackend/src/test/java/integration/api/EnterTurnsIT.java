@@ -60,10 +60,11 @@ public class EnterTurnsIT {
                 player.setInvitationStatus(InvitationStatus.ACCEPTED);
                 //playerService.save(player);
             }
-            gameObject.assignRandomTerritories();
-            for(Territory territory: gameObject.getTerritories()) {
-                territoryService.updateTerritory(territory);
-            }
+            //gameObject.setTerritories();
+            gameService.saveTerritories(gameObject,new ArrayList<>(territoryService.getTerritories() ));
+            //gameObject.assignRandomTerritories();
+
+
 
             int i = 0;
             destination = null;
@@ -85,12 +86,13 @@ public class EnterTurnsIT {
     public void cleanUp() {
         Game gameObject = gameService.getGame(game);
             turnService.removeTurns(gameObject);
+
             for(Territory territory: gameObject.getTerritories()) {
                 territoryService.removeTerritory(territory);
             }
-            for(Player player: players) {
-                playerService.removePlayer(player);
-            }
+       for(Player player: players) {
+           playerService.removePlayer(player);
+       }
             gameService.removeGame(gameService.getGame(game));
             userService.removeUser("turntestgameuser");
             userService.removeUser("turntestgameuser2");
@@ -98,8 +100,10 @@ public class EnterTurnsIT {
 
     @Test
     public void askReinforcementNumber() {
+        turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.TEXT).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
+
     }
 
     @Test

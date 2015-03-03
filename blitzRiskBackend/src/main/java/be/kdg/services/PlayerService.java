@@ -29,6 +29,10 @@ public class PlayerService {
     @Autowired
     GameDao gameDao;
 
+    public void removePlayer(Player player) {
+        playerDao.removePlayer(player);
+    }
+
     public Player getPlayer(int playerId) {
         return playerDao.getPlayerById(playerId);
     }
