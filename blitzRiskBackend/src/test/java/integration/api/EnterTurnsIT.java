@@ -102,5 +102,14 @@ public class EnterTurnsIT {
         given().contentType(ContentType.TEXT).headers("X-Auth-Token", token, "playerId", "1").get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
     }
 
-
+    @Test
+    public void reinforce() {
+        Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
+        String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .request().body(moveWrapperList)
+                .post(URL + "reinforce").then().assertThat().statusCode(200);
+    }
 }
