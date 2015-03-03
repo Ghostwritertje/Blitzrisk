@@ -5,7 +5,7 @@
     </div>
     <div ng-show="showChat" class="msg_wrap">
         <div class="msg_body">
-            <div ng-repeat="message in messages | orderBy:'tie':true" class="color-{{message.color}}"
+            <div ng-repeat="message in messages | orderBy:'tie':true" class="playermessage color-{{message.color}}"
                  ng-class="{'msg_a': message.self, 'msg_b' : !message.self}">{{message.message}}
             </div>
 
@@ -14,7 +14,7 @@
         <div class="msg_footer"><!--<input ng-model="message" class="msg_input" rows="4"/>-->
             <form>
                 <div class="input-group">
-                    <input ng-model="newMessage" type="text" class="form-control">
+                    <input id="newMessage" ng-model="newMessage" type="text" class="form-control">
                         <span class="input-group-btn">
                          <button ng-click="addMessage()" class="btn btn-default" type="submit">Send</button>
                         </span>

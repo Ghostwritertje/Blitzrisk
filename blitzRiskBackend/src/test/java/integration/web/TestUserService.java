@@ -18,7 +18,7 @@ public class TestUserService {
 
     public static void registerUser(WebDriver driver, String username, String password, String email) {
         driver.get(MyServerConfiguration.getURL() + "#/register");
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement element = driver.findElement(By.id("username"));
         element.sendKeys(username);
         element = driver.findElement(By.id("password"));
@@ -31,7 +31,7 @@ public class TestUserService {
 
     public static void loginUser(WebDriver driver, String username, String password){
         driver.get(MyServerConfiguration.getURL() + "#/login");
-        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("username")));
+        (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement usernameElement = driver.findElement(By.id("username"));
         usernameElement.sendKeys(username);
         WebElement passwordElement = driver.findElement(By.id("password"));

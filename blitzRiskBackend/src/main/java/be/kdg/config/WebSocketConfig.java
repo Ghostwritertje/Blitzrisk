@@ -21,9 +21,10 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config){ //where communication enters and leaves
-        config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/blitzrisk"); //, "/topic"
-        config.setUserDestinationPrefix("/blitzrisk");
+        config.enableSimpleBroker("/channel", "/game");
+      //  config.enableSimpleBroker("/blitzrisk");
+        config.setApplicationDestinationPrefixes("/game"); //, "/topic"
+        config.setUserDestinationPrefix("/game");
     }
 
     @Override

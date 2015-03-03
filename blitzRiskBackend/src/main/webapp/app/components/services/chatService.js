@@ -14,8 +14,8 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
 
     service.RECONNECT_TIMEOUT = 30000; //30 seconds
     service.SOCKET_URL = "/BlitzRisk/api/chat";
-    service.CHAT_TOPIC = "/topic/message";
-    service.CHAT_BROKER = "/blitzrisk/chat";
+    service.CHAT_TOPIC = "/game/channel/";
+    service.CHAT_BROKER = "/game/sendmessage/";
 
     /* PUBLIC FUNCTIONS */
     service.receive = function () {
@@ -27,8 +27,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
     service.send = function (message, player) {
         var id = Math.floor(Math.random() * 1000000);
         $log.log("Player " + player.username + " sends message \'" + message);
-        socket.stomp.send(
-            '/blitzrisk/notify/' + service.gameId,    //send to "/app/chat"
+        socket.stomp.send(service.CHAT_BROKER + service.gameId,    //send to "/sendmessage/XX"
             {priority: 9},
             JSON.stringify(
                 { //stringified JSON with ID, so that it can be used by the getMessage() function
@@ -49,38 +48,62 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
         }, this.RECONNECT_TIMEOUT);
     };
 
-    var getMessage = function (data) { //translates the websocket data body (payload) to the model required by the controller
-        var message = JSON.parse(data),//parse the JSON string to an object
-            out = {};
+    var getMessage = function (newMessage) { //translates the websocket data body (payload) to the model required by the controller
+        var out = {};
+        var message = {
+            "message": "hi",
+            "id": 700831,
+            "player": {"id": 1, "color": 0, "invitationStatus": "ACCEPTED", "username": "speler1"},
+            "time": 1425406605763
+        };
+        $log.log("Message: " + message);
+        message = newMessage;
+        out.message = message.message;
 
-        var isArray = message.constructor === Array;
-        $log.info("Is array? " + isArray);
 
-        if ( isArray) {
+        out.time = new Date(message.time); //sets the time as a Date object
+        out.username = message.player.username;
+        out.color = message.player.color;
 
+        if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
+            // then it means the message originated from this client, so it will set the self property to true.
+            out.self = true;
+            messageIds = _.remove(messageIds, message.id); //remove id so it is available again
         }
-        else {
-            out.message = message.message;
-            out.time = new Date(message.time); //sets the time as a Date object
-            out.username = message.player.username;
-            out.color = message.player.color;
+        return out;
 
-
-            if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
-                // then it means the message originated from this client, so it will set the self property to true.
-                out.self = true;
-                messageIds = _.remove(messageIds, message.id); //remove id so it is available again
-            }
-            return out;
-        }
     };
 
     var startListener = function () { //listens to /topic/message topic on which all messages will be received.
-        service.subscription = socket.stomp.subscribe("/blitzrisk/topic/push/" + service.gameId, function (data) { // /topic/message
+        service.subscription = socket.stomp.subscribe(service.CHAT_TOPIC + service.gameId, function (data) { // /channel/
+            var messageBox = JSON.parse(data.body);//parse the JSON string to an object
+            if (messageBox.constructor === Array) {
+                for(var i = 0; i < messageBox.length; i++) {
+                    var obj = messageBox[i];
+                    listener.notify(getMessage(obj)); //sends data to the deferred which will be used by the controllers
 
-            listener.notify(getMessage(data.body)); //sends data to the deferred which will be used by the controllers
+                }
 
 
+            }
+            else {
+                listener.notify(getMessage(messageBox)); //sends data to the deferred which will be used by the controllers
+            }
+        });
+        service.subscription = socket.stomp.subscribe("/channel/" + service.gameId, function (data) { // /channel/
+            var messageBox = JSON.parse(data.body);//parse the JSON string to an object
+            if (messageBox.constructor === Array) {
+                for(var i = 0; i < messageBox.length; i++) {
+                    var obj = messageBox[i];
+                    listener.notify(getMessage(obj)); //sends data to the deferred which will be used by the controllers
+
+                }
+
+
+            }
+            else {
+                listener.notify(getMessage(messageBox)); //sends data to the deferred which will be used by the controllers
+            }
         });
         //   service.send("aah");
     };

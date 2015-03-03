@@ -2,7 +2,10 @@ package integration.web;
 
 import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -18,12 +21,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Gunther Claessens.
+ * Selenium tests for Chat
  */
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class InitilizeBoardIT {
-    private final String URL = MyServerConfiguration.getURL();
+public class ChatIT {
     private static WebDriver driver;
     private static WebDriver driver2;
 
@@ -41,8 +43,8 @@ public class InitilizeBoardIT {
 
     @AfterClass
     public static void quitDriver() {
-     //   driver.quit();
-     //   driver2.quit();
+       // driver.quit();
+       // driver2.quit();
     }
 
     @Before
@@ -50,16 +52,8 @@ public class InitilizeBoardIT {
         TestUserService.registerUser(driver, "speler1", "test", "speler1@test.be");
         TestUserService.registerUser(driver2, "speler2", "test", "speler2@test.be");
     }
-
-
-    @After
-    public void removeSeleniumUsers() {
-
-    }
-
     @Test
-    public void testCreateGame2Players() {
-
+    public void testChatBetween2Users(){
         //Log in user 1
         TestUserService.loginUser(driver, "speler1", "test");
 
@@ -109,11 +103,45 @@ public class InitilizeBoardIT {
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/game"));
 
         //user 2: go into game
-        (new WebDriverWait(driver2, 25)).until((WebDriver d) -> d.findElements(By.className("playButton")).size() > 0);
+        (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElements(By.className("playButton")).size() > 0);
         elements = driver2.findElements(By.className("playButton"));
         elements.get(0).click();
 
-        (new WebDriverWait(driver2, 25)).until((WebDriver d) -> d.getCurrentUrl().equals(MyServerConfiguration.getURL() + "#/game"));
+        //Player 1: send chatMessage
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.className("msg_head")));
+        element = driver.findElement(By.className("msg_head"));
+        element.click();
+
+        element = driver.findElement(By.id("newMessage"));
+        element.sendKeys("Hello");
+        element.sendKeys(Keys.ENTER);
+
+        //Player 2: receive message
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.className("msg_head")));
+        element = driver2.findElement(By.className("msg_head"));
+        element.click();
+
+        (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElements(By.className("playermessage")).size() > 0);
+
+        //Player 2: send message
+        element = driver2.findElement(By.id("newMessage"));
+        element.sendKeys("Hi");
+        element.sendKeys(Keys.ENTER);
+
+        //Player 1: receive message
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElements(By.className("playermessage")).size() > 1);
+
+
+        //player 1 leave page
+        element = driver.findElement(By.id("overviewTab"));
+        element.click();
+
+        //player 1: enter game again
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElements(By.className("playButton")).size() > 0);
+        elements = driver.findElements(By.className("playButton"));
+        elements.get(0).click();
+
+        (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElements(By.className("playermessage")).size() > 1);
 
 
     }

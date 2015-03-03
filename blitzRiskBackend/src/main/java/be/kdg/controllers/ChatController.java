@@ -25,7 +25,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class ChatController {
-    private static final Logger logger = Logger.getLogger(ChatController.class);//gets logger "be.kdg.controllers.ChatController"
+        private static final Logger logger = Logger.getLogger(ChatController.class);//gets logger "be.kdg.controllers.ChatController"
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -47,17 +47,29 @@ public class ChatController {
         return new OutputMessage(message, new Date());
     }*/
 
-    @MessageMapping("/notify/{gameId}") //for websocket traffic
+    @MessageMapping("/game/sendmessage/{gameId}") //for websocket traffic
     public void sendNewMessage(@DestinationVariable int gameId, MessageWrapper message) { //broadcast a message to /topic/message
         //when a message enters the messagebroker /app/chat
-        logger.info("Message (" + message.getMessage() + ") has been send in game (" + gameId + ")");
+        logger.info(message.getPlayer().getUsername() + " sends (" + message.getMessage() + ") in game (" + gameId + ")");
         message.setTime(new Date());
         messageService.saveMessage(message.getMessage(), message.getTime(), message.getPlayer().getId());
 
-        template.convertAndSend("/blitzrisk/topic/push/" + gameId, message);
+        logger.info("Method 1: Message saved. Message being send to \"" + "/game/channel/" + gameId);
+        template.convertAndSend("/game/channel/" + gameId, message);
     }
 
-    @SubscribeMapping("/topic/push/{gameId}")
+    @MessageMapping("/sendmessage/{gameId}") //for websocket traffic
+    public void sendNewMessage2(@DestinationVariable int gameId, MessageWrapper message) { //broadcast a message to /topic/message
+        //when a message enters the messagebroker /app/chat
+        logger.info(message.getPlayer().getUsername() + " sends (" + message.getMessage() + ") in game (" + gameId + ")");
+        message.setTime(new Date());
+        messageService.saveMessage(message.getMessage(), message.getTime(), message.getPlayer().getId());
+
+        logger.info("Method 2: Message saved. Message being send to \"" + "/game/channel/" + gameId);
+        template.convertAndSend("/game/channel/" + gameId, message);
+    }
+
+    @SubscribeMapping("/channel/{gameId}")
     public List<MessageWrapper> chatInit(@DestinationVariable int gameId) {
         logger.info("User has subscribed!");
 
