@@ -2,17 +2,13 @@ package integration.web;
 
 import be.kdg.model.User;
 import integration.MyServerConfiguration;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Random;
 
 /**
- * Created by user jorandeboever
- * Date:1/03/15.
+ * Service for tests to register and log in.
  */
 public class TestUserService {
 
@@ -33,7 +29,12 @@ public class TestUserService {
         driver.get(MyServerConfiguration.getURL() + "#/login");
         (new WebDriverWait(driver, 10)).until((WebDriver d) -> d.findElement(By.id("username")));
         WebElement usernameElement = driver.findElement(By.id("username"));
-        usernameElement.sendKeys(username);
+        try {
+            usernameElement.sendKeys(username);
+        }catch (StaleElementReferenceException e){
+            usernameElement = driver.findElement(By.id("username"));
+            usernameElement.sendKeys(username);
+        }
         WebElement passwordElement = driver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
         usernameElement.sendKeys(Keys.ENTER);

@@ -39,23 +39,25 @@ public class ChatIT {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver2 = new ChromeDriver();
         driver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
     }
 
     @AfterClass
     public static void quitDriver() {
-       // driver.quit();
-       // driver2.quit();
+        driver.quit();
+        driver2.quit();
     }
 
     @Before
     public void registerUsers() {
-        TestUserService.registerUser(driver, "speler1", "test", "speler1@test.be");
-        TestUserService.registerUser(driver2, "speler2", "test", "speler2@test.be");
+        TestUserService.registerUser(driver, "chatspeler1", "test", "chatspeler1@test.be");
+        TestUserService.registerUser(driver2, "chatspeler2", "test", "chatspeler2@test.be");
     }
+
     @Test
-    public void testChatBetween2Users(){
+    public void testChatBetween2Users() {
         //Log in user 1
-        TestUserService.loginUser(driver, "speler1", "test");
+        TestUserService.loginUser(driver, "chatspeler1", "test");
 
         //user 1: create game
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("createGameBtn")));
@@ -67,7 +69,7 @@ public class ChatIT {
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElements(By.className("newUserTxt")).size() > 0);
         List<WebElement> elements = driver.findElements(By.className("newUserTxt"));
         for (WebElement e : elements) {
-            e.sendKeys("speler2");
+            e.sendKeys("chatspeler2");
         }
         (new WebDriverWait(driver, 25)).until((WebDriver d) -> d.findElements(By.className("addPlayerBtn")).size() > 0);
 
@@ -76,7 +78,7 @@ public class ChatIT {
 
 
         //Log in user 2
-        TestUserService.loginUser(driver2, "speler2", "test");
+        TestUserService.loginUser(driver2, "chatspeler2", "test");
 
         //user 2: accept game
         (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElements(By.className("gameHeader")).size() > 0);
@@ -114,7 +116,8 @@ public class ChatIT {
 
         element = driver.findElement(By.id("newMessage"));
         element.sendKeys("Hello");
-        element.sendKeys(Keys.ENTER);
+        element = driver.findElement(By.id("sendMessage"));
+        element.click();
 
         //Player 2: receive message
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.className("msg_head")));

@@ -183,31 +183,8 @@ public class GameService {
     public List<Game> getGames(String username) {
         User user = userDao.loadUserByUsername(username);
         List<Game> games = gameDao.getGamesForUser(user);
-        for (Game game : games) {
-            checkIfGameCanStart(game);
-        }
         return games;
     }
 
-    private void checkIfGameCanStart(Game game) {
-        //Check if game can begin
-        if (!game.isStarted()) {
-            boolean ready = true;
-            List<Player> gamePlayers = playerDao.getPlayersForGame(game);
-            int numberOfPlayers = 0;
-            for (Player gamePlayer : gamePlayers) {
-                if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
-                    ready = false;
-                }
-                numberOfPlayers = numberOfPlayers + 1;
-            }
-            if (ready && numberOfPlayers > 1) {
-                game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
-                //   gameDao.saveGame(game);
-                game.assignRandomTerritories();
-                game.setStarted(true);
-                gameDao.updateGame(game);
-            }
-        }
-    }
+
 }

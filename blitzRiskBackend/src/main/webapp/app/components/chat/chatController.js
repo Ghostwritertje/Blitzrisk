@@ -8,29 +8,19 @@
 /* messages: array contains all received messages */
 /* max: the maximum allowed chars in a message */
 
-angular.module('blitzriskControllers').controller("ChatController", ['$scope', 'ChatService', 'LoginService', 'GameService', function ($scope, ChatService, LoginService, GameService) {
+angular.module('blitzriskControllers').controller("ChatController", ['$scope', '$log',  'ChatService', 'LoginService', 'GameService', function ($scope,$log, ChatService, LoginService, GameService) {
     $scope.showChat = false;
-    // $scope.messages = [{"message": "hallo", "self": true}, {"message": "jow", "self": false}, {"message": "how are u?", "self": true}, {"message": "Great, how are you?", "self": false}, {"message": "Really good, thanks!", "self": true}];
     $scope.messages = [];
     $scope.currentGame = {};
+    $scope.currentUsername = "";
 
     $scope.max = 140;
     var players;
 
-
-    /*    function getCurrentPlayer(){
-     var username = LoginService.getUserName();
-     alert("My username : " + username +" \nUsers: First user: " + $scope.currentGame.players[0].username + ", Second user: " +  $scope.currentGame.players[1].username );
-     for(var player in $scope.currentGame.players){
-     if(player.username.localeCompare(username)){
-     return player;
-     }
-     }
-
-     }*/
-
     function getPlayer() {
         var username = LoginService.getUserName();
+        $log.info("Username: " + username);
+        $log.info("Players: " + players);
         var length = players.length;
         for (var i = 0; i < length; i++) {
 
@@ -62,6 +52,7 @@ angular.module('blitzriskControllers').controller("ChatController", ['$scope', '
 
     //receiving a message
     function addListener() {
+        ChatService.currentPlayerName = getPlayer().username;
         ChatService.receive().then(null, null, function (message) { //runs a deferred. Each time a message is received,
             //updates the progress part of the directive
 
@@ -70,6 +61,7 @@ angular.module('blitzriskControllers').controller("ChatController", ['$scope', '
 
         })
     }
+
 
     $scope.showChatScreen = function () {
         $scope.showChat = !$scope.showChat;

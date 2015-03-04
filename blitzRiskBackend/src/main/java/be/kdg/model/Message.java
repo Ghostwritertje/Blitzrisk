@@ -13,7 +13,6 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private String message;
-
     private Date time;
 
     @ManyToOne(fetch = FetchType.EAGER)

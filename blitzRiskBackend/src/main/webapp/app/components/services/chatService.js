@@ -11,6 +11,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
         messageIds = [];
 
     service.gameId = 0;
+    service.currentPlayerName = "";
 
     service.RECONNECT_TIMEOUT = 30000; //30 seconds
     service.SOCKET_URL = "/BlitzRisk/api/chat";
@@ -65,10 +66,10 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
         out.username = message.player.username;
         out.color = message.player.color;
 
-        if (_.contains(messageIds, message.id)) { //If the message ID is listed in the messageIds array,
+        if (message.player.username === service.currentPlayerName) { //If the message ID is listed in the messageIds array, _.contains(messageIds, message.id)
             // then it means the message originated from this client, so it will set the self property to true.
             out.self = true;
-            messageIds = _.remove(messageIds, message.id); //remove id so it is available again
+          //  messageIds = _.remove(messageIds, message.id); //remove id so it is available again
         }
         return out;
 
@@ -90,7 +91,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
                 listener.notify(getMessage(messageBox)); //sends data to the deferred which will be used by the controllers
             }
         });
-        service.subscription = socket.stomp.subscribe("/channel/" + service.gameId, function (data) { // /channel/
+      /*  service.subscription = socket.stomp.subscribe("/channel/" + service.gameId, function (data) { // /channel/
             var messageBox = JSON.parse(data.body);//parse the JSON string to an object
             if (messageBox.constructor === Array) {
                 for(var i = 0; i < messageBox.length; i++) {
@@ -104,7 +105,7 @@ angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$
             else {
                 listener.notify(getMessage(messageBox)); //sends data to the deferred which will be used by the controllers
             }
-        });
+        });*/
         //   service.send("aah");
     };
 

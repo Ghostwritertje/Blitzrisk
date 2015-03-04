@@ -5,6 +5,7 @@ import be.kdg.dao.PlayerDao;
 import be.kdg.model.*;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Created by Alexander on 20/2/2015.
  */
 @Service("playerService")
-@Transactional
 public class PlayerService {
+    private static final Logger logger = Logger.getLogger(PlayerService.class);
 
     @Autowired
     PlayerDao playerDao;
@@ -29,10 +29,11 @@ public class PlayerService {
     @Autowired
     GameDao gameDao;
 
-    public Player createPlayer (User user, Game game) throws IllegalUserInviteException {
-        if(game.getPlayers().size() != 0) {
+    @Transactional
+    public Player createPlayer(User user, Game game) throws IllegalUserInviteException {
+        if (game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {
-                if(player.getUser().getId() == user.getId()) {
+                if (player.getUser().getId() == user.getId()) {
                     throw new IllegalUserInviteException("User is already in this game");
                 }
             }
@@ -49,20 +50,52 @@ public class PlayerService {
         return player;
     }
 
+    @Transactional
     public void save(Player player) {
         playerDao.savePlayer(player);
     }
 
+    @Transactional
     public void acceptGame(int playerId) {
-        Player player = playerDao.getPlayerById(playerId);
-        player.setInvitationStatus(InvitationStatus.ACCEPTED);
-        playerDao.updatePlayer(player);
-
+        acceptGameForPlayer(playerId);
+        checkIfGameCanStart(playerId);
     }
 
+    @Transactional
     public Player getPlayerById(int playerId) {
         return playerDao.getPlayerById(playerId);
     }
 
+
+    private void acceptGameForPlayer(int playerId) {
+        Player player = playerDao.getPlayerById(playerId);
+        player.setInvitationStatus(InvitationStatus.ACCEPTED);
+        playerDao.updatePlayer(player);
+    }
+
+    private void checkIfGameCanStart(int playerId) {
+        Player player = playerDao.getPlayerById(playerId);
+        Game game = player.getGame();
+        //Check if game can begin
+        if (!game.isStarted()) {
+            boolean ready = true;
+            List<Player> gamePlayers = playerDao.getPlayersForGame(game);
+            int numberOfPlayers = 0;
+            for (Player gamePlayer : gamePlayers) {
+                if (!gamePlayer.getInvitationStatus().equals(InvitationStatus.ACCEPTED)) {
+                    ready = false;
+                }
+                numberOfPlayers = numberOfPlayers + 1;
+            }
+            if (ready && numberOfPlayers > 1) {
+                game.setTerritories(new ArrayList<>(territoryService.getTerritories()));
+                //   gameDao.saveGame(game);
+                game.assignRandomTerritories();
+                game.setStarted(true);
+                gameDao.updateGame(game);
+                logger.info("Game " + game.getId() + " has started!");
+            }
+        }
+    }
 
 }

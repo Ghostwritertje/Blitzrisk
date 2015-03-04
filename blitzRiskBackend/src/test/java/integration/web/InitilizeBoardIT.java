@@ -41,8 +41,8 @@ public class InitilizeBoardIT {
 
     @AfterClass
     public static void quitDriver() {
-     //   driver.quit();
-     //   driver2.quit();
+        driver.quit();
+        driver2.quit();
     }
 
     @Before

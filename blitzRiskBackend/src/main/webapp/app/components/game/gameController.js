@@ -1,7 +1,7 @@
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
     function ($scope, GameService) {
-        $scope.game = {}; //
+        $scope.game = {};
 
         GameService.getCurrentGame()
             .then(function (payload) {

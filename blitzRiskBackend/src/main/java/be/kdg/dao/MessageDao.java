@@ -1,8 +1,6 @@
 package be.kdg.dao;
 
-import be.kdg.model.Game;
 import be.kdg.model.Message;
-import be.kdg.model.Move;
 import be.kdg.model.Player;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -13,8 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by user jorandeboever
- * Date:2/03/15.
+ * Saves and retrieves ChatMessages in database
  */
 
 @Service("messageDao")
@@ -22,13 +19,10 @@ public class MessageDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Autowired
-    private PlayerDao playerDao;
-
-
     public List<Message> getMessagesForGame(int gameId){
-        Query query = sessionFactory.getCurrentSession().createQuery("from Message message where message.player.game.Id = :gameId");
+        Query query = sessionFactory.getCurrentSession().createQuery("from Message message where message.player.game.Id = :gameId order by message.time desc ");
         query.setParameter("gameId", gameId);
+        query.setMaxResults(30);
         return  query.list();
     }
 
@@ -40,9 +34,4 @@ public class MessageDao {
         sessionFactory.getCurrentSession().saveOrUpdate(message);
     }
 
-    public List<Message> getMessagesForPlayer(Player player) {
-        Query query = sessionFactory.getCurrentSession().createQuery("from Message message where message.player = :player");
-        query.setParameter("player", player);
-        return query.list();
-    }
 }
