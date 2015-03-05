@@ -28,8 +28,10 @@
                   <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">Overview</a></li>
               </ul>
               <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
-                  <li ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                  <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                  <li><a  href="" ng-click="changeLanguage('nl')"></span>nl</a></li>
+                  <li><a  href="" ng-click="changeLanguage('en')"></span>en</a></li>
+                  <li ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> {{ 'SIGNUP' | translate }} </a></li>
+                  <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span></a></li>
               </ul>
               <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
                   <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
@@ -50,6 +52,7 @@
   <script src="app/bower_components/angular-css/angular-css.min.js"></script>
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="app/bower_components/bootstrap/js/modal.js"></script>
+  <script src="app/bower_components/bower-angular-translate-2.6.1/angular-translate.js"></script>
   <!-- chat libraries -->
   <script src="assets/libs/sockjs-0.3.4.js"></script>
   <script src="app/bower_components/stomp/stomp.js"></script>
@@ -71,6 +74,9 @@
   <script src="app/components/services/gameService.js"></script>
   <script src="app/components/services/chatService.js"></script>
   <script src="app/components/services/loginService.js"></script>
+
+  <script src="app/components/i18n/angularTranslate.js"></script>
+
 
 
 </body>
