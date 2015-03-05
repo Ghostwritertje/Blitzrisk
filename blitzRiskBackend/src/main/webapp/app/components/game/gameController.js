@@ -23,6 +23,34 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             angular.element(document).ready(function () {
                 loadGameBoard();
                 loadTerritoryLayout();
+                var regiontext = angular.element(element[0].getSVGDocument().getElementById("19-text"));
+                regiontext.attr("coord", "dit werkt");
+                //regiontext.nodeValue = "2";
+                /*function clickRegion(regionid) {
+                    //Android.clickRegion(regionid);
+                    //document.getElementById("mysvg").getElementById(regionid).className='player1color';
+                    // Get the Object by ID
+                    var a = document.getElementById("mysvg");
+                    // Get the SVG document inside the Object tag
+                    var svgDoc = a.contentDocument;
+                    // Get one of the SVG items by ID;
+                    //var qty = parseInt(document.getElementById("qty").value);
+                    var svgItem = svgDoc.getElementById(regionid);
+                    // Set the colour to something else
+                    //svgItem.attr("class","player1color");
+
+                    //svgItem.setAttribute('class','player1color');
+                    var l = document.getElementById('thecolor')
+                    var thecolor = l.options[l.selectedIndex].text;
+                    svgItem.setAttribute('class',thecolor);
+                    svgItem.innerHTML = 'AA';
+                    //svgItem.setAttribute('fill',thecolor);
+
+                    console.log("onload executed");
+                    console.log(svgDoc.getElementById(regionid).getAttribute("xcoord"));
+
+                }*/
+                alert("text change");
             });
 
             function loadGameBoard() {
@@ -42,8 +70,8 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             function initializeBoard() {
                 players = gameBoard.players;
                 var length = players.length;
-                for (var i = 0; i < length; i++) {
-                    if (players[i].username == LoginService.getUserName()) {
+                for(var i = 0; i < length; i++){
+                    if(players[i].username == LoginService.getUserName()){
                         thisPlayer = players[i];
                         break;
                     }
@@ -75,21 +103,21 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             }
 
             /*if (element[0].getSVGDocument() != null) {
-             alert("hier geraak ik 6");
-             loadGameBoard();
-             alert("hier geraak ik 1");
-             loadTerritoryLayout();
-             } else {
-             alert("hier geraak ik 7");
-             element.on("load", loadGameBoard);
-             alert("hier geraak ik 8");
-             element.on("load", loadTerritoryLayout);
-             }*/
+                alert("hier geraak ik 6");
+                loadGameBoard();
+                alert("hier geraak ik 1");
+                loadTerritoryLayout();
+            } else {
+                alert("hier geraak ik 7");
+                element.on("load", loadGameBoard);
+                alert("hier geraak ik 8");
+                element.on("load", loadTerritoryLayout);
+            }*/
 
 
             scope.changeTerritoryStyle = function (territory) {
                 scope.hideArrows();
-                if (isMyTerritory(territory)) {
+                if(isMyTerritory(territory)){
                     GameService.getTerritoryLayout().then(function (layout) {
                         showNeighbour(layout, territory);
                     });
@@ -111,8 +139,9 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var homeTerritory = angular.element(element[0].getSVGDocument().getElementById(territoryId));
                 var homeX = homeTerritory.attr("xcoord");
                 var homeY = homeTerritory.attr("ycoord");
+                var arrowId = 1;
                 for (var i = 0; i < lenght; i++) {
-                    if (neighbours[i] == 1) {
+                    if(neighbours[i] == 1){
 
                     }
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
@@ -121,18 +150,29 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     var arrowline = "M ".concat(homeX).concat(",").concat(homeY).concat(" ").concat(nX).concat(",").concat(nY);
                     var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i + 1)));
                     arrow.attr("d", arrowline);
-                    if (isMyTerritory(neighbours[i])) {
+                    if(isMyTerritory(neighbours[i])){
                         arrow.attr("class", "arrowToSelf");
-                    } else {
+                    }else{
                         arrow.attr("class", "arrowToEnemy");
                     }
                 }
             }
 
-            function isMyTerritory(territoryId) {
+            function drawArrow(arrowId, fromX, fromY, toX, toY, destinationTerritoryId){
+                var arrowline = "M ".concat(fromX).concat(",").concat(fromY).concat(" ").concat(toX).concat(",").concat(toY);
+                var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(arrowId)));
+                arrow.attr("d", arrowline);
+                if(isMyTerritory(destinationTerritoryId)){
+                    arrow.attr("class", "arrowToSelf");
+                }else{
+                    arrow.attr("class", "arrowToEnemy");
+                }
+            }
+
+            function isMyTerritory(territoryId){
                 var length = gameBoard.territories.length;
                 for (var i = 0; i < length; i++) {
-                    if (gameBoard.territories[i].key == territoryId && thisPlayer.id == gameBoard.territories[i].playerId) {
+                    if(gameBoard.territories[i].key == territoryId && thisPlayer.id == gameBoard.territories[i].playerId){
                         return true;
                     }
                 }

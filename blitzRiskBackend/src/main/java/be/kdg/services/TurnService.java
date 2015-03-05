@@ -49,17 +49,12 @@ public class TurnService {
         turn.setGame(game);
         turn.setPlayer(player);
         turnDao.updateTurn(turn);
-        //update player en game
         return turn;
     }
 
-    public Turn createTurn(Game game, Player player,List<Move> moveList) throws IllegalMoveException {
-        //alleen attack worden
-        Turn turn = new Turn();
-        turn.setMoves(moveList);
-        turn.setPlayer(player);
-        game.addTurn(turn);
-        executeTurn(turn);
+    public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException {
+        if(!player.getId().equals(turn.getPlayer().getId())) throw new IllegalMoveException("wrong turn");
+        executeTurn(turn, moveList);
         turn.setCalculatedMoves(moveList);
         turnDao.updateTurn(turn);
         for (Move move: moveList) {
@@ -67,30 +62,30 @@ public class TurnService {
             territoryDao.updateTerritory(move.getOriginTerritory());
             territoryDao.updateTerritory(move.getDestinationTerritory());
         }
-        //game en speler ook nog updaten
         return turn;
     }
 
-    private void executeTurn(Turn turn) throws IllegalMoveException {
+    private void executeTurn(Turn turn, List<Move> moveList) throws IllegalMoveException {
 
         Player player = turn.getPlayer();
-        for (Move move : turn.getMoves()) {
-            if(!move.getOriginTerritory().getPlayer().equals(player)) {
+        for (Move move : moveList) {
+            if(!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) {
                 throw new IllegalMoveException("Illegal origin territory");
             }
             //TODO: nog niet getest?
             boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
-                if(territory.equals(move.getDestinationTerritory())) isNeighbour = true;
+                if(territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
 
-            if (move.getDestinationTerritory().getPlayer().equals(player)) throw new IllegalMoveException("Can't attack own territory");
+            if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("Can't attack own territory");
 
             if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");
 
-            Move calculatedMove = calculateMove(move);
+            calculateMove(move);
+            turn.getMoves().add(move);
         }
     }
 

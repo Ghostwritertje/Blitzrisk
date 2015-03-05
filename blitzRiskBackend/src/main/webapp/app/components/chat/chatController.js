@@ -8,7 +8,8 @@
 /* messages: array contains all received messages */
 /* max: the maximum allowed chars in a message */
 
-angular.module('blitzriskControllers').controller("ChatController", ['$scope', '$log',  'ChatService', 'LoginService', 'GameService', function ($scope,$log, ChatService, LoginService, GameService) {
+angular.module('blitzriskControllers').controller("ChatController", ['$scope', '$log',  'ChatService', 'LoginService', 'GameService',
+    function ($scope,$log, ChatService, LoginService, GameService) {
     $scope.showChat = false;
     $scope.messages = [];
     $scope.currentGame = {};
