@@ -98,7 +98,7 @@ public class EnterTurnsIT {
             userService.removeUser("turntestgameuser2");
     }
 
-    //@Test
+    @Test
     public void askReinforcementNumber() {
         turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
@@ -106,7 +106,7 @@ public class EnterTurnsIT {
 
     }
 
-    //@Test
+    @Test
     public void reinforce() {
         Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());

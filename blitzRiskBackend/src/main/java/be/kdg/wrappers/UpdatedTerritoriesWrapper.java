@@ -8,6 +8,7 @@ import be.kdg.model.Territory;
 public class UpdatedTerritoriesWrapper {
     private int gameId;
     private int territoryId;
+    private int playerId;
     private int units;
 
     public UpdatedTerritoriesWrapper(Territory territory) {
@@ -38,5 +39,13 @@ public class UpdatedTerritoriesWrapper {
 
     public void setUnits(int units) {
         this.units = units;
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 }

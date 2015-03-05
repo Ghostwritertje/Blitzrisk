@@ -142,8 +142,8 @@ public class TurnService {
             //number of units in both territories will be reduced
             move.getDestinationTerritory().setNumberOfUnits(survivingDefenders);
             move.setDestinationTerritoryRemainingNrUnits(survivingDefenders);
-            move.getOriginTerritory().setNumberOfUnits(survivingAttacckers);
-            move.setOriginTerritoryRemainingNrUnits(survivingAttacckers);
+            move.getOriginTerritory().setNumberOfUnits(originTerritoryStartingNrUnits-attackers+survivingAttacckers);
+            move.setOriginTerritoryRemainingNrUnits(originTerritoryStartingNrUnits-attackers+survivingAttacckers);
         }
 
         return move;
