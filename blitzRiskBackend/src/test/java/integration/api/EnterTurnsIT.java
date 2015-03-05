@@ -82,7 +82,7 @@ public class EnterTurnsIT {
             }
     }
 
-   @After
+    @After
     public void cleanUp() {
         Game gameObject = gameService.getGame(game);
             turnService.removeTurns(gameObject);
@@ -98,7 +98,7 @@ public class EnterTurnsIT {
             userService.removeUser("turntestgameuser2");
     }
 
-    @Test
+    //@Test
     public void askReinforcementNumber() {
         turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
@@ -106,7 +106,7 @@ public class EnterTurnsIT {
 
     }
 
-    @Test
+    //@Test
     public void reinforce() {
         Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
@@ -122,11 +122,11 @@ public class EnterTurnsIT {
         Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        String moveWrapperList = String.format("[{\"id\":2,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":1,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), destination.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":1,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
                 .request().body(moveWrapperList)
-                .post(URL + "reinforce").then().assertThat().statusCode(200);
+                .post(URL + "attack").then().assertThat().statusCode(200);
     }
 }

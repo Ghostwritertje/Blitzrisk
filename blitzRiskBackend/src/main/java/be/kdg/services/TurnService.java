@@ -82,13 +82,13 @@ public class TurnService {
                 throw new IllegalMoveException("Illegal origin territory");
             }
             //TODO: nog niet getest?
-            boolean isNeighbour = false;
+           /* boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
                 if(territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
-
+*/
             if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("Can't attack own territory");
 
             if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");
