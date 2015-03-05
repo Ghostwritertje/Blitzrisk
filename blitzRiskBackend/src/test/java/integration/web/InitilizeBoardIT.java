@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Gunther Claessens.
@@ -33,7 +34,9 @@ public class InitilizeBoardIT {
     public static void insertUser() {
         System.setProperty("webdriver.chrome.driver", MyServerConfiguration.getChromedriverlocation());
         driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver2 = new ChromeDriver();
+        driver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
     @AfterClass
@@ -61,6 +64,8 @@ public class InitilizeBoardIT {
         TestUserService.loginUser(driver, "speler1", "test");
 
         //user 1: create game
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("createGameBtn")));
+
         WebElement element = driver.findElement(By.id("createGameBtn"));
         element.click();
 

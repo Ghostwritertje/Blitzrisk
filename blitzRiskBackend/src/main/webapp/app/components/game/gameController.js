@@ -1,6 +1,12 @@
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
     function ($scope, GameService) {
+        $scope.game = {};
+
+        GameService.getCurrentGame()
+            .then(function (payload) {
+                $scope.game = payload.data;
+            });
 
     }
 ]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
@@ -96,6 +102,19 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 }
             }
 
+            /*if (element[0].getSVGDocument() != null) {
+                alert("hier geraak ik 6");
+                loadGameBoard();
+                alert("hier geraak ik 1");
+                loadTerritoryLayout();
+            } else {
+                alert("hier geraak ik 7");
+                element.on("load", loadGameBoard);
+                alert("hier geraak ik 8");
+                element.on("load", loadTerritoryLayout);
+            }*/
+
+
             scope.changeTerritoryStyle = function (territory) {
                 scope.hideArrows();
                 if(isMyTerritory(territory)){
@@ -122,22 +141,19 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var homeY = homeTerritory.attr("ycoord");
                 var arrowId = 1;
                 for (var i = 0; i < lenght; i++) {
+                    if(neighbours[i] == 1){
+
+                    }
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
-                    var nX = null;
-                    var nY = null;
-                    if(neighbours[i] == 1 && territoryId == 30){
-                        drawArrow(arrowId, homeX, homeY, "1533.75", homeY, 1);
-                        arrowId++;
-                        drawArrow(arrowId, "0", neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 1);
-                        arrowId++;
-                    }else if(neighbours[i] == 30 && territoryId == 1){
-                        drawArrow(arrowId, homeX, homeY, "0", homeY, 30);
-                        arrowId++;
-                        drawArrow(arrowId,  "1533.75",  neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 30);
-                        arrowId++;
+                    var nX = neighbourTerritory.attr("xcoord");
+                    var nY = neighbourTerritory.attr("ycoord");
+                    var arrowline = "M ".concat(homeX).concat(",").concat(homeY).concat(" ").concat(nX).concat(",").concat(nY);
+                    var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i + 1)));
+                    arrow.attr("d", arrowline);
+                    if(isMyTerritory(neighbours[i])){
+                        arrow.attr("class", "arrowToSelf");
                     }else{
-                        drawArrow(arrowId, homeX, homeY, neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), neighbours[i]);
-                        arrowId++;
+                        arrow.attr("class", "arrowToEnemy");
                     }
                 }
             }

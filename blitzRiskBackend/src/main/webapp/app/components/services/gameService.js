@@ -52,6 +52,9 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
             getCurrentGame: function () {
                 return $http.get('api/game/' + currentGameId, {headers: {'X-Auth-Token': LoginService.getToken()}})
             },
+            getCurrentGameId: function () {
+                return currentGameId;
+            },
             invitePlayerToGame: function (gameId, username) {
                 return $http.post('api/game/' + gameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
 

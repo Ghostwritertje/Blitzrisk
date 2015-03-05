@@ -37,8 +37,6 @@
 
         <!--        Chatserver met Websocket ondersteunt geen custom header  -->
         <security:intercept-url method="GET" pattern="/api/chat/**" access="permitAll"/>
-
-
         <security:intercept-url method="PUT" pattern="/api/user/*" access="permitAll"/>
         <security:intercept-url method="GET" pattern="/api/login" access="permitAll"/>
         <security:intercept-url method="GET" pattern="/api/**" access="hasRole('user')"/>

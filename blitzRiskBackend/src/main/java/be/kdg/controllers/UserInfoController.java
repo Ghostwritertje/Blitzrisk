@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 public class UserInfoController {
-    private static final Logger logger = Logger.getLogger(ChatController.class);
+    private static final Logger logger = Logger.getLogger(UserInfoController.class);
 
     @Autowired
     private UserService userService;

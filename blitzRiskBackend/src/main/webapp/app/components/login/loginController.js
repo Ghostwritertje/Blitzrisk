@@ -1,11 +1,13 @@
 'use strict';
-angular.module('blitzriskControllers').controller('LoginController', ['$scope', '$rootScope',  '$http', '$location', 'LoginService',
-    function ($scope, $rootScope, $http, $location, LoginService) {
+angular.module('blitzriskControllers').controller('LoginController', ['$scope', '$rootScope',  '$http', '$location', '$log', 'LoginService',
+    function ($scope, $rootScope, $http, $location, $log, LoginService) {
         $scope.username = '';
         $scope.password = '';
 
         $scope.busy = false;
         $scope.loginError = false;
+
+        $log.info("Hello, world!");
 
         $scope.go = function (path) {
             $location.path(path);
