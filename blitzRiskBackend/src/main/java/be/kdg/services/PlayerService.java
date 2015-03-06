@@ -34,6 +34,11 @@ public class PlayerService {
     }
 
     @Transactional
+    public void removePlayer(Player player) {
+        playerDao.removePlayer(player);
+    }
+
+    @Transactional
     public Player createPlayer(User user, Game game) throws IllegalUserInviteException {
         if (game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {

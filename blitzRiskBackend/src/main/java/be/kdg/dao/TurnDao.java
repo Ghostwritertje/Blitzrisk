@@ -28,4 +28,8 @@ public class TurnDao {
     public void updateTurn(Turn turn) {
         sessionFactory.getCurrentSession().saveOrUpdate(turn);
     }
+
+    public void removeTurn(Turn turn) {
+        sessionFactory.getCurrentSession().delete(turn);
+    }
 }
