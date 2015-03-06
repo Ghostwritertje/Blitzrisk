@@ -11,6 +11,7 @@ import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
 
 import be.kdg.wrappers.GameWrapper;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,14 +73,14 @@ public class GameController {
         try {
             gameService.checkUserInGame(gameId, user);
         } catch (UnAuthorizedActionException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
 
         Player newPlayer = null;
         try {
             newPlayer = gameService.inviteUser(userName, gameId);
         } catch (IllegalUserInviteException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(newPlayer.getUser().getUsername() , HttpStatus.ACCEPTED);
     }
@@ -91,17 +92,19 @@ public class GameController {
         try {
             gameService.checkUserInGame(gameId, user);
         } catch (UnAuthorizedActionException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
 
         Player newPlayer = null;
         newPlayer = gameService.inviteRandomUser(gameId);
-        return new ResponseEntity<String>(newPlayer.getUser().getUsername(), HttpStatus.OK);
+        return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
+  /* @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<PlayerBean> getPlayers(@PathVariable("username") String username) {
+    public List<PlayerBean> getPlayers(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        if
         List<Player> players = gameService.getPlayers(username);
         List<PlayerBean> playerBeanList = new ArrayList<>();
 
@@ -111,17 +114,21 @@ public class GameController {
 
         return playerBeanList;
     }
-
+*/
     @RequestMapping(value = "/user/{username}/games", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<GameWrapper> getGames(@PathVariable("username") String username) {
-        List<Game> games = gameService.getGames(username);
+    public ResponseEntity<List<GameWrapper>> getGames(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         List<GameWrapper> gameWrapperList = new ArrayList<>();
+        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+        if (!user.getName().equals(username)) {
+            return new ResponseEntity<>(gameWrapperList, HttpStatus.FORBIDDEN);
+        }
+        List<Game> games = gameService.getGames(username);
 
         for(Game game : games){
             gameWrapperList.add(new GameWrapper(game));
         }
-        return gameWrapperList;
+        return new ResponseEntity<>(gameWrapperList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET, produces = "application/json")
@@ -131,9 +138,9 @@ public class GameController {
         try {
             gameService.checkUserInGame(gameId, user);
         } catch (UnAuthorizedActionException e) {
-            return new ResponseEntity<GameWrapper>(gameWrapper, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(gameWrapper, HttpStatus.FORBIDDEN);
         }
         gameWrapper = new GameWrapper(gameService.getGame(gameId));
-        return new ResponseEntity<GameWrapper>(gameWrapper, HttpStatus.OK);
+        return new ResponseEntity<>(gameWrapper, HttpStatus.OK);
     }
 }

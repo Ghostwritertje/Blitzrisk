@@ -28,4 +28,8 @@ public class TerritoryDao {
     public void updateTerritory(Territory territory) {
         sessionFactory.getCurrentSession().saveOrUpdate(territory);
     }
+
+    public void removeTerritory(Territory territory) {
+        sessionFactory.getCurrentSession().delete(territory);
+    }
 }

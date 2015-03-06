@@ -20,6 +20,18 @@ public class TerritoryService {
     private TerritoryDao territoryDao;
 
     @Transactional
+    public void removeTerritory (Territory territory){
+        Set<Territory> territories = territory.getPlayer().getTerritories();
+        territoryDao.removeTerritory(territory);
+    }
+
+    @Transactional
+    public Territory updateTerritory(Territory territory) {
+        territoryDao.updateTerritory(territory);
+        return territory;
+    }
+
+    @Transactional
     public Territory getTerritory(int territoryId) {
         return territoryDao.getTerritoryById(territoryId);
     }
@@ -212,7 +224,7 @@ public class TerritoryService {
 
         brazil.addNeighbour(argentina);
         brazil.addNeighbour(venezuela);
-        brazil.addNeighbour(argentina);
+        brazil.addNeighbour(peru);
         brazil.addNeighbour(northAfrica);
 
         argentina.addNeighbour(peru);
@@ -249,7 +261,7 @@ public class TerritoryService {
 
         northernEurope.addNeighbour(greatBritain);
         northernEurope.addNeighbour(westernEurope);
-        northernEurope.addNeighbour(southAfrica);
+        northernEurope.addNeighbour(southernEurope);
         northernEurope.addNeighbour(ukraine);
         northernEurope.addNeighbour(scandinavia);
 

@@ -5,19 +5,18 @@
     </div>
     <div ng-show="showChat" class="msg_wrap">
         <div class="msg_body">
-            <div ng-repeat="message in messages | orderBy:'tie':true"
-                 ng-class="{'msg_a': message.self, 'msg_b' : !message.self}">{{message.message}}
+            <div ng-repeat="message in messages"
+                 class="{{message.self ? 'msg_a':'msg_b'}} playermessage color-{{message.color}}">{{message.message}}
             </div>
 
-
-            <div class="msg_push"></div>
+            <div id="bottom" class="msg_push"></div>
         </div>
         <div class="msg_footer"><!--<input ng-model="message" class="msg_input" rows="4"/>-->
             <form>
                 <div class="input-group">
-                    <input ng-model="newMessage" type="text" class="form-control">
+                    <input id="newMessage" ng-model="newMessage" type="text" class="form-control">
                         <span class="input-group-btn">
-                         <button ng-click="addMessage()" class="btn btn-default" type="submit">Send</button>
+                         <button id="sendMessage" ng-click="addMessage()" class="btn btn-default" type="submit">Send</button>
                         </span>
                 </div>
             </form>

@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
- * Created by vman on 7/02/2015.
+ * Configuration for the websocket
  */
 
 @Configuration
@@ -21,8 +21,10 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config){ //where communication enters and leaves
-        config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/blitzrisk");
+        config.enableSimpleBroker("/channel", "/game");
+      //  config.enableSimpleBroker("/blitzrisk");
+        config.setApplicationDestinationPrefixes("/game"); //, "/topic"
+        config.setUserDestinationPrefix("/game");
     }
 
     @Override

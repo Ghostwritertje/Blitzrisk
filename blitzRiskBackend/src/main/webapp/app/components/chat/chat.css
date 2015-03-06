@@ -68,7 +68,7 @@
 
 .msg_a{
     position:relative;
-    background:#FDE4CE;
+    /*background:#FDE4CE;*/
     padding:10px;
     min-height:10px;
     margin-bottom:5px;
@@ -81,14 +81,14 @@
     width:0px;
     height:0px;
     border: 10px solid;
-    border-color: transparent #FDE4CE transparent transparent;
+    /*border-color: transparent #FDE4CE transparent transparent;*/
     left:-20px;
     top:7px;
 }
 
 
 .msg_b{
-    background:#EEF2E7;
+    /*background:#EEF2E7;*/
     padding:10px;
     min-height:15px;
     margin-bottom:5px;
@@ -102,7 +102,67 @@
     width:0px;
     height:0px;
     border: 10px solid;
-    border-color: transparent transparent transparent #EEF2E7;
+  /*  border-color: transparent transparent transparent #EEF2E7;*/
     right:-20px;
     top:7px;
 }
+
+.color-0 {
+    background: #E3B4E8;
+}
+.color-1 {
+    background: #FFE273;
+}
+.color-2 {
+    background: #92D7F5;
+}
+.color-3 {
+    background: #FFA875;
+}
+.color-4 {
+    background: #B6F5A6;
+}
+.color-5 {
+    background: #FF7976;
+}
+
+.color-0.msg_b:after{
+    border-color: transparent transparent transparent #E3B4E8
+}
+.color-1.msg_b:after{
+    border-color: transparent transparent transparent #FFE273
+}
+.color-2.msg_b:after{
+    border-color: transparent transparent transparent #92D7F5
+}
+.color-3.msg_b:after{
+    border-color: transparent transparent transparent #FFA875
+}
+.color-4.msg_b:after{
+    border-color: transparent transparent transparent #B6F5A6
+}
+.color-5.msg_b:after{
+    border-color: transparent transparent transparent #FF7976
+}
+
+
+
+.color-0.msg_a:before{
+    border-color: transparent #E3B4E8 transparent transparent;
+}
+.color-1.msg_a:before{
+    border-color: transparent #FFE273 transparent transparent;
+}
+.color-2.msg_a:before{
+    border-color: transparent #92D7F5 transparent transparent;
+}
+.color-3.msg_a:before{
+    border-color: transparent #FFA875 transparent transparent;
+}
+.color-4.msg_a:before{
+    border-color: transparent #B6F5A6 transparent transparent;
+}
+.color-5.msg_a:before{
+    border-color: transparent #FF7976 transparent transparent;
+}
+

@@ -1,4 +1,4 @@
-#gameBoardWrapper{
+#gameBoardWrapper {
     margin-top: 52px;
     width: 100%;
     height: auto;
@@ -7,11 +7,62 @@
 }
 
 @media (max-width: 768px) {
-    #gameBoardWrapper{
+    #gameBoardWrapper {
         margin-top: 233px;
     }
 }
 
-#riskMap{
+#riskMap {
     background-image: url("../../../assets/img/boardBackground.jpg");
+}
+
+#playerDiv {
+    position: fixed;
+    bottom: 0;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.colorTab {
+    bottom:0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    margin-top: 30px;
+    border-radius: 5px 5px 5px 5px;
+}
+
+#player0 {
+    background-color: #E3B4E8;
+}
+
+#player0Active {
+    background-color: #E3B4E8;
+}
+
+#player1 {
+    background-color: #FFE273;
+}
+
+#player2 {
+    background-color: #92D7F5;
+}
+
+#player3 {
+    background-color: #FFA875;
+}
+
+#player4 {
+    background-color: #B6F5A6;
+}
+
+#player5 {
+    background-color: #FF7976;
+}
+
+.playing {
+    margin-top: 0;
+    height: 5em;
+}
+
+a {
+    color: #000000;
 }
