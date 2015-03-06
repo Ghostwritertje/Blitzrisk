@@ -70,10 +70,13 @@ public class TurnServiceTest {
         gameDao.setSessionFactory(sessionFactory);
         playerDao.setSessionFactory(sessionFactory);
         when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(game.getPlayerTurn()).thenReturn(0);
+
 
         players = new ArrayList<>();
         for (int i = 0 ; i<3 ; i++) {
             Player player = new Player();
+            player.setGame(game);
             players.add(player);
 
             Class playerClass = player.getClass();
@@ -83,6 +86,7 @@ public class TurnServiceTest {
             playerId.set(player, i + 1);
 
         }
+        when(game.getPlayers()).thenReturn(players);
 
         Territory origin = new Territory();
         Class territoryClass = origin.getClass();
