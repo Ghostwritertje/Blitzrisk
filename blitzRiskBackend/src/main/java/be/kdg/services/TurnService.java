@@ -3,12 +3,10 @@ package be.kdg.services;
 import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
-import be.kdg.wrappers.MoveWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +27,15 @@ public class TurnService {
 
     @Autowired
     private PlayerDao playerDao;
+
+    public void removeTurns(Game game) {
+        for(Turn turn: game.getTurns()) {
+            for(Move move: turn.getMoves()) {
+                moveDao.removeMove(move);
+            }
+            turnDao.removeTurn(turn);
+        }
+    }
 
     public Turn getTurn(int turnId) {
         return turnDao.getTurnById(turnId);
@@ -73,13 +80,13 @@ public class TurnService {
                 throw new IllegalMoveException("Illegal origin territory");
             }
             //TODO: nog niet getest?
-            boolean isNeighbour = false;
+           /* boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
                 if(territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
-
+*/
             if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("Can't attack own territory");
 
             if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");

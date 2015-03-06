@@ -36,6 +36,19 @@ public class GameService {
     private GameDao gameDao;
 
     @Transactional
+    public void removeGame(Game game) {
+        gameDao.removeGame(game);
+    }
+
+    @Transactional
+    public Game saveTerritories(Game game, List<Territory> territories) {
+        game.setTerritories(territories);
+        game.assignRandomTerritories();
+        gameDao.updateGame(game);
+        return game;
+    }
+
+    @Transactional
     public Game createNewGame() {
         Game game = new Game();
         //Wordt al gedaan in constructor van game
