@@ -44,8 +44,6 @@ public class TurnServiceTest {
     private @Mock Query query;
     private @Mock User user;
 
-    private Hibernate hibernate;
-
     @Autowired
     private TerritoryDao territoryDao;
     @Autowired
@@ -121,8 +119,21 @@ public class TurnServiceTest {
         move.setOriginTerritory(territories.get(0));
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, players.get(0), moves);
+        Turn turn = turnService.createTurn(game, players.get(0));
+        turn = turnService.attack(turn, moves, players.get(0));
         Assert.assertTrue("turn isn't valid", turn.getCalculatedMoves().size() == 1);
+    }
+
+    @Test(expected = IllegalMoveException.class)
+    public void wrongTurn() throws  IllegalMoveException {
+        Move move = new Move();
+        move.setNumberOfUnitsToAttack(1);
+        move.setDestinationTerritory(territories.get(1));
+        move.setOriginTerritory(territories.get(0));
+        List<Move> moves = new ArrayList<>();
+        moves.add(move);
+        Turn turn = turnService.createTurn(game, players.get(0));
+        turn = turnService.attack(turn, moves, players.get(1));
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -133,7 +144,8 @@ public class TurnServiceTest {
         move.setOriginTerritory(territories.get(0));
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        turnService.createTurn(game, players.get(2), moves);
+        Turn turn = turnService.createTurn(game, players.get(2));
+        turn = turnService.attack(turn, moves, players.get(2));
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -144,7 +156,8 @@ public class TurnServiceTest {
         move.setOriginTerritory(territories.get(0));
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        turnService.createTurn(game, players.get(0), moves);
+        Turn turn = turnService.createTurn(game, players.get(0));
+        turn = turnService.attack(turn, moves, players.get(0));
     }
 
     @Test
@@ -161,7 +174,8 @@ public class TurnServiceTest {
         for(int i = 0; i< 5; i++) {
             territories.get(0).setNumberOfUnits(40);
             territories.get(1).setNumberOfUnits(40);
-            turnService.createTurn(game, players.get(0), moves);
+            Turn turn = turnService.createTurn(game, players.get(0));
+            turn = turnService.attack(turn, moves, players.get(0));
             if (move.getDestinationTerritoryRemainingNrUnits() == 40 || move.getOriginTerritoryRemainingNrUnits() == 40) {
                 count++;
             }
@@ -183,7 +197,8 @@ public class TurnServiceTest {
         for(int i = 0; i< 5; i++) {
             territories.get(0).setNumberOfUnits(40);
             territories.get(1).setNumberOfUnits(40);
-            turnService.createTurn(game, players.get(0), moves);
+            Turn turn = turnService.createTurn(game, players.get(0));
+            turn = turnService.attack(turn, moves, players.get(0));
             if (move.getDestinationTerritoryRemainingNrUnits() == 0 || move.getOriginTerritoryRemainingNrUnits() < 2) {
                 count++;
             }
@@ -207,8 +222,8 @@ public class TurnServiceTest {
             move.setOriginTerritory(territories.get(0));
             List<Move> moves = new ArrayList<>();
             moves.add(move);
-
-            turnService.createTurn(game, players.get(0), moves);
+            Turn turn = turnService.createTurn(game, players.get(0));
+            turn = turnService.attack(turn, moves, players.get(0));
             if(move.getDestinationTerritory().getPlayer() == players.get(0)) attackersCount++;
             else defendersCount++;
         }

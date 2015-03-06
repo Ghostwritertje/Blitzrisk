@@ -1,34 +1,45 @@
 package be.kdg.model;
 
+import javax.persistence.*;
+import java.util.Date;
+
 /**
- * Created by vman on 7/02/2015.
+ * Chatmessage used to send over websockets from client to server and back.
  */
-public class Message { //the chat message itself
+@Entity
+@Table(name = "t_message")
+public class Message {
+    @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer Id;
     private String message;
-    private int id;
+    private Date time;
 
-    public Message(){
-
-    }
-
-    public Message(int id, String message){
-        this.id=id;
-        this.message=message;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "playerId")
+    private Player player;
 
     public String getMessage(){
         return message;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public void setMessage(String message){
         this.message=message;
     }
 
-    public int getId(){
-        return id;
+    public Date getTime() {
+        return time;
     }
 
-    public void setId(int id){
-        this.id=id;
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

@@ -3,7 +3,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
     function ($scope, GameService) {
 
     }
-]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
+]).directive('riskmap', ["GameService", "TurnService", "LoginService", function (GameService, TurnService, LoginService) {
     return {
         restrict: 'E',
         replace: true,
@@ -12,6 +12,9 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             var gameBoard = "";
             var players = null;
             var thisPlayer = null;
+            var gameState = "placeUnits";
+            var selectedRegion = null;
+            var numberOfUnitslef = 5;
 
             angular.element(document).ready(function () {
                 loadGameBoard();
@@ -47,6 +50,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     var region = angular.element(element[0].getSVGDocument().getElementById(gameBoard.territories[i].key));
                     var colorClass = "player".concat(getPlayer(gameBoard.territories[i].playerId).color + 1).concat("color");
                     region.attr("class", colorClass);
+
                     var id = gameBoard.territories[i].key.toString().concat("-text");
                     changeTerritoryText(id, gameBoard.territories[i].numberOfUnits);
                 }
@@ -61,12 +65,18 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 }
             }
 
-            scope.changeTerritoryStyle = function (territory) {
-                scope.hideArrows();
-                if(isMyTerritory(territory)){
-                    GameService.getTerritoryLayout().then(function (layout) {
-                        showNeighbour(layout, territory);
-                    });
+            scope.selectRegion = function(territory) {
+                if(gameState == "placeUnits") {
+                    scope.hideArrows();
+                }else if(gameState == "attack" || gameState == "move" && selectedRegion == null){
+                    scope.hideArrows();
+                    if(isMyTerritory(territory)){
+                        GameService.getTerritoryLayout().then(function (layout) {
+                            showNeighbour(layout, territory);
+                        });
+                    }
+                }else if(gameState == "attack" || gameState == "move" && selectedRegion != null){
+                    //todo popup for number of attacking units or moving units.
                 }
             };
 
@@ -88,17 +98,17 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var arrowId = 1;
                 for (var i = 0; i < lenght; i++) {
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
-                    if(neighbours[i] == 1 && territoryId == 30){
+                    if (neighbours[i] == 1 && territoryId == 30) {
                         drawArrow(arrowId, homeX, homeY, "1533.75", homeY, 1);
                         arrowId++;
                         drawArrow(arrowId, "0", neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 1);
                         arrowId++;
-                    }else if(neighbours[i] == 30 && territoryId == 1){
+                    } else if (neighbours[i] == 30 && territoryId == 1) {
                         drawArrow(arrowId, homeX, homeY, "0", homeY, 30);
                         arrowId++;
-                        drawArrow(arrowId,  "1533.75",  neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 30);
+                        drawArrow(arrowId, "1533.75", neighbourTerritory.attr("ycoord"), neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), 30);
                         arrowId++;
-                    }else{
+                    } else {
                         drawArrow(arrowId, homeX, homeY, neighbourTerritory.attr("xcoord"), neighbourTerritory.attr("ycoord"), neighbours[i]);
                         arrowId++;
                     }
@@ -148,10 +158,11 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i)));
                     arrow.attr("class", "arrowhidden");
                 }
-            }
+            };
 
             scope.voidClick = function () {
                 scope.hideArrows();
+                selectedRegion = null;
             }
         }
     }

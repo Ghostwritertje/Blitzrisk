@@ -1,5 +1,5 @@
 function clickRegion(regionId){
-    angular.element(document.getElementById('riskMap')).scope().changeTerritoryStyle(regionId);
+    angular.element(document.getElementById('riskMap')).scope().selectRegion(regionId);
 }
 
 function regionOver(regionId){

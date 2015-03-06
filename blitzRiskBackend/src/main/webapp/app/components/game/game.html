@@ -1,12 +1,13 @@
-<!--<object id='riskMap' type='image/svg+xml' data='assets/img/herwerkteRiskMapMini.svg'></object>-->
-<!--<risk-map watch="status"></risk-map>
-<input type="button" value="alert" ng-click="status='alert'">-->
-
 <div id="gameBoardWrapper">
-    {{test}}
+
     <riskmap id="riskMap">
     </riskmap>
     <div id="chat">
         <div ng-include="'app/components/chat/chatBox.html'"></div>
     </div>
+</div>
+<div >
+    <ul id="playerDiv" class="nav nav-pills">
+        <li ng-repeat="player in game.players" id="player{{player.color}}" class="colorTab" ng-class="{'playing': player.color == game.playerTurn}"><a>{{player.username}}</a></li>
+    </ul>
 </div>

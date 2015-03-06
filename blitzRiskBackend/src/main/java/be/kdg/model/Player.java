@@ -36,6 +36,9 @@ public class Player {
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<Territory> territories = new HashSet<Territory>();
 
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    private Set<Message> messages = new HashSet<>();
+
     @OneToMany(mappedBy = "player")
     private List<Turn> turns = new ArrayList<>();
 
@@ -93,5 +96,9 @@ public class Player {
 
     public void addTurn(Turn turn) {
         turns.add(turn);
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
     }
 }

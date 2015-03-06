@@ -19,6 +19,9 @@ public class PlayerWrapper {
     private InvitationStatus invitationStatus;
     private String username;
 
+    public PlayerWrapper(){
+
+    }
 
     public PlayerWrapper(Player player) {
         this.id = player.getId();
@@ -26,6 +29,8 @@ public class PlayerWrapper {
         this.invitationStatus = player.getInvitationStatus();
         this.username = player.getUser().getName();
     }
+
+
 
     public String getUsername() {
         return username;

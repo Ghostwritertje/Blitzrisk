@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 /**
- *
  * Created by Alexander on 6/2/2015.
  */
 
@@ -39,8 +38,8 @@ public class GameService {
     @Transactional
     public Game createNewGame() {
         Game game = new Game();
-       //Wordt al gedaan in constructor van game
-       // game.setTerritories(territoryService.getTerritories());
+        //Wordt al gedaan in constructor van game
+        // game.setTerritories(territoryService.getTerritories());
 
         game.setPlayerTurn(0);
         gameDao.saveGame(game);
@@ -122,7 +121,7 @@ public class GameService {
         Random random = new Random();
         Player player = null;
         int counter = 0;
-        while(player == null && counter < 10) {
+        while (player == null && counter < 10) {
             try {
                 counter++;
                 player = createPlayerForInvite(users.get(random.nextInt(users.size())).getId(), gameId);
@@ -136,9 +135,9 @@ public class GameService {
     private Player createPlayerForInvite(int userId, int gameId) throws IllegalUserInviteException {
         User user = userDao.loadUserById(userId);
         Game game = gameDao.getGame(gameId);
-        if(game.getPlayers().size() != 0) {
+        if (game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {
-                if(player.getUser().getId() == user.getId()) {
+                if (player.getUser().getId() == user.getId()) {
                     throw new IllegalUserInviteException("User is already in this game");
                 }
             }
@@ -169,8 +168,8 @@ public class GameService {
         Game game = gameDao.getGame(gameId);
         boolean inGame = false;
 
-        for(Player player : game.getPlayers()) {
-            if(player.getUser().getId() == user.getId()) {
+        for (Player player : game.getPlayers()) {
+            if (player.getUser().getId() == user.getId()) {
                 inGame = true;
             }
         }
@@ -184,9 +183,8 @@ public class GameService {
     public List<Game> getGames(String username) {
         User user = userDao.loadUserByUsername(username);
         List<Game> games = gameDao.getGamesForUser(user);
-      /*  for(Game game: games){
-            game.setPlayers(playerDao.getPlayersForGame(game));
-        }*/
-        return   games;
+        return games;
     }
+
+
 }
