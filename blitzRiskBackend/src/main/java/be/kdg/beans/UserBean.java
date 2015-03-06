@@ -1,5 +1,6 @@
 package be.kdg.beans;
 
+import be.kdg.model.User;
 import org.springframework.stereotype.Component;
 
 
@@ -15,6 +16,14 @@ public class UserBean {
 
     private String email;
 
+    public UserBean() {
+    }
+
+    public UserBean(User user) {
+        this.name = user.getName();
+        this.password = user.getPassword();
+        this.email = user.getEmail();
+    }
 
     public String getName() {
         return name;

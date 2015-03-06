@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,6 +78,37 @@ public class UserInfoController {
     @ResponseBody
     public List<User> getSecuredUsers() {
         return this.userService.findall();
+    }
+
+    @RequestMapping(value = "/{username}/friends", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<UserBean> getFriends(@PathVariable("username") String username) {
+        List<UserBean> friends = new ArrayList<>();
+        for(User user : userService.getFriends(username)){
+            friends.add(new UserBean(user));
+        }
+
+        return friends;
+    }
+
+    @RequestMapping(value = "/{username}/friendrequests", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<UserBean> getFriendRequests(@PathVariable("username") String username) {
+        List<UserBean> friends = new ArrayList<>();
+        for(User user : userService.getFriendRequests(username)){
+            friends.add(new UserBean(user));
+        }
+
+        return friends;
+    }
+
+    @RequestMapping(value = "/addFriend/{username}", method = RequestMethod.PUT)
+    @ResponseBody
+    public void addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
+        User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
+        logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");
+        userService.addFriend(requestingUser, username);
+     //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
     }
 
 }

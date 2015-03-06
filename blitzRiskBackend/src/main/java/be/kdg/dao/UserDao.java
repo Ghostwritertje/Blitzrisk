@@ -1,7 +1,10 @@
 package be.kdg.dao;
 
+import be.kdg.model.FriendRequest;
 import be.kdg.model.User;
+import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,6 +13,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,7 @@ import java.util.List;
 
 @Service("userDao")
 public class UserDao {
+    private static final Logger logger = Logger.getLogger(UserDao.class);
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -86,6 +91,7 @@ public class UserDao {
         user.setPassword(newPassword);
         sessionFactory.getCurrentSession().save(user);
     }
+
     public void changeEmail(String username, String newEmail) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
@@ -93,6 +99,7 @@ public class UserDao {
         user.setEmail(newEmail);
         sessionFactory.getCurrentSession().save(user);
     }
+
     public void changeUsername(String username, String newUsername) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
@@ -101,4 +108,44 @@ public class UserDao {
         sessionFactory.getCurrentSession().save(user);
     }
 
+
+    public void addFriend(User requestingUser, String username) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User user where user.name = :username");
+        query.setParameter("username", username);
+        User user = (User) query.uniqueResult();
+        User user2 = loadUserByUsername(username);
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUser(requestingUser);
+        friendRequest.setFriend(user2);
+
+        user.addFriend(friendRequest);
+        sessionFactory.getCurrentSession().saveOrUpdate(friendRequest);
+        sessionFactory.getCurrentSession().saveOrUpdate(requestingUser);
+    }
+
+
+    public List<User> getFriends(String username) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :username and f.accepted = true ");
+        query.setParameter("username", username);
+
+        List<FriendRequest> friendRequests = query.list();
+        List<User> friends = new ArrayList<>();
+        for(FriendRequest friendRequest : friendRequests){
+            friends.add(friendRequest.getFriend());
+        }
+        return friends;
+
+    }
+
+    public List<User> getFriendRequests(String username) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :username and f.accepted = false ");
+        query.setParameter("username", username);
+
+        List<FriendRequest> friendRequests = query.list();
+        List<User> friends = new ArrayList<>();
+        for(FriendRequest friendRequest : friendRequests){
+            friends.add(friendRequest.getFriend());
+        }
+        return friends;
+    }
 }

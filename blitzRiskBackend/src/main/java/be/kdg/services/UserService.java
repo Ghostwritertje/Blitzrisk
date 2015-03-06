@@ -31,4 +31,10 @@ public interface UserService {
     void changeUsername(String username, String newUsername);
 
     public User getUserById(int id);
+
+    List<User> getFriends(String username);
+
+    void addFriend(User requestingUser, String username);
+
+    List<User> getFriendRequests(String username);
 }
