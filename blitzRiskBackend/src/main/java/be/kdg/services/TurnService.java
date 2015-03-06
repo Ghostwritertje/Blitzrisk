@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alexander on 13/2/2015.
@@ -142,9 +143,34 @@ public class TurnService {
 
     public int calculateNumberOfReinforcements(Player player) {
         double territoriesNo = (double) player.getTerritories().size();
-        territoriesNo = Math.ceil(territoriesNo/3);
-        if (territoriesNo < 3) return 3;
-        else return (int) territoriesNo;
+        double nrOfUnits = Math.ceil(territoriesNo/3);
+
+        Set<Territory> territorySet = player.getTerritories();
+
+        int northAmCounter = 0;
+        int southAmCounter = 0;
+        int europeCounter = 0;
+        int africaCounter = 0;
+        int asiaCounter = 0;
+        int australiaCounter = 0;
+
+        for (Territory territory : territorySet){
+            if (territory.getGameKey() < 10) northAmCounter++;
+            if (territory.getGameKey() < 14 && territory.getGameKey() > 9) southAmCounter++;
+            if (territory.getGameKey() < 21 && territory.getGameKey() > 13) europeCounter++;
+            if (territory.getGameKey() < 27 && territory.getGameKey() > 20) africaCounter++;
+            if (territory.getGameKey() < 39 && territory.getGameKey() > 26) asiaCounter++;
+            if (territory.getGameKey() < 43 && territory.getGameKey() > 38) australiaCounter++;
+        }
+        if (northAmCounter == 9) nrOfUnits += 5;
+        if (southAmCounter == 4) nrOfUnits += 2;
+        if (europeCounter == 7) nrOfUnits += 5;
+        if (africaCounter == 6) nrOfUnits += 3;
+        if (asiaCounter == 12) nrOfUnits += 7;
+        if (australiaCounter == 4) nrOfUnits += 2;
+
+        if (nrOfUnits < 3) return 3;
+        else return (int) nrOfUnits;
     }
 
     public int calculateNumberOfReinforcements(String playerIdStr) {
