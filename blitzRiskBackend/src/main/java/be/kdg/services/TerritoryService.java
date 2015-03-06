@@ -224,7 +224,7 @@ public class TerritoryService {
 
         brazil.addNeighbour(argentina);
         brazil.addNeighbour(venezuela);
-        brazil.addNeighbour(argentina);
+        brazil.addNeighbour(peru);
         brazil.addNeighbour(northAfrica);
 
         argentina.addNeighbour(peru);

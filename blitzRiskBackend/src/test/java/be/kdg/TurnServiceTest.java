@@ -3,6 +3,7 @@ package be.kdg;
 import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.model.*;
+import be.kdg.services.TerritoryService;
 import be.kdg.services.TurnService;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
@@ -57,6 +58,8 @@ public class TurnServiceTest {
 
     @Autowired
     private TurnService turnService;
+    @Autowired
+    private TerritoryService territoryService;
 
     @Before
     public void createGame() throws IllegalAccessException {
@@ -93,12 +96,14 @@ public class TurnServiceTest {
         territoryId.set(origin, 1);
         origin.setNumberOfUnits(2);
         origin.setPlayer(players.get(0));
+        origin.setGameKey(1);
 
         Territory destination = new Territory();
         territoryId.set(destination, 2);
         destination.setNumberOfUnits(1);
         destination.setPlayer(players.get(1));
         destination.addNeighbour(origin);
+        destination.setGameKey(2);
         origin.addNeighbour(destination);
         territories = new ArrayList<>();
         territories.add(origin);
@@ -257,6 +262,7 @@ public class TurnServiceTest {
             Territory territory = new Territory();
             territory.setPlayer(players.get(0));
             territory.setNumberOfUnits(1);
+            territory.setGameKey(i+3);
             territories.add(territory);
             playerTerritories.add(territory);
         }
@@ -307,5 +313,18 @@ public class TurnServiceTest {
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
         turnService.addReinforcements(turn, players.get(0), reinforcements);
+    }
+
+    @Test
+    public void getExtraUnitsWithFullContinent() throws IllegalMoveException {
+        Set<Territory> fullTerritories = territoryService.getTerritories();
+        Set<Territory> subSelectTerritories = new HashSet<>();
+        Player player = new Player();
+        for (Territory territory : fullTerritories){
+            if (territory.getGameKey() < 10) subSelectTerritories.add(territory);
+        }
+        player.setTerritories(subSelectTerritories);
+
+        Assert.assertEquals("Player should have 8 units", 8, turnService.calculateNumberOfReinforcements(player));
     }
 }
