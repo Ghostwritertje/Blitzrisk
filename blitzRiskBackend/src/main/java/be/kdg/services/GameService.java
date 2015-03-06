@@ -35,6 +35,7 @@ public class GameService {
     @Autowired
     private GameDao gameDao;
 
+
     @Transactional
     public void removeGame(Game game) {
         gameDao.removeGame(game);
@@ -55,6 +56,9 @@ public class GameService {
         // game.setTerritories(territoryService.getTerritories());
 
         game.setPlayerTurn(0);
+        for (int i = 1; i< game.getPlayers().size(); i++) {
+            game.getPlayers().get(i).setPlayerStatus(PlayerStatus.WAITING);
+        }
         gameDao.saveGame(game);
         return game;
     }
@@ -198,6 +202,7 @@ public class GameService {
         List<Game> games = gameDao.getGamesForUser(user);
         return games;
     }
+
 
 
 }

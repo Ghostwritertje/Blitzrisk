@@ -5,7 +5,6 @@ import be.kdg.model.*;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
 import be.kdg.wrappers.MoveWrapper;
-import be.kdg.wrappers.UpdatedTerritoriesWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +51,13 @@ public class TurnController {
             return new ResponseEntity<>(-1,HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(turnService.calculateNumberOfReinforcements(playerId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getPlayerStatus", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> getPlayerStatus(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId){
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        PlayerStatus playerStatus = playerService.getPlayerStatus(player);
+        return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")

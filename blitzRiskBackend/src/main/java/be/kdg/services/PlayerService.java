@@ -52,11 +52,17 @@ public class PlayerService {
         player.setGame(game);
         player.setColor(game.getPlayers().size());
         player.setInvitationStatus(InvitationStatus.PENDING);
+        player.setPlayerStatus(PlayerStatus.WAITING);
         game.addPlayer(player);
         playerDao.savePlayer(player);
 
         //gameDao.saveGame(game);
         return player;
+    }
+
+    @Transactional
+    public PlayerStatus getPlayerStatus(Player player) {
+        return player.getPlayerStatus();
     }
 
     @Transactional
@@ -112,12 +118,13 @@ public class PlayerService {
                 //   gameDao.saveGame(game);
                 game.assignRandomTerritories();
                 game.setStarted(true);
+                game.getPlayers().get(0).setPlayerStatus(PlayerStatus.REINFORCE);
                 gameDao.updateGame(game);
                 logger.info("Game " + game.getId() + " has started!");
             }
         }
     }
-    
+
 
 
 

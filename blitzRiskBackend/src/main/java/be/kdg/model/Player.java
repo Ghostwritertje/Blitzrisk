@@ -42,6 +42,9 @@ public class Player {
     @OneToMany(mappedBy = "player")
     private List<Turn> turns = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private PlayerStatus playerStatus;
+
     public Integer getColor() {
         return color;
     }
@@ -100,5 +103,13 @@ public class Player {
 
     public Set<Message> getMessages() {
         return messages;
+    }
+
+    public PlayerStatus getPlayerStatus() {
+        return playerStatus;
+    }
+
+    public void setPlayerStatus(PlayerStatus playerStatus) {
+        this.playerStatus = playerStatus;
     }
 }

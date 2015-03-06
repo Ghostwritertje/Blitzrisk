@@ -28,6 +28,9 @@ public class TurnService {
     @Autowired
     private PlayerDao playerDao;
 
+    @Autowired
+    private GameDao gameDao;
+
     public void removeTurns(Game game) {
         for(Turn turn: game.getTurns()) {
             for(Move move: turn.getMoves()) {
@@ -69,6 +72,7 @@ public class TurnService {
             territoryDao.updateTerritory(move.getOriginTerritory());
             territoryDao.updateTerritory(move.getDestinationTerritory());
         }
+        setPlayerTurn(player, PlayerStatus.WAITING);
         return turn;
     }
 
@@ -168,6 +172,8 @@ public class TurnService {
         for (Move move : moves) {
             if(!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("player doesn't own the territories he wants to reinforce");
             reinforcementsTotal += move.getNumberOfUnitsToAttack();
+            move.setDestinationTerritoryRemainingNrUnits(reinforcementsTotal);
+            move.setOriginTerritoryRemainingNrUnits(reinforcementsTotal);
         }
         if (reinforcementsTotal >  calculateNumberOfReinforcements(player)) throw new IllegalMoveException("Amount of allowed reinforcements is exceeded");
 
@@ -181,5 +187,26 @@ public class TurnService {
         }
         turn.setCalculatedMoves(moves);
         turnDao.updateTurn(turn);
+        setPlayerTurn(player, PlayerStatus.ATTACK);
+    }
+
+    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException {
+        setPlayerTurn(player, PlayerStatus.WAITING);
+
+    }
+
+    public void setPlayerTurn(Player player, PlayerStatus playerStatus) {
+        player.setPlayerStatus(playerStatus);
+        playerDao.updatePlayer(player);
+        if (playerStatus.equals(PlayerStatus.WAITING)) {
+            Game game = player.getGame();
+
+            game.setPlayerTurn(game.getPlayerTurn()+1);
+            if(game.getPlayerTurn() >= game.getPlayers().size()) game.setPlayerTurn(0);
+            Player newPlayer = game.getPlayers().get(game.getPlayerTurn());
+            newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
+            playerDao.updatePlayer(newPlayer);
+            gameDao.updateGame(game);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package be.kdg.wrappers;
 
 import be.kdg.model.Move;
+import be.kdg.model.PlayerStatus;
 import be.kdg.model.Territory;
 
 /**
@@ -16,6 +17,8 @@ public class MoveWrapper {
     private int destinationNrOfUnits;
     private int destinationPlayer;
     private int unitsToAttackOrReinforce;
+    private int playerOnTurn;
+    private PlayerStatus playerStatus;
 
     public MoveWrapper (Move move) {
         id = move.getId();
@@ -27,6 +30,8 @@ public class MoveWrapper {
         destinationNrOfUnits = move.getDestinationTerritory().getNumberOfUnits();
         destinationPlayer = move.getDestinationTerritory().getPlayer().getId();
         unitsToAttackOrReinforce = move.getNumberOfUnitsToAttack();
+        playerOnTurn = move.getTurn().getGame().getPlayerTurn();
+        playerStatus = move.getTurn().getGame().getPlayers().get(playerOnTurn).getPlayerStatus();
     }
 
     public MoveWrapper() {
@@ -102,5 +107,21 @@ public class MoveWrapper {
 
     public void setDestinationPlayer(int destinationPlayer) {
         this.destinationPlayer = destinationPlayer;
+    }
+
+    public int getPlayerOnTurn() {
+        return playerOnTurn;
+    }
+
+    public void setPlayerOnTurn(int playerOnTurn) {
+        this.playerOnTurn = playerOnTurn;
+    }
+
+    public PlayerStatus getPlayerStatus() {
+        return playerStatus;
+    }
+
+    public void setPlayerStatus(PlayerStatus playerStatus) {
+        this.playerStatus = playerStatus;
     }
 }
