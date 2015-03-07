@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.logging.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
 @RestController
 public class TurnController {
 
-    static Logger log = Logger.getLogger(TurnController.class.getName());
+    static Logger log = Logger.getLogger(TurnController.class);
 
     @Autowired
     private TurnService turnService;
@@ -79,8 +80,9 @@ public class TurnController {
     @RequestMapping(value = "/attack", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     public ResponseEntity<List<MoveWrapper>> attack(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+        log.warn("attack called");
         List<Move> moves = getMoves(moveWrappers);
-        Player player = playerService.getPlayer(Integer.parseInt(playerId));
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         turnService.attack(moves.get(0).getTurn(), moves, player);
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
         return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
