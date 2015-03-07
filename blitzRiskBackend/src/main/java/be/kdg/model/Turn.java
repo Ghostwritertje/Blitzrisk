@@ -27,7 +27,7 @@ public class Turn {
     @OneToMany(mappedBy = "turn")
     private List<Move> calculatedMoves = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "playerId")
     private Player player;
 
