@@ -48,12 +48,29 @@ public class FriendIT {
     }
 
 
+    @Test
+    public void testAddAndAcceptFriend() {
+        String token = given().header("name", "friendtestuser1").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().header("X-Auth-Token", token).post(URL + "addFriend/friendtestuser2").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "friendtestuser1/friends").then().assertThat().statusCode(200);
+
+        token = given().header("name", "friendtestuser2").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().header("X-Auth-Token", token).post(URL + "acceptFriend/friendtestuser1").then().assertThat().statusCode(200);
+
+    }
 
     @Test
-    public void testAddFriend() {
+    public void testAddFriendTwice() {
         String token = given().header("name", "friendtestuser1").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        given().header("X-Auth-Token", token).put(URL + "addFriend/friendtestuser2").then().assertThat().statusCode(200);
-        given().header("X-Auth-Token", token).get(URL + "friendtestuser1/friends").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).post(URL + "addFriend/friendtestuser3").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).post(URL + "addFriend/friendtestuser3").then().assertThat().statusCode(400);
+
+    }
+
+    @Test
+    public void testAcceptNonExistingFriendRequest() {
+        String token = given().header("name", "friendtestuser2").header("password", "testuserpass").get(URL + "login").getBody().asString();
+        given().header("X-Auth-Token", token).post(URL + "acceptFriend/friendtestuser9000").then().assertThat().statusCode(400);
     }
 
 

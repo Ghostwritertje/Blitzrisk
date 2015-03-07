@@ -7,7 +7,8 @@ import javax.persistence.*;
  * Date:7/03/15.
  */
 @Entity
-@Table(name = "t_friendrequest")
+@Table(name = "t_friendrequest", uniqueConstraints = @UniqueConstraint(columnNames={"userId", "friendId"}))
+
 public class FriendRequest {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

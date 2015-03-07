@@ -2,6 +2,7 @@ package be.kdg.controllers;
 
 //import be.kdg.beans.UserBean;
 import be.kdg.beans.UserBean;
+import be.kdg.exceptions.FriendRequestException;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserService;
@@ -102,13 +103,31 @@ public class UserInfoController {
         return friends;
     }
 
-    @RequestMapping(value = "/addFriend/{username}", method = RequestMethod.PUT)
-    @ResponseBody
-    public void addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
+    @RequestMapping(value = "/addFriend/{username}", method = RequestMethod.POST)
+    public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
         logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");
-        userService.addFriend(requestingUser, username);
-     //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
+        try {
+            userService.addFriend(requestingUser, username);
+            return new ResponseEntity(HttpStatus.OK);
+
+        } catch (FriendRequestException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        }
+        //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
+    }
+
+    @RequestMapping(value = "/acceptFriend/{username}", method= RequestMethod.POST)
+    public ResponseEntity acceptFriendRequest(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token){
+        User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
+        logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is accepting " + username + " as a friend.");
+        try {
+            userService.acceptFriend(requestingUser, username);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (FriendRequestException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

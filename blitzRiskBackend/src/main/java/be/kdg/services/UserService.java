@@ -1,11 +1,12 @@
 package be.kdg.services;
 
+import be.kdg.exceptions.FriendRequestException;
 import be.kdg.model.User;
 
 import java.util.List;
 
 /**
- * Created by Marlies on 17/02/2015.
+ * Interface that defines the responsabilities of a userservice.
  */
 public interface UserService {
     //@Transactional
@@ -34,7 +35,9 @@ public interface UserService {
 
     List<User> getFriends(String username);
 
-    void addFriend(User requestingUser, String username);
+    void addFriend(User requestingUser, String username) throws FriendRequestException;
 
     List<User> getFriendRequests(String username);
+
+    void acceptFriend(User requestingUser, String usernameToAccept) throws FriendRequestException;
 }

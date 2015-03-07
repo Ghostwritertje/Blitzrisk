@@ -1,6 +1,7 @@
 package be.kdg.services;
 
 import be.kdg.dao.UserDao;
+import be.kdg.exceptions.FriendRequestException;
 import be.kdg.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,10 +93,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
-
     @Override
-    public void addFriend(User requestingUser, String username) {
+    public void addFriend(User requestingUser, String username) throws FriendRequestException {
         userDao.addFriend(requestingUser, username);
     }
+
+    @Override
+    public void acceptFriend(User requestingUser, String usernameToAccept) throws FriendRequestException {
+        userDao.acceptFriend(requestingUser,usernameToAccept);
+    }
+
 
 }
