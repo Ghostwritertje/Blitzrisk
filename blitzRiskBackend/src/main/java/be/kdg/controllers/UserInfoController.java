@@ -2,6 +2,7 @@ package be.kdg.controllers;
 
 //import be.kdg.beans.UserBean;
 import be.kdg.beans.UserBean;
+import be.kdg.exceptions.FriendRequestException;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,9 +34,9 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public User getUser(@RequestHeader("X-Auth-Token") String token) {
+    public UserBean getUser(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        return userService.getUser(username);
+        return new UserBean(userService.getUser(username));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
@@ -67,16 +69,73 @@ public class UserInfoController {
     }
 
 
-   /* @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+/*
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getUsers() {
         return this.userService.findall();
     }
 */
-    @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
+
+ /*   @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<User> getSecuredUsers() {
-        return this.userService.findall();
+    public ResponseEntity getSecuredUsers() {
+        try {
+            return new ResponseEntity<>(this.userService.findall(), HttpStatus.OK);
+        } catch (Exception e){
+            logger.error(e.getMessage());
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+    }*/
+
+    @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<UserBean> getFriends(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
+        List<UserBean> friends = new ArrayList<>();
+        for(User user : userService.getFriends(username)){
+            friends.add(new UserBean(user));
+        }
+
+        return friends;
+    }
+
+    @RequestMapping(value = "/friendRequests", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<UserBean> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
+        List<UserBean> friends = new ArrayList<>();
+        for(User user : userService.getFriendRequests(username)){
+            friends.add(new UserBean(user));
+        }
+
+        return friends;
+    }
+
+    @RequestMapping(value = "/addFriend/{username}", method = RequestMethod.POST)
+    public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
+        User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
+        logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");
+        try {
+            userService.addFriend(requestingUser, username);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (FriendRequestException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
+    }
+
+    @RequestMapping(value = "/acceptFriend/{username}", method= RequestMethod.POST)
+    public ResponseEntity acceptFriendRequest(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token){
+        User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
+        logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is accepting " + username + " as a friend.");
+        try {
+            userService.acceptFriend(requestingUser, username);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (FriendRequestException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

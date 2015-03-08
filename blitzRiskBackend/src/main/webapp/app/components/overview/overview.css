@@ -11,3 +11,7 @@
 .acceptButton {
     float: right;
 }
+
+.glyphicon {
+    right:4em;
+}

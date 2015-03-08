@@ -26,6 +26,7 @@ import java.util.List;
 
 @RestController
 public class GameController {
+    private static final Logger logger = Logger.getLogger(GameController.class);
 
     @Autowired
     GameService gameService;
@@ -96,7 +97,12 @@ public class GameController {
         }
 
         Player newPlayer = null;
-        newPlayer = gameService.inviteRandomUser(gameId);
+        try {
+            newPlayer = gameService.inviteRandomUser(gameId);
+        }catch (Exception e){
+            logger.warn(e);
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.OK);
     }
 

@@ -2,10 +2,8 @@
  * Created by jorandeboever on 18/02/15.
  */
 'use strict';
-angular.module('blitzriskControllers').controller('OverviewController', ['$scope', '$http', '$location', '$interval', 'LoginService', 'GameService',
-    function ($scope, $http, $location,$interval, LoginService, GameService) {
-        $scope.friends = [{"name": "Dummy1"}, {"name": "Dummy2"}, {"name": "Dummy3"}];
-
+angular.module('blitzriskControllers').controller('OverviewController', ['$scope', '$http', '$location', '$interval', 'LoginService', 'GameService', 'FriendService',
+    function ($scope, $http, $location, $interval, LoginService, GameService, FriendService) {
         $scope.recentlyPlayed = [{"name": "Dummy145"}, {"name": "Dummy234"}, {"name": "Dummy367"}];
         $scope.selectedGameId = "";
 
@@ -15,14 +13,14 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
 
         loadGames();
 
-        $scope.interval =    $interval(loadGames,5000); //reloads data every 5 seconds
+        $scope.interval = $interval(loadGames, 5000); //reloads data every 5 seconds
 
         $scope.go = function (path) {
             $location.path(path);
 
         };
 
-        $scope.$on('$destroy', function(){
+        $scope.$on('$destroy', function () {
             $interval.cancel($scope.interval);
         });
 
@@ -36,18 +34,18 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
         };
 
         $scope.addPlayer = function (gameId) {
-            GameService.invitePlayerToGame(gameId,$scope.newUsers[gameId]).then(function(){
+            GameService.invitePlayerToGame(gameId, $scope.newUsers[gameId]).then(function () {
                 loadGames();
                 $scope.newUsers[gameId] = "";
             })
         };
         $scope.addRandomPlayer = function (gameId) {
-            GameService.invitRandomPlayerToGame(gameId).then(function (){
+            GameService.invitRandomPlayerToGame(gameId).then(function () {
                 loadGames();
             })
         };
 
-        $scope.selectGame = function(gameId){
+        $scope.selectGame = function (gameId) {
             $scope.selectedGameId = gameId;
 
         };
@@ -76,10 +74,51 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
         function loadGames() {
             var promise = GameService.getGamesList();
             promise.then(function (payload) {
-                if($scope.games != payload)  $scope.games = payload;
+                if ($scope.games != payload)  $scope.games = payload;
             });
         }
 
+        /*  Friends  */
+        $scope.friends = [];
+        $scope.friendRequests = [];
+        $scope.newFriend = "";
+        $scope.addFriendError = false;
+        reloadFriends();
 
+        $scope.addFriend = function () {
+            FriendService.addFriend($scope.newFriend).then(
+                function () {
+                    $scope.newFriend = "";
+                    reloadFriends();
+                },function(){
+                    $scope.newFriend = "";
+                    $scope.addFriendError = true;
+
+                }
+            )
+        };
+
+        $scope.acceptFriend = function (friendName) {
+            FriendService.acceptFriendRequest(friendName).then(
+                function () {
+                    reloadFriends();
+                }
+            )
+        };
+
+        function reloadFriends() {
+            FriendService.getFriends()
+                .then(function (payload) {
+                    $scope.friends = payload.data;
+                }
+            )
+
+            ;
+            FriendService.getFriendRequests()
+                .then(function (payload) {
+                    $scope.friendRequests = payload.data;
+                }
+            );
+        }
     }
 ]);

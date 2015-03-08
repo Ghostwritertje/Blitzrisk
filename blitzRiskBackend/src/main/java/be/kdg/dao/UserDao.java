@@ -1,7 +1,11 @@
 package be.kdg.dao;
 
+import be.kdg.exceptions.FriendRequestException;
+import be.kdg.model.FriendRequest;
 import be.kdg.model.User;
+import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -10,6 +14,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +23,7 @@ import java.util.List;
 
 @Service("userDao")
 public class UserDao {
+    private static final Logger logger = Logger.getLogger(UserDao.class);
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -86,6 +92,7 @@ public class UserDao {
         user.setPassword(newPassword);
         sessionFactory.getCurrentSession().save(user);
     }
+
     public void changeEmail(String username, String newEmail) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
@@ -93,6 +100,7 @@ public class UserDao {
         user.setEmail(newEmail);
         sessionFactory.getCurrentSession().save(user);
     }
+
     public void changeUsername(String username, String newUsername) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User where name = :username");
         query.setParameter("username", username);
@@ -101,4 +109,88 @@ public class UserDao {
         sessionFactory.getCurrentSession().save(user);
     }
 
+
+    public void addFriend(User requestingUser, String username) throws FriendRequestException {
+        if(!checkFriendRequestExists(requestingUser.getUsername(), username)){
+            Query query = sessionFactory.getCurrentSession().createQuery("from User user where user.name = :username");
+            query.setParameter("username", username);
+            User user = (User) query.uniqueResult();
+            if(user == null){
+                logger.warn("User doesn't exist");
+                throw new FriendRequestException("User doesn't exist");
+            }
+            User user2 = loadUserByUsername(username);
+            FriendRequest friendRequest = new FriendRequest();
+            friendRequest.setUser(requestingUser);
+            friendRequest.setFriend(user2);
+            user.addFriend(friendRequest);
+            sessionFactory.getCurrentSession().saveOrUpdate(friendRequest);
+        }else {
+            logger.warn("Friendrequest already exists");
+            throw new FriendRequestException("Friendrequest already exists");
+        }
+
+
+    }
+
+
+    public List<User> getFriends(String username) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :username and f.accepted = true ");
+        query.setParameter("username", username);
+
+        List<FriendRequest> friendRequests = query.list();
+        List<User> friends = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequests) {
+            friends.add(friendRequest.getFriend());
+        }
+        query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.friend.name = :username and f.accepted = true ");
+        query.setParameter("username", username);
+        friendRequests = query.list();
+        for (FriendRequest friendRequest : friendRequests) {
+            friends.add(friendRequest.getUser());
+        }
+        return friends;
+
+    }
+
+    public List<User> getFriendRequests(String username) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.friend.name = :username and f.accepted = false ");
+        query.setParameter("username", username);
+
+        List<FriendRequest> friendRequests = query.list();
+        List<User> friends = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequests) {
+            friends.add(friendRequest.getUser());
+        }
+        return friends;
+    }
+
+    public void acceptFriend(User requestingUser, String usernameToAccept) throws FriendRequestException {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :usernameToAccept and f.friend.name =  :username");
+        query.setParameter("username", requestingUser.getUsername());
+        query.setParameter("usernameToAccept", usernameToAccept);
+
+        FriendRequest friendRequest = (FriendRequest) query.uniqueResult();
+        if (friendRequest == null) {
+            logger.error("Friend request not found");
+            throw new FriendRequestException("Friend request not found");
+        } else {
+            friendRequest.setAccepted(true);
+            sessionFactory.getCurrentSession().saveOrUpdate(friendRequest);
+        }
+    }
+
+    private boolean checkFriendRequestExists(String requestingUsername, String usernameToAccept)  {
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :usernameToAccept and f.friend.name =  :username");
+        query.setParameter("username", requestingUsername);
+        query.setParameter("usernameToAccept", usernameToAccept);
+
+        FriendRequest friendRequest1 = (FriendRequest) query.uniqueResult();
+         query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :usernameToAccept and f.friend.name =  :username");
+        query.setParameter("username", usernameToAccept);
+        query.setParameter("usernameToAccept", requestingUsername);
+        FriendRequest friendRequest2 = (FriendRequest) query.uniqueResult();
+
+        return !(friendRequest1 == null && friendRequest2 == null);
+    }
 }
