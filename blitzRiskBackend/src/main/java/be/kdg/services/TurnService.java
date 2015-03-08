@@ -80,7 +80,7 @@ public class TurnService {
             for (Move move : moveList) {
                 moveDao.updateMove(move);
             }
-            setPlayerTurn(player, PlayerStatus.WAITING);
+            setPlayerTurn(player, PlayerStatus.MOVE);
             return turn;
         } catch (Exception e) {
             log.warn(e.getMessage());
@@ -96,14 +96,13 @@ public class TurnService {
                 log.warn("error: illegal origin territory");
                 throw new IllegalMoveException("Illegal origin territory");
             }
-            //TODO: nog niet getest?
-           /* boolean isNeighbour = false;
+           /*boolean isNeighbour = false;
             for(Territory territory : move.getOriginTerritory().getNeighbourTerritories()) {
                 if(territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
-            if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
-*/
+            if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");*/
+
             if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) {
                 log.warn("error: can't attack own territory");
                 throw new IllegalMoveException("Can't attack own territory");
@@ -238,9 +237,11 @@ public class TurnService {
         setPlayerTurn(player, PlayerStatus.ATTACK);
     }
 
-    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException {
+    /*public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException {
         setPlayerTurn(player, PlayerStatus.WAITING);
-
+    }*/
+    public void moveUnits(Player player) {
+        setPlayerTurn(player, PlayerStatus.WAITING);
     }
 
     public void setPlayerTurn(Player player, PlayerStatus playerStatus) {
@@ -248,10 +249,10 @@ public class TurnService {
         playerDao.updatePlayer(player);
         if (playerStatus.equals(PlayerStatus.WAITING)) {
             Game game = player.getGame();
-
             game.setPlayerTurn(game.getPlayerTurn()+1);
             if(game.getPlayerTurn() >= game.getPlayers().size()) game.setPlayerTurn(0);
-            Player newPlayer = game.getPlayers().get(game.getPlayerTurn());
+
+            Player newPlayer = game.getPlayers().get(game.getPlayerTurn() + 1);
             newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
             playerDao.updatePlayer(newPlayer);
             gameDao.updateGame(game);
