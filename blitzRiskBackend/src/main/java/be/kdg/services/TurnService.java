@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  * Created by Alexander on 13/2/2015.
@@ -16,6 +17,7 @@ import java.util.Set;
 @Transactional
 @Service("turnService")
 public class TurnService {
+    static Logger log = Logger.getLogger(TurnService.class);
 
     @Autowired
     private MoveDao moveDao;
@@ -31,6 +33,10 @@ public class TurnService {
 
     @Autowired
     private GameDao gameDao;
+
+    public void saveTurn(Turn turn) {
+        turnDao.updateTurn(turn);
+    }
 
     public void removeTurns(Game game) {
         for(Turn turn: game.getTurns()) {
@@ -51,7 +57,7 @@ public class TurnService {
         return createTurn(game, player);
     }
 
-    public List<Move> moves() {
+    public List<Move> getMoves() {
         return moveDao.findall();
     }
 
@@ -64,17 +70,22 @@ public class TurnService {
     }
 
     public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException {
+        log.warn("player 1" + player.getId());
+        log.warn("turnPlayer:" + turn.getPlayer().getId());
         if(!player.getId().equals(turn.getPlayer().getId())) throw new IllegalMoveException("wrong turn");
         executeTurn(turn, moveList);
-        turn.setCalculatedMoves(moveList);
-        turnDao.updateTurn(turn);
-        for (Move move: moveList) {
-            moveDao.updateMove(move);
-            territoryDao.updateTerritory(move.getOriginTerritory());
-            territoryDao.updateTerritory(move.getDestinationTerritory());
+        try {
+            turn.setCalculatedMoves(moveList);
+            turnDao.updateTurn(turn);
+            for (Move move : moveList) {
+                moveDao.updateMove(move);
+            }
+            setPlayerTurn(player, PlayerStatus.WAITING);
+            return turn;
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return null;
         }
-        setPlayerTurn(player, PlayerStatus.WAITING);
-        return turn;
     }
 
     private void executeTurn(Turn turn, List<Move> moveList) throws IllegalMoveException {
@@ -82,6 +93,7 @@ public class TurnService {
         Player player = turn.getPlayer();
         for (Move move : moveList) {
             if(!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) {
+                log.warn("error: illegal origin territory");
                 throw new IllegalMoveException("Illegal origin territory");
             }
             //TODO: nog niet getest?
@@ -92,9 +104,15 @@ public class TurnService {
 
             if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
 */
-            if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("Can't attack own territory");
+            if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) {
+                log.warn("error: can't attack own territory");
+                throw new IllegalMoveException("Can't attack own territory");
+            }
 
-            if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) throw new IllegalMoveException("Not enough units to attack");
+            if (move.getOriginTerritory().getNumberOfUnits() - move.getNumberOfUnitsToAttack() < 1) {
+                log.warn("error: not enough units to attack");
+                throw new IllegalMoveException("Not enough units to attack");
+            }
 
             calculateMove(move);
             turn.getMoves().add(move);
@@ -102,54 +120,58 @@ public class TurnService {
     }
 
     private Move calculateMove(Move move) {
+    log.warn("move calculation started");
+        try {
+            int attackers = move.getNumberOfUnitsToAttack();
+            int defenders = move.getDestinationTerritory().getNumberOfUnits();
+            int survivingAttacckers = attackers;
+            int survivingDefenders = defenders;
+            int originTerritoryStartingNrUnits = move.getOriginTerritory().getNumberOfUnits();
+            int originTerritoryRemainingNrUnits;
+            int destinationTerritoryStartingNrUnits = move.getDestinationTerritory().getNumberOfUnits();
 
-        int attackers = move.getNumberOfUnitsToAttack();
-        int defenders = move.getDestinationTerritory().getNumberOfUnits();
-        int survivingAttacckers = attackers;
-        int survivingDefenders = defenders;
-        int originTerritoryStartingNrUnits = move.getOriginTerritory().getNumberOfUnits();
-        int originTerritoryRemainingNrUnits;
-        int destinationTerritoryStartingNrUnits = move.getDestinationTerritory().getNumberOfUnits();
+            move.setOriginTerritoryStartingNrUnits(originTerritoryStartingNrUnits);
+            move.setDestinationTerritoryStartingNrUnits(destinationTerritoryStartingNrUnits);
 
-        move.setOriginTerritoryStartingNrUnits(originTerritoryStartingNrUnits);
-        move.setDestinationTerritoryStartingNrUnits(destinationTerritoryStartingNrUnits);
-
-        //attackers have a 60% survival rate, defenders have a 70% survival rate
-        for (int i = 0; i<attackers; i++) {
-            if (Math.random()<0.7){
-                survivingAttacckers-=1;
+            //attackers have a 60% survival rate, defenders have a 70% survival rate
+            for (int i = 0; i < attackers; i++) {
+                if (Math.random() < 0.7) {
+                    survivingAttacckers -= 1;
+                }
             }
-        }
 
-        for (int i = 0; i<defenders; i++) {
-            if (Math.random()<0.6){
-                survivingDefenders-=1;
+            for (int i = 0; i < defenders; i++) {
+                if (Math.random() < 0.6) {
+                    survivingDefenders -= 1;
+                }
             }
+
+
+            //if attacker has won
+            if (survivingDefenders <= 0) {
+                //surviving attackers will occupy the destination territory
+                originTerritoryRemainingNrUnits = originTerritoryStartingNrUnits - attackers;
+                move.getDestinationTerritory().setPlayer(move.getOriginTerritory().getPlayer());
+                move.getDestinationTerritory().setNumberOfUnits(survivingAttacckers);
+                move.setDestinationTerritoryRemainingNrUnits(survivingAttacckers);
+
+                //updated number of units in origin country
+                move.setOriginTerritoryRemainingNrUnits(originTerritoryRemainingNrUnits);
+                move.getOriginTerritory().setNumberOfUnits(originTerritoryRemainingNrUnits);
+            } else {
+                //number of units in both territories will be reduced
+                move.getDestinationTerritory().setNumberOfUnits(survivingDefenders);
+                move.setDestinationTerritoryRemainingNrUnits(survivingDefenders);
+                move.getOriginTerritory().setNumberOfUnits(survivingAttacckers);
+                move.setOriginTerritoryRemainingNrUnits(survivingAttacckers);
+            }
+            log.warn("" + move.getDestinationTerritory().getNumberOfUnits());
+            log.warn("" + move.getOriginTerritory().getNumberOfUnits());
+            return move;
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return null;
         }
-
-
-        //if attacker has won
-        if (survivingDefenders <= 0) {
-            //surviving attackers will occupy the destination territory
-            originTerritoryRemainingNrUnits = originTerritoryStartingNrUnits-attackers;
-            move.getDestinationTerritory().setPlayer(move.getOriginTerritory().getPlayer());
-            move.getDestinationTerritory().setNumberOfUnits(survivingAttacckers);
-            move.setDestinationTerritoryRemainingNrUnits(survivingAttacckers);
-
-            //updated number of units in origin country
-            move.setOriginTerritoryRemainingNrUnits(originTerritoryRemainingNrUnits);
-            move.getOriginTerritory().setNumberOfUnits(originTerritoryRemainingNrUnits);
-        }
-        else
-        {
-            //number of units in both territories will be reduced
-            move.getDestinationTerritory().setNumberOfUnits(survivingDefenders);
-            move.setDestinationTerritoryRemainingNrUnits(survivingDefenders);
-            move.getOriginTerritory().setNumberOfUnits(survivingAttacckers);
-            move.setOriginTerritoryRemainingNrUnits(survivingAttacckers);
-        }
-
-        return move;
     }
 
     public int calculateNumberOfReinforcements(Player player) {

@@ -117,12 +117,14 @@ public class EnterTurnsIT {
                 .post(URL + "reinforce").then().assertThat().statusCode(200);
     }
 
-   // @Test
+    @Test
     public void attack() {
         Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
+        turn.setPlayer(origin.getPlayer());
+        turnService.saveTurn(turn);
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":1,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), destination.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
