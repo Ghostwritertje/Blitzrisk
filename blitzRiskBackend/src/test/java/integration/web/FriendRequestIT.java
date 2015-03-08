@@ -5,7 +5,6 @@ import integration.MyServerConfiguration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,11 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Gunther Claessens.
+ * Selenium test for friend-requests
  */
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,8 +39,8 @@ public class FriendRequestIT {
 
     @AfterClass
     public static void quitDriver() {
-     //   driver.quit();
-    //    driver2.quit();
+        driver.quit();
+        driver2.quit();
     }
 
     @Before

@@ -34,9 +34,9 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public User getUser(@RequestHeader("X-Auth-Token") String token) {
+    public UserBean getUser(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        return userService.getUser(username);
+        return new UserBean(userService.getUser(username));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
@@ -69,17 +69,25 @@ public class UserInfoController {
     }
 
 
-   /* @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+/*
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<User> getUsers() {
         return this.userService.findall();
     }
 */
-    @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
+
+ /*   @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<User> getSecuredUsers() {
-        return this.userService.findall();
-    }
+    public ResponseEntity getSecuredUsers() {
+        try {
+            return new ResponseEntity<>(this.userService.findall(), HttpStatus.OK);
+        } catch (Exception e){
+            logger.error(e.getMessage());
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+    }*/
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody

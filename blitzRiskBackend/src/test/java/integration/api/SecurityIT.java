@@ -56,13 +56,13 @@ public class SecurityIT {
 
     @Test
     public void testSecurePage() {
-        get(URL + "secured/users").then().assertThat().statusCode(401);
+        get(URL + "friends").then().assertThat().statusCode(401);
     }
 
     @Test
     public void testCorrectUser() {
         String token = given().header("name", "testuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
-        given().header("X-Auth-Token", token).when().get(URL + "secured/users").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).when().get(URL + "friends").then().assertThat().statusCode(200);
 
     }
 
