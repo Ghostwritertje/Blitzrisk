@@ -115,6 +115,10 @@ public class UserDao {
             Query query = sessionFactory.getCurrentSession().createQuery("from User user where user.name = :username");
             query.setParameter("username", username);
             User user = (User) query.uniqueResult();
+            if(user == null){
+                logger.warn("User doesn't exist");
+                throw new FriendRequestException("User doesn't exist");
+            }
             User user2 = loadUserByUsername(username);
             FriendRequest friendRequest = new FriendRequest();
             friendRequest.setUser(requestingUser);

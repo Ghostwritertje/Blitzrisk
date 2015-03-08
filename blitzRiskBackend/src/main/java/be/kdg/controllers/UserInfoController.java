@@ -112,10 +112,8 @@ public class UserInfoController {
         try {
             userService.addFriend(requestingUser, username);
             return new ResponseEntity(HttpStatus.OK);
-
         } catch (FriendRequestException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
-
         }
         //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
     }
