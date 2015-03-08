@@ -81,9 +81,10 @@ public class UserInfoController {
         return this.userService.findall();
     }
 
-    @RequestMapping(value = "/{username}/friends", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriends(@PathVariable("username") String username) {
+    public List<UserBean> getFriends(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
         List<UserBean> friends = new ArrayList<>();
         for(User user : userService.getFriends(username)){
             friends.add(new UserBean(user));
@@ -92,9 +93,10 @@ public class UserInfoController {
         return friends;
     }
 
-    @RequestMapping(value = "/{username}/friendrequests", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/friendRequests", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriendRequests(@PathVariable("username") String username) {
+    public List<UserBean> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
         List<UserBean> friends = new ArrayList<>();
         for(User user : userService.getFriendRequests(username)){
             friends.add(new UserBean(user));

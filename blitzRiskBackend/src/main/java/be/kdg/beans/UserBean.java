@@ -21,7 +21,6 @@ public class UserBean {
 
     public UserBean(User user) {
         this.name = user.getName();
-        this.password = user.getPassword();
         this.email = user.getEmail();
     }
 

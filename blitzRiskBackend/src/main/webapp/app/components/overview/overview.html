@@ -3,14 +3,29 @@
         <div class="col-sm-4">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-success">Friends</li>
-                <li ng-repeat="friend in friends" class="list-group-item">{{friend.name}}</li>
+                <li ng-repeat="friend in friends" class="list-group-item friends">{{friend.name}}</li>
                 <li class="list-group-item">
-                    <div class="input-group">
-                        <input type="text" class="form-control">
+                    <div class="input-group" ng-class="{'has-error' : addFriendError}">
+                        <input ng-keyup="addFriendError = false"  id="newFriend" ng-model="newFriend" type="text" class="form-control">
+                        <span ng-show="addFriendError" class="glyphicon glyphicon-remove form-control-feedback"></span>
+
                         <span class="input-group-btn">
-                         <button class="btn btn-default" type="button">Add</button>
+                             <button id="addFriendBtn" ng-click="addFriend()" class="btn btn-default" type="submit">Add</button>
                         </span>
+
                     </div>
+                </li>
+
+
+            </ul>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">Friend Requests</li>
+
+                <li ng-repeat="friend in friendRequests" class="list-group-item">
+                    {{friend.name}}
+                    <button ng-click="acceptFriend(friend.name)"
+                            class="btn btn-primary btn-xs acceptFriendBtn" type="button">Accept
+                    </button>
                 </li>
             </ul>
         </div>

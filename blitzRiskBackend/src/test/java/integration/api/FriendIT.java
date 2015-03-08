@@ -52,7 +52,7 @@ public class FriendIT {
     public void testAddAndAcceptFriend() {
         String token = given().header("name", "friendtestuser1").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).post(URL + "addFriend/friendtestuser2").then().assertThat().statusCode(200);
-        given().header("X-Auth-Token", token).get(URL + "friendtestuser1/friends").then().assertThat().statusCode(200);
+        given().header("X-Auth-Token", token).get(URL + "friends").then().assertThat().statusCode(200);
 
         token = given().header("name", "friendtestuser2").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).post(URL + "acceptFriend/friendtestuser1").then().assertThat().statusCode(200);

@@ -139,18 +139,24 @@ public class UserDao {
         for (FriendRequest friendRequest : friendRequests) {
             friends.add(friendRequest.getFriend());
         }
+        query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.friend.name = :username and f.accepted = true ");
+        query.setParameter("username", username);
+        friendRequests = query.list();
+        for (FriendRequest friendRequest : friendRequests) {
+            friends.add(friendRequest.getUser());
+        }
         return friends;
 
     }
 
     public List<User> getFriendRequests(String username) {
-        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :username and f.accepted = false ");
+        Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.friend.name = :username and f.accepted = false ");
         query.setParameter("username", username);
 
         List<FriendRequest> friendRequests = query.list();
         List<User> friends = new ArrayList<>();
         for (FriendRequest friendRequest : friendRequests) {
-            friends.add(friendRequest.getFriend());
+            friends.add(friendRequest.getUser());
         }
         return friends;
     }
