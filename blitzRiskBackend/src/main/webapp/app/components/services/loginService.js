@@ -16,10 +16,7 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
                 .success(function (data) {
                     token = data;
                     isLoggedIn = true;
-
                     deferred.resolve(data);
-
-
                 }).
                 error(function () {
                     deferred.reject('Wrong log in details');

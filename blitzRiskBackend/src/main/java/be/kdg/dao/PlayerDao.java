@@ -58,7 +58,7 @@ public class PlayerDao {
     }
 
     public List<User> getRecentlyPlayed(String username) {
-        Query query = sessionFactory.getCurrentSession().createQuery("from Player player where player.user.name = :username order by player.game.Id desc");
+        Query query = sessionFactory.getCurrentSession().createQuery("from Player player where player.user.name = :username and player.game.started = true order by player.game.Id desc");
         query.setMaxResults(10);
         query.setParameter("username", username);
         List<Player> usersPlayers = query.list();

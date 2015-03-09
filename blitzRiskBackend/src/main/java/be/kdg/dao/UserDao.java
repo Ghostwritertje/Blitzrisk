@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Marlies on 4/01/2015.
+ * Retrieves and saves Users in the database.
  */
 
 @Service("userDao")
