@@ -1,6 +1,7 @@
 package be.kdg.controllers;
 
 import be.kdg.exceptions.IllegalMoveException;
+import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
@@ -62,6 +63,18 @@ public class TurnController {
         return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/getTurnId", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Integer> getTurnId(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId){
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        try {
+            Turn turn = turnService.getTurn(player);
+            return new ResponseEntity<>(turn.getId(), HttpStatus.OK);
+        }
+        catch (IllegalMoveException e) {
+            return new ResponseEntity<Integer>(-1, HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "/skipAttack", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> skipAttack(@RequestHeader("X-Auth-Token") java.lang.String token, @RequestHeader("playerId") java.lang.String playerId){
             Player player = playerService.getPlayerById(Integer.parseInt(playerId));
@@ -98,7 +111,9 @@ public class TurnController {
 
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<List<MoveWrapper>> reinforce(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+    public ResponseEntity<List<MoveWrapper>> reinforce(@RequestHeader("X-Auth-Token") String token,
+                                                       @RequestHeader("playerId") String playerId,
+                                                       @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
         List <MoveWrapper> newMoveWrappers = new ArrayList<>();
         User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
         if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
@@ -114,7 +129,9 @@ public class TurnController {
 
     @RequestMapping(value = "/attack", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<List<MoveWrapper>> attack(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+    public ResponseEntity<List<MoveWrapper>> attack(@RequestHeader("X-Auth-Token") String token,
+                                                    @RequestHeader("playerId") String playerId,
+                                                    @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
         log.warn("attack called");
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
@@ -125,7 +142,9 @@ public class TurnController {
 
     @RequestMapping(value = "/moveUnits", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<List<MoveWrapper>> moveUnits(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+    public ResponseEntity<List<MoveWrapper>> moveUnits(@RequestHeader("X-Auth-Token") String token,
+                                                       @RequestHeader("playerId") String playerId,
+                                                       @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
         log.warn("move called");
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
@@ -133,7 +152,6 @@ public class TurnController {
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
         return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
     }
-
 
     public List<Move> getMoves(List<MoveWrapper> moveWrappers) {
         List <Move> moves = new ArrayList<>();

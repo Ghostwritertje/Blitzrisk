@@ -153,7 +153,7 @@ public class EnterTurnsIT {
     @Test
     public void skipMoveWithWrongStatus() throws IllegalMoveException{
         Player player = origin.getPlayer();
-        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
         turn.setPlayer(player);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
@@ -225,5 +225,16 @@ public class EnterTurnsIT {
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "gameId", game, "turnId", turnId ).get(URL + "getRecentTurns").then().assertThat().statusCode(200);
 
+    }
+
+    @Test
+    public void getTurnId() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.saveTurn(turn);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).get(URL + "getTurnId").then().assertThat().statusCode(200);
     }
 }
