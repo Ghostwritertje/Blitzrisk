@@ -1,5 +1,6 @@
 package integration.api;
 
+import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
 import be.kdg.services.*;
@@ -45,7 +46,7 @@ public class EnterTurnsIT {
     private Territory destination;
 
     @Before
-    public void setUp() throws IllegalUserInviteException {
+    public void setUp() throws IllegalUserInviteException{
 
         userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
         userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
@@ -58,6 +59,7 @@ public class EnterTurnsIT {
         players = gameObject.getPlayers();
         for (Player player: players) {
             player.setInvitationStatus(InvitationStatus.ACCEPTED);
+            player.setPlayerStatus(PlayerStatus.WAITING);
             //playerService.save(player);
         }
         //gameObject.setTerritories();
@@ -114,8 +116,55 @@ public class EnterTurnsIT {
     }
 
     @Test
-    public void reinforce() {
-        Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
+    public void skipAttack() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
+        turnService.saveTurn(turn);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipAttack").then().assertThat().statusCode(200);
+    }
+
+    @Test
+    public void skipMove() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
+        turnService.setPlayerTurn(player, PlayerStatus.MOVE);
+        turnService.saveTurn(turn);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipMove").then().assertThat().statusCode(200);
+    }
+
+    @Test
+    public void skipAttackWithWrongStatus() throws IllegalMoveException {
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.saveTurn(turn);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipAttack").then().assertThat().statusCode(405);
+    }
+
+    @Test
+    public void skipMoveWithWrongStatus() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.saveTurn(turn);
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipMove").then().assertThat().statusCode(405);
+    }
+
+    @Test
+    public void reinforce() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
@@ -125,9 +174,12 @@ public class EnterTurnsIT {
     }
 
     @Test
-    public void attack() {
-        Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
-        turn.setPlayer(origin.getPlayer());
+    public void attack() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.saveTurn(turn);
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
