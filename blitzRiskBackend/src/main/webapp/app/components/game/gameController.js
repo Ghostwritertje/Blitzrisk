@@ -9,7 +9,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             });
 
     }
-]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
+]).directive('riskmap', ["GameService", "LoginService" , '$log', function (GameService, LoginService, $log) {
     return {
         restrict: 'E',
         replace: true,
@@ -50,7 +50,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     console.log(svgDoc.getElementById(regionid).getAttribute("xcoord"));
 
                 }*/
-                alert("text change");
+                $log.info("text change");
             });
 
             function loadGameBoard() {

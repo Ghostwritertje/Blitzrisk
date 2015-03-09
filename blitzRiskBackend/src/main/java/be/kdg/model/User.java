@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<Player>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<FriendRequest> friends = new ArrayList<>();
+
     public String getName() {
         return name;
     }
@@ -97,5 +100,11 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public List<FriendRequest> getFriends() {
+        return friends;
+    }
 
+    public void addFriend(FriendRequest friendRequest) {
+        this.friends.add(friendRequest);
+    }
 }

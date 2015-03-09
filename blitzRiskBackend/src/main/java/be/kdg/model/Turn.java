@@ -21,13 +21,13 @@ public class Turn {
     @JoinColumn(name = "gameId")
     private Game game;
 
-    @OneToMany(mappedBy = "turn")
+    @OneToMany(mappedBy = "turn", fetch = FetchType.EAGER)
     private List<Move> moves = new ArrayList<>();
 
     @OneToMany(mappedBy = "turn")
     private List<Move> calculatedMoves = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "playerId")
     private Player player;
 

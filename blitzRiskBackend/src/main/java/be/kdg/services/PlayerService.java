@@ -34,6 +34,11 @@ public class PlayerService {
     }
 
     @Transactional
+    public void removePlayer(Player player) {
+        playerDao.removePlayer(player);
+    }
+
+    @Transactional
     public Player createPlayer(User user, Game game) throws IllegalUserInviteException {
         if (game.getPlayers().size() != 0) {
             for (Player player : game.getPlayers()) {
@@ -47,11 +52,17 @@ public class PlayerService {
         player.setGame(game);
         player.setColor(game.getPlayers().size());
         player.setInvitationStatus(InvitationStatus.PENDING);
+        player.setPlayerStatus(PlayerStatus.WAITING);
         game.addPlayer(player);
         playerDao.savePlayer(player);
 
         //gameDao.saveGame(game);
         return player;
+    }
+
+    @Transactional
+    public PlayerStatus getPlayerStatus(Player player) {
+        return player.getPlayerStatus();
     }
 
     @Transactional
@@ -107,13 +118,15 @@ public class PlayerService {
                 //   gameDao.saveGame(game);
                 game.assignRandomTerritories();
                 game.setStarted(true);
+                game.getPlayers().get(0).setPlayerStatus(PlayerStatus.REINFORCE);
                 gameDao.updateGame(game);
                 logger.info("Game " + game.getId() + " has started!");
             }
         }
     }
-    
 
-
-
+    @Transactional
+    public List<User> getRecentlyPlayed(String username) {
+        return playerDao.getRecentlyPlayed(username);
+    }
 }
