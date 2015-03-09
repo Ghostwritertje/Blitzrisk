@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -47,6 +48,11 @@ public class TurnService {
         }
     }
 
+    public int getTurnNumber(int turnId) {
+        Turn turn = turnDao.getTurnById(turnId);
+        return turn.getNumber();
+    }
+
     public Turn getTurn(int turnId) {
         return turnDao.getTurnById(turnId);
     }
@@ -65,8 +71,20 @@ public class TurnService {
         Turn turn = new Turn();
         turn.setGame(game);
         turn.setPlayer(player);
+        turn.setNumber(game.getTurns().size());
         turnDao.updateTurn(turn);
         return turn;
+    }
+
+    public List<Turn> getRecentTurns(int gameId, int number) {
+            List<Turn> turns = new ArrayList<>();
+            Game game = gameDao.getGame(gameId);
+            List<Turn> allTurns = game.getTurns();
+
+            for (; number < allTurns.size(); number++) {
+                turns.add(allTurns.get(number));
+            }
+            return turns;
     }
 
     public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException {
@@ -242,6 +260,7 @@ public class TurnService {
     }*/
     public void moveUnits(Player player) {
         setPlayerTurn(player, PlayerStatus.WAITING);
+
     }
 
     public void setPlayerTurn(Player player, PlayerStatus playerStatus) {
