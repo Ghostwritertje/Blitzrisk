@@ -95,6 +95,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void addFriend(User requestingUser, String username) throws FriendRequestException {
+        if(requestingUser.getUsername().toLowerCase().equals(username.toLowerCase())){
+            logger.warn("Can't add yourself as a friend");
+            throw new FriendRequestException("Can't add yourself as a friend");
+        }
+
         userDao.addFriend(requestingUser, username);
     }
 
