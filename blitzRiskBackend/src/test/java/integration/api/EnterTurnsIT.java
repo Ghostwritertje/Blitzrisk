@@ -138,4 +138,17 @@ public class EnterTurnsIT {
                 .request().body(moveWrapperList)
                 .post(URL + "attack").then().assertThat().statusCode(200);
     }
+
+    @Test
+    public void recentTurns() {
+        for (int i = 0; i< 3; i++) {
+            Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
+            turn.setPlayer(origin.getPlayer());
+            turnService.saveTurn(turn);
+        }
+
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "gameId", game, "turnId", 1 ).get(URL + "getRecentTurns").then().assertThat().statusCode(200);
+
+    }
 }
