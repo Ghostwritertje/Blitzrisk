@@ -18,25 +18,26 @@
 <div id="view">
 
   <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+      <div class="container-fluid" ng-controller="AngularTranslateController">
           <div class="navbar-header">
-              <a class="navbar-brand" href="#">BlitzRisk</a>
+              <a class="navbar-brand" href="#">{{ HOME | translate}}</a>
           </div>
           <div>
               <ul class="nav navbar-nav">
-                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">Profile</a></li>
-                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">Overview</a></li>
+                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">{{'PROFILE'|translate}}</a></li>
+                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">{{'OVERVIEW'|translate}}</a></li>
               </ul>
-              <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
-                  <li><a  href="" ng-click="changeLanguage('nl')"></span>nl</a></li>
-                  <li><a  href="" ng-click="changeLanguage('en')"></span>en</a></li>
-                  <li ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> {{ 'SIGNUP' | translate }} </a></li>
-                  <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span></a></li>
-              </ul>
-              <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
+              <ul  class="nav navbar-nav navbar-right">
+                  <li><a  href="" ng-click="changeLanguage('nl')">NL</span></a></li>
+                  <li><a  href="" ng-click="changeLanguage('en')">EN</span></a></li>
+
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')">{{'SIGNUP'|translate}} <span class="glyphicon glyphicon-user"></span></a></li>
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')">{{'LOGIN'|translate}} <span class="glyphicon glyphicon-log-in"></span></a></li>
+              <!--</ul>-->
+              <!--<ul class="nav navbar-nav navbar-right">-->
                   <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
-                  <li><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
-                  <li><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+                  <li  ng-show="loggedIn"><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
+                  <li  ng-show="loggedIn"><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span>{{'LOGOUT'|translate}}</a></li>
               </ul>
           </div>
       </div>
