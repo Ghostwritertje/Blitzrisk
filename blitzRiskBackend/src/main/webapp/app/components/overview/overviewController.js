@@ -2,8 +2,8 @@
  * Created by jorandeboever on 18/02/15.
  */
 'use strict';
-angular.module('blitzriskControllers').controller('OverviewController', ['$scope', '$http', '$location', '$interval', 'LoginService', 'GameService', 'FriendService',
-    function ($scope, $http, $location, $interval, LoginService, GameService, FriendService) {
+angular.module('blitzriskControllers').controller('OverviewController', ['$scope', '$http', '$log', '$location', '$interval', 'LoginService', 'GameService', 'FriendService',
+    function ($scope, $http,$log, $location, $interval, LoginService, GameService, FriendService) {
         $scope.recentlyPlayed = [{"name": "Dummy145"}, {"name": "Dummy234"}, {"name": "Dummy367"}];
         $scope.selectedGameId = "";
 
@@ -105,6 +105,27 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
                     reloadFriends();
                 }
             )
+        };
+
+
+
+        $scope.friendExists = function(name){
+            var i;
+            for (i = 0; i < $scope.friends.length; i++) {
+                if(name === $scope.friends[i].name){
+                    return true;
+                }
+            }
+            return false;
+        };
+        $scope.friendRequestExists = function(name){
+            var i;
+            for (i = 0; i < $scope.friendRequests.length; i++) {
+                if(name === $scope.friendRequests[i].name){
+                    return true;
+                }
+            }
+            return false;
         };
 
         function reloadFriends() {

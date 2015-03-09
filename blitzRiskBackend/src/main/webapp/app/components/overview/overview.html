@@ -34,7 +34,10 @@
 
             <ul class="list-group">
                 <li class="list-group-item list-group-item-success">Recently played</li>
-                <li ng-repeat="user in recentlyPlayed" class="list-group-item friends">{{user.name}}</li>
+                <li ng-repeat="user in recentlyPlayed" class="list-group-item friends">
+                    {{user.name}}
+                    <span ng-if="friendExists(user.name)" class="badge">friend</span>
+                </li>
             </ul>
         </div>
         <div class="col-sm-4">

@@ -12,9 +12,16 @@
 }
 
 .acceptFriendBtn {
+    float:right;
+}
+
+.myFloatRightBtn {
     float: right;
 }
 
 .glyphicon-remove {
     right: 4em;
+}
+.addFriendBtn {
+    float:right;
 }
