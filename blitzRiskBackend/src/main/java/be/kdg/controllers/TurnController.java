@@ -62,6 +62,30 @@ public class TurnController {
         return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/skipAttack", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> skipAttack(@RequestHeader("X-Auth-Token") java.lang.String token, @RequestHeader("playerId") java.lang.String playerId){
+            Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+            try {
+                turnService.setPlayerTurn(player, PlayerStatus.MOVE);
+                return new ResponseEntity<>(player.getPlayerStatus().toString(), HttpStatus.OK);
+            } catch (IllegalMoveException e) {
+                log.warn("error: " + e.getMessage());
+                return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            }
+    }
+
+    @RequestMapping(value = "/skipMove", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<String> skipMove(@RequestHeader("X-Auth-Token") java.lang.String token, @RequestHeader("playerId") java.lang.String playerId){
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        try {
+            turnService.setPlayerTurn(player, PlayerStatus.WAITING);
+            return new ResponseEntity<>(player.getPlayerStatus().toString(), HttpStatus.OK);
+        } catch (IllegalMoveException e) {
+            log.warn(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        }
+    }
+
     @RequestMapping(value = "/getRecentTurns", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<TurnWrapper>> getRecentTurns(@RequestHeader("X-Auth-Token") String token, @RequestHeader("gameId") String gameId, @RequestHeader ("turnId") String turnId){
         int turnNumber = turnService.getTurnNumber(Integer.parseInt(turnId));

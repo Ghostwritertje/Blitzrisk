@@ -258,23 +258,32 @@ public class TurnService {
     /*public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException {
         setPlayerTurn(player, PlayerStatus.WAITING);
     }*/
-    public void moveUnits(Player player) {
+    public void moveUnits(Player player) throws IllegalMoveException{
         setPlayerTurn(player, PlayerStatus.WAITING);
 
     }
 
-    public void setPlayerTurn(Player player, PlayerStatus playerStatus) {
-        player.setPlayerStatus(playerStatus);
-        playerDao.updatePlayer(player);
-        if (playerStatus.equals(PlayerStatus.WAITING)) {
-            Game game = player.getGame();
-            game.setPlayerTurn(game.getPlayerTurn()+1);
-            if(game.getPlayerTurn() >= game.getPlayers().size()) game.setPlayerTurn(0);
+    public void setPlayerTurn(Player player, PlayerStatus playerStatus) throws IllegalMoveException{
+        PlayerStatus currentPlayerStatus = player.getPlayerStatus();
+        //checking if new playerStatus is a secuence of the current player status
+        if ((playerStatus.equals(PlayerStatus.REINFORCE)&& currentPlayerStatus.equals(PlayerStatus.WAITING))
+                || (playerStatus.equals(PlayerStatus.ATTACK) && currentPlayerStatus.equals(PlayerStatus.REINFORCE))
+                || (playerStatus.equals(PlayerStatus.MOVE) && currentPlayerStatus.equals(PlayerStatus.ATTACK))
+                || playerStatus.equals(PlayerStatus.WAITING) && currentPlayerStatus.equals(PlayerStatus.MOVE) ) {
+            player.setPlayerStatus(playerStatus);
+            playerDao.updatePlayer(player);
+            if (playerStatus.equals(PlayerStatus.WAITING)) {
+                Game game = player.getGame();
+                game.setPlayerTurn(game.getPlayerTurn() + 1);
+                if (game.getPlayerTurn() >= game.getPlayers().size()) game.setPlayerTurn(0);
 
-            Player newPlayer = game.getPlayers().get(game.getPlayerTurn() + 1);
-            newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
-            playerDao.updatePlayer(newPlayer);
-            gameDao.updateGame(game);
+                Player newPlayer = game.getPlayers().get(game.getPlayerTurn());
+                newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
+                playerDao.updatePlayer(newPlayer);
+                gameDao.updateGame(game);
+
+            }
         }
+        else throw new IllegalMoveException("new playerStatus isn't allowed: current = " + currentPlayerStatus + " new = " + playerStatus);
     }
 }
