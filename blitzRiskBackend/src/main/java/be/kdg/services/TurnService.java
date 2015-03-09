@@ -277,10 +277,11 @@ public class TurnService {
                 game.setPlayerTurn(game.getPlayerTurn() + 1);
                 if (game.getPlayerTurn() >= game.getPlayers().size()) game.setPlayerTurn(0);
 
-                Player newPlayer = game.getPlayers().get(game.getPlayerTurn() + 1);
+                Player newPlayer = game.getPlayers().get(game.getPlayerTurn());
                 newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
                 playerDao.updatePlayer(newPlayer);
                 gameDao.updateGame(game);
+
             }
         }
         else throw new IllegalMoveException("new playerStatus isn't allowed: current = " + currentPlayerStatus + " new = " + playerStatus);

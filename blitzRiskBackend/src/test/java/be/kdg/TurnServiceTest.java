@@ -304,7 +304,7 @@ public class TurnServiceTest {
         Assert.assertTrue("player should have 5 units", territories.get(0).getNumberOfUnits() == 5);
     }
 
-    @Test
+    @Test(expected = IllegalMoveException.class)
     public void reinforceWithWrongStatus() throws IllegalMoveException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.ATTACK);
