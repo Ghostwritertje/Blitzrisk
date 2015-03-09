@@ -192,6 +192,27 @@ public class EnterTurnsIT {
     }
 
     @Test
+    public void moveUnits() throws IllegalMoveException{
+        Player player = origin.getPlayer();
+        Turn turn = turnService.createTurn(gameService.getGame(game),player);
+        turn.setPlayer(player);
+        turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
+        turnService.setPlayerTurn(player, PlayerStatus.MOVE);
+        turnService.saveTurn(turn);
+        origin.setNumberOfUnits(3);
+        territoryService.updateTerritory(origin);
+        destination.setPlayer(player);
+        territoryService.updateTerritory(destination);
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
+        String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token, "playerId", "" + player.getId())
+                .request().body(moveWrapperList)
+                .post(URL + "moveUnits").then().assertThat().statusCode(200);
+    }
+
+    @Test
     public void recentTurns() {
         int turnId = 0;
         for (int i = 0; i< 3; i++) {

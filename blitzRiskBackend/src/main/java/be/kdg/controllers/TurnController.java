@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 
@@ -39,11 +38,12 @@ public class TurnController {
 
     @RequestMapping(value = "/createTurn", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Integer> createTurn(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
-        User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
-        if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
-            return new ResponseEntity<>(-1,HttpStatus.FORBIDDEN);
-        }
-        return new ResponseEntity<>(turnService.createTurn(Integer.parseInt(playerId)).getId(),HttpStatus.CREATED);
+
+            User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
+            if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
+                return new ResponseEntity<>(-1, HttpStatus.FORBIDDEN);
+            }
+            return new ResponseEntity<>(turnService.createTurn(Integer.parseInt(playerId)).getId(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/numberOfReinforcements", method = RequestMethod.GET, produces = "application/json")
@@ -69,7 +69,6 @@ public class TurnController {
                 turnService.setPlayerTurn(player, PlayerStatus.MOVE);
                 return new ResponseEntity<>(player.getPlayerStatus().toString(), HttpStatus.OK);
             } catch (IllegalMoveException e) {
-                log.warn("error: " + e.getMessage());
                 return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
             }
     }
@@ -123,6 +122,18 @@ public class TurnController {
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
         return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/moveUnits", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<List<MoveWrapper>> moveUnits(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId, @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException{
+        log.warn("move called");
+        List<Move> moves = getMoves(moveWrappers);
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        turnService.moveUnits(moves.get(0).getTurn(), player, moves);
+        List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
+        return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
+    }
+
 
     public List<Move> getMoves(List<MoveWrapper> moveWrappers) {
         List <Move> moves = new ArrayList<>();

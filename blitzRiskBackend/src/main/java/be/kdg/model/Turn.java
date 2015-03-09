@@ -24,7 +24,7 @@ public class Turn {
     @OneToMany(mappedBy = "turn", fetch = FetchType.EAGER)
     private List<Move> moves = new ArrayList<>();
 
-    @OneToMany(mappedBy = "turn")
+    @OneToMany(mappedBy = "turn", fetch = FetchType.EAGER)
     private List<Move> calculatedMoves = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
