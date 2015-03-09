@@ -50,7 +50,9 @@ angularTranslate.config(function ($translateProvider) {
         PROFILE_CFRM_NEW_PWD: 'Confirm new password:',
         PROFILE_CANCEL: 'Cancel',
         PROFILE_SAVECHANGES: 'Save Changes',
-        PROFILE_SAVED: 'Saved'
+        PROFILE_SAVED: 'Saved',
+        PROFILE_PWD_RQD: 'Password Required',
+        PROFILE_PWD_WRONG: 'Password wrong'
 
     });
     $translateProvider.translations('nl', {
@@ -101,7 +103,9 @@ angularTranslate.config(function ($translateProvider) {
         PROFILE_CFRM_NEW_PWD: 'Bevestig nieuw wachtwoord:',
         PROFILE_CANCEL: 'Annuleren',
         PROFILE_SAVECHANGES: 'Veranderingen opslaan',
-        PROFILE_SAVED: 'Opgeslagen'
+        PROFILE_SAVED: 'Opgeslagen',
+        PROFILE_PWD_RQD: 'Wachtwoord vereist',
+        PROFILE_PWD_WRONG: 'Wachtwoord verkeerd'
     });
     $translateProvider.preferredLanguage('en');
 });
