@@ -1,6 +1,7 @@
 package be.kdg.controllers;
 
 import be.kdg.beans.PlayerBean;
+import be.kdg.beans.UserBean;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.exceptions.UnAuthorizedActionException;
 import be.kdg.model.Game;
@@ -59,7 +60,7 @@ public class GameController {
     public ResponseEntity<String> acceptGame(@PathVariable("id") int playerId, @RequestHeader("X-Auth-Token") String token) {
         User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
         Player player = playerService.getPlayerById(playerId);
-        if(player.getUser().getId() != user.getId()) {
+        if (player.getUser().getId() != user.getId()) {
             return new ResponseEntity<String>("You may not accept other peoples games", HttpStatus.FORBIDDEN);
         }
         //player.setAccepted(true);
@@ -83,7 +84,7 @@ public class GameController {
         } catch (IllegalUserInviteException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(newPlayer.getUser().getUsername() , HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/game/{gameId}/invite-random", method = RequestMethod.POST, produces = "application/json")
@@ -99,28 +100,28 @@ public class GameController {
         Player newPlayer = null;
         try {
             newPlayer = gameService.inviteRandomUser(gameId);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.warn(e);
             return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.OK);
     }
 
-  /* @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<PlayerBean> getPlayers(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
-        User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
-        if
-        List<Player> players = gameService.getPlayers(username);
-        List<PlayerBean> playerBeanList = new ArrayList<>();
+    /* @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
+      @ResponseBody
+      public List<PlayerBean> getPlayers(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
+          User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
+          if
+          List<Player> players = gameService.getPlayers(username);
+          List<PlayerBean> playerBeanList = new ArrayList<>();
 
-        for (Player player : players) {
-            playerBeanList.add(new PlayerBean(player));
-        }
+          for (Player player : players) {
+              playerBeanList.add(new PlayerBean(player));
+          }
 
-        return playerBeanList;
-    }
-*/
+          return playerBeanList;
+      }
+  */
     @RequestMapping(value = "/user/{username}/games", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<List<GameWrapper>> getGames(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
@@ -131,13 +132,14 @@ public class GameController {
         }
         List<Game> games = gameService.getGames(username);
 
-        for(Game game : games){
+        for (Game game : games) {
             gameWrapperList.add(new GameWrapper(game));
         }
         return new ResponseEntity<>(gameWrapperList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/game/{gameId}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
     public ResponseEntity<GameWrapper> getGame(@PathVariable("gameId") int gameId, @RequestHeader("X-Auth-Token") String token) {
         GameWrapper gameWrapper = null;
         User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
@@ -148,5 +150,23 @@ public class GameController {
         }
         gameWrapper = new GameWrapper(gameService.getGame(gameId));
         return new ResponseEntity<>(gameWrapper, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/recentlyplayed", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<List<UserBean>> getRecentlyPlayedUsers(@RequestHeader("X-Auth-Token") String token) {
+        String username = TokenUtils.getUserNameFromToken(token);
+       try {
+           List<User> users = playerService.getRecentlyPlayed(username);
+           List<UserBean> userBeans = new ArrayList<>();
+           for(User user : users){
+               userBeans.add(new UserBean(user));
+           }
+           return new ResponseEntity<List<UserBean>>(userBeans, HttpStatus.OK);
+       }catch (Exception e ){
+           logger.warn(e);
+           return new ResponseEntity<List<UserBean>>(HttpStatus.BAD_REQUEST);
+
+       }
     }
 }

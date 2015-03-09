@@ -109,7 +109,6 @@ public class UserDao {
         sessionFactory.getCurrentSession().save(user);
     }
 
-
     public void addFriend(User requestingUser, String username) throws FriendRequestException {
         if(!checkFriendRequestExists(requestingUser.getUsername(), username)){
             Query query = sessionFactory.getCurrentSession().createQuery("from User user where user.name = :username");
@@ -132,7 +131,6 @@ public class UserDao {
 
 
     }
-
 
     public List<User> getFriends(String username) {
         Query query = sessionFactory.getCurrentSession().createQuery("from FriendRequest f where f.user.name = :username and f.accepted = true ");

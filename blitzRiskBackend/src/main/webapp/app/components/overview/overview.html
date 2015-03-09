@@ -6,11 +6,14 @@
                 <li ng-repeat="friend in friends" class="list-group-item friends">{{friend.name}}</li>
                 <li class="list-group-item">
                     <div class="input-group" ng-class="{'has-error' : addFriendError}">
-                        <input ng-keyup="addFriendError = false"  id="newFriend" ng-model="newFriend" type="text" class="form-control">
+                        <input ng-keyup="addFriendError = false" id="newFriend" ng-model="newFriend" type="text"
+                               class="form-control">
                         <span ng-show="addFriendError" class="glyphicon glyphicon-remove form-control-feedback"></span>
 
                         <span class="input-group-btn">
-                             <button id="addFriendBtn" ng-click="addFriend()" class="btn btn-default" type="submit">Add</button>
+                             <button id="addFriendBtn" ng-click="addFriend()" class="btn btn-default" type="submit">
+                                 Add
+                             </button>
                         </span>
 
                     </div>
@@ -27,6 +30,11 @@
                             class="btn btn-primary btn-xs acceptFriendBtn" type="button">Accept
                     </button>
                 </li>
+            </ul>
+
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-success">Recently played</li>
+                <li ng-repeat="user in recentlyPlayed" class="list-group-item friends">{{user.name}}</li>
             </ul>
         </div>
         <div class="col-sm-4">
