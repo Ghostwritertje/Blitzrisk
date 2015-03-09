@@ -10,6 +10,7 @@ import be.kdg.model.Territory;
 public class MoveWrapper {
     private int id;
     private int turnId;
+    private int turnNumber;
     private int origin;
     private int originNrOfUnits;
     private int originPlayer;
@@ -26,6 +27,7 @@ public class MoveWrapper {
         originNrOfUnits = move.getOriginTerritory().getNumberOfUnits();
         originPlayer = move.getOriginTerritory().getPlayer().getId();
         turnId = move.getTurn().getId();
+        turnNumber = move.getTurn().getNumber();
         destination = move.getDestinationTerritory().getId();
         destinationNrOfUnits = move.getDestinationTerritory().getNumberOfUnits();
         destinationPlayer = move.getDestinationTerritory().getPlayer().getId();

@@ -5,6 +5,7 @@ import be.kdg.model.*;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.*;
 import be.kdg.wrappers.MoveWrapper;
+import be.kdg.wrappers.TurnWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,17 @@ public class TurnController {
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         PlayerStatus playerStatus = playerService.getPlayerStatus(player);
         return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getRecentTurns", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<TurnWrapper>> getRecentTurns(@RequestHeader("X-Auth-Token") String token, @RequestHeader("gameId") String gameId, @RequestHeader ("turnId") String turnId){
+        int turnNumber = turnService.getTurnNumber(Integer.parseInt(turnId));
+        List<Turn> turns = turnService.getRecentTurns(Integer.parseInt(gameId), turnNumber);
+        List<TurnWrapper> turnWrappers = new ArrayList<>();
+        for(Turn turn: turns) {
+            turnWrappers.add(new TurnWrapper(turn));
+        }
+        return new ResponseEntity<>(turnWrappers ,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/reinforce", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
