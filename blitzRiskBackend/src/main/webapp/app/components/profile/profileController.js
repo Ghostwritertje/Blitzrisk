@@ -11,7 +11,9 @@ angular.module('blitzriskControllers').controller('ProfileController', ['$scope'
         $scope.confirmNewPassword = '';
         $scope.updatesAvailable = false;
         $scope.wrongPassword = false;
-        $scope.errorMessagePassword = 'Password required';
+        $scope.errorPasswordRequired = false;
+        $scope.errorPasswordWrong = false;
+
         $scope.emailState = 0; //state: 0 = unchanged, 1 is changed by user, 2 is change is saved on server
         $scope.usernameState = 0;
         $scope.passwordState = 0;
@@ -29,6 +31,9 @@ angular.module('blitzriskControllers').controller('ProfileController', ['$scope'
             $scope.confirmNewPassword = '';
             $scope.wrongPassword = false;
             $scope.updatesAvailable = false;
+            $scope.errorPasswordWrong = false;
+            $scope.errorPasswordRequired = false;
+
 
             var userPromise = LoginService.getUserDetails();
             userPromise.then(function (user) {
@@ -42,7 +47,16 @@ angular.module('blitzriskControllers').controller('ProfileController', ['$scope'
         $scope.cancel = reset();
 
         $scope.save = function save() {
-            if (LoginService.authenticate($scope.password)) {
+            if ($scope.password === "") {
+                $scope.wrongPassword = true;
+                $scope.errorPasswordRequired = true;
+            }else if(!LoginService.authenticate($scope.password)){
+
+                $scope.wrongPassword = true;
+                $scope.errorPasswordWrong = true;
+
+
+            } else  {
                 var newPassword = null;
                 if ($scope.newPassword.length > 0 && angular.equals($scope.newPassword, $scope.confirmNewPassword)) {
                     newPassword = $scope.newPassword;
@@ -60,24 +74,16 @@ angular.module('blitzriskControllers').controller('ProfileController', ['$scope'
                         $scope.passwordState = 2;
                     } else {
                         $scope.passwordState = 0;
-                    }    if ($scope.emailState == 1) {
+                    }
+                    if ($scope.emailState == 1) {
                         $scope.emailState = 2;
                     } else {
                         $scope.emailState = 0;
                     }
-
-
-
-
                 });
-            } else {
-                $scope.wrongPassword = true;
-                $scope.errorMessagePassword = 'Wrong Password';
-
-
             }
-
         };
+
 
         $scope.setUpdatesAvailable = function (field) {
             $scope.updatesAvailable = true;
@@ -99,5 +105,12 @@ angular.module('blitzriskControllers').controller('ProfileController', ['$scope'
             $location.path(path);
         };
 
+        $scope.resetPassError = function () {
+            $scope.wrongPassword = false;
+            $scope.errorPasswordRequired = false;
+            $scope.errorPasswordWrong = false;
+        }
+
     }
-]);
+])
+;

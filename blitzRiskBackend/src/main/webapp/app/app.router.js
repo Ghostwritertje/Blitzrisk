@@ -1,5 +1,5 @@
 'use strict';
-var router = angular.module('blitzrisk', ['ngRoute','door3.css', 'blitzriskControllers']);
+var router = angular.module('blitzrisk', ['ngRoute','door3.css', 'blitzriskControllers', 'angularTranslate']);
 
 router.config(['$routeProvider',
     function ($routeProvider) {

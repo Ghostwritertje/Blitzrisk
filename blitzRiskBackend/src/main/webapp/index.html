@@ -23,67 +23,68 @@
 <![endif]-->
 <div id="view">
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">BlitzRisk</a>
-            </div>
-            <div>
-                <ul class="nav navbar-nav">
-                    <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')"
-                                                                            href="">Profile</a></li>
-                    <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')"
-                                                                             href="">Overview</a></li>
-                </ul>
-                <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
-                    <li ng-class="{'active': currentPage == '/register'}"><a href="" ng-click="go('/register')"><span
-                            class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                    <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span
-                            class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                </ul>
-                <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
-                    <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
-                    <li><a ng-click="go('/profile')" href=""><span class="glyphicon glyphicon-user"></span>
-                        {{myUsername}}</a></li>
-                    <li><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span> Log
-                        out</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid" ng-controller="AngularTranslateController">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#">{{ HOME | translate}}</a>
+          </div>
+          <div>
+              <ul class="nav navbar-nav">
+                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">{{'PROFILE'|translate}}</a></li>
+                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">{{'OVERVIEW'|translate}}</a></li>
+              </ul>
+              <ul  class="nav navbar-nav navbar-right">
+                  <li><a  href="" ng-click="changeLanguage('nl')">NL</span></a></li>
+                  <li><a  href="" ng-click="changeLanguage('en')">EN</span></a></li>
+
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')">{{'SIGNUP'|translate}} <span class="glyphicon glyphicon-user"></span></a></li>
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')">{{'LOGIN'|translate}} <span class="glyphicon glyphicon-log-in"></span></a></li>
+              <!--</ul>-->
+              <!--<ul class="nav navbar-nav navbar-right">-->
+                  <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
+                  <li  ng-show="loggedIn"><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
+                  <li  ng-show="loggedIn"><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span>{{'LOGOUT'|translate}}</a></li>
+              </ul>
+          </div>
+      </div>
+  </nav>
     <ng-view>loading...</ng-view>
 
 </div>
-<!-- Bower Components (external libraries) -->
-<script src="app/bower_components/cryptojslib/rollups/sha256.js"></script>
-<script src="app/bower_components/angular/angular.min.js"></script>
-<script src="app/bower_components/angular-route/angular-route.min.js"></script>
-<script src="app/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="app/bower_components/angular-css/angular-css.min.js"></script>
-<script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="app/bower_components/bootstrap/js/modal.js"></script>
-<!-- chat libraries -->
-<script src="assets/libs/sockjs-0.3.4.js"></script>
-<script src="app/bower_components/stomp/stomp.js"></script>
-<script src="assets/libs/lodash.js"></script>
+  <!-- Bower Components (external libraries) -->
+  <script src="app/bower_components/cryptojslib/rollups/sha256.js"></script>
+  <script src="app/bower_components/angular/angular.min.js"></script>
+  <script src="app/bower_components/angular-route/angular-route.min.js"></script>
+  <script src="app/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="app/bower_components/angular-css/angular-css.min.js"></script>
+  <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="app/bower_components/bootstrap/js/modal.js"></script>
+  <script src="app/bower_components/bower-angular-translate-2.6.1/angular-translate.js"></script>
+  <!-- chat libraries -->
+  <script src="assets/libs/sockjs-0.3.4.js"></script>
+  <script src="app/bower_components/stomp/stomp.js"></script>
+  <script src="assets/libs/lodash.js"></script>
 
-<!-- Angular javascript -->
-<script src="app/app.js"></script>
-<script src="app/app.router.js"></script>
-<script src="app/components/game/riskmapEvents.js"></script>
-<!-- Angular controllers -->
-<script src="app/components/login/loginController.js"></script>
-<script src="app/components/register/registerController.js"></script>
-<script src="app/components/profile/profileController.js"></script>
-<script src="app/components/game/gameController.js"></script>
-<script src="app/components/gamelobby/gamelobbyController.js"></script>
-<script src="app/components/overview/overviewController.js"></script>
-<script src="app/components/chat/chatController.js"></script>
-<!-- Angular services -->
-<script src="app/components/services/gameService.js"></script>
-<script src="app/components/services/chatService.js"></script>
-<script src="app/components/services/loginService.js"></script>
+  <!-- Angular javascript -->
+  <script src="app/app.js"></script>
+  <script src="app/app.router.js"></script>
+  <script src="app/components/game/riskmapEvents.js"></script>
+  <!-- Angular controllers -->
+  <script src="app/components/login/loginController.js"></script>
+  <script src="app/components/register/registerController.js"></script>
+  <script src="app/components/profile/profileController.js"></script>
+  <script src="app/components/game/gameController.js"></script>
+  <script src="app/components/gamelobby/gamelobbyController.js"></script>
+  <script src="app/components/overview/overviewController.js"></script>
+  <script src="app/components/chat/chatController.js"></script>
+  <!-- Angular services -->
+  <script src="app/components/services/gameService.js"></script>
+  <script src="app/components/services/chatService.js"></script>
+  <script src="app/components/services/loginService.js"></script>
 <script src="app/components/services/friendService.js"></script>
+
+  <script src="app/components/i18n/angularTranslate.js"></script>
+
 
 
 </body>

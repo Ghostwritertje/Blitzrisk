@@ -1,7 +1,7 @@
 <section class="login-wrapper">
     <section class="login-panel">
         <article class="login-custom">
-            <h1>Login</h1>
+            <h1>{{'LOGINPAGE_LOGIN'|translate}}</h1>
             <form ng-show="!busy" ng-submit="login()">
 
                 <div class="login-form-input">
@@ -12,15 +12,15 @@
                     <img src="assets/img/loginLockIcon.png">
                     <label><input ng-model="password" id="password" type="password"></label>
                 </div>
-                <p ng-if="loginError" class="errorMessage">Wrong credentials</p>
+                <p ng-if="loginError" class="errorMessage">{{'LOGINPAGE_WRONGCRED'|translate}}</p>
 
-                <input ng-click="logIn()" type="submit" value="login">
+                <input ng-click="logIn()" type="submit" value="{{'LOGINPAGE_BTN'|translate}}">
 
-                <p>Dont have an account? <b><a href="" ng-click="go('/register')">Please, Register</a></b></p>
+                <p>{{'LOGINPAGE_NOACCT'|translate}} <b><a href="" ng-click="go('/register')">{{'LOGINPAGE_REG'|translate}}</a></b></p>
 
             </form>
             <div ng-if="busy" >
-                <p>Logging in</p>
+                <p>{{'LOGINPAGE_LOGGING_IN'|translate}}</p>
             </div>
         </article>
 

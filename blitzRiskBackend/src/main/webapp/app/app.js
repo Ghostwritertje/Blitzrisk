@@ -2,6 +2,7 @@
 var blitzrisk = angular.module('blitzrisk', [
     'blitzriskControllers',
     'blitzriskServices',
+    'angularTranslate',
     '$httpProvider',
     function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
@@ -9,7 +10,6 @@ var blitzrisk = angular.module('blitzrisk', [
 }]);
 var blitzriskControllers = angular.module('blitzriskControllers',['blitzriskServices']);
 var blitzriskServices = angular.module('blitzriskServices', []);
-
 
 
 angular.module('blitzriskControllers').controller('HomeController', ['$scope', '$rootScope',  '$http', '$routeParams', '$location', 'LoginService',
