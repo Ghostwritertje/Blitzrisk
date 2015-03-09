@@ -17,8 +17,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -287,8 +284,8 @@ public class TurnServiceTest {
             else defendersCount++;
         }
 
-        Assert.assertFalse("Player shouldn't always win", attackersCount==20);
-        Assert.assertFalse("Player shouldn't always lose", defendersCount==20);
+        Assert.assertFalse("Player shouldn't always win", attackersCount == 20);
+        Assert.assertFalse("Player shouldn't always lose", defendersCount == 20);
     }
 
     @Test
@@ -536,5 +533,4 @@ public class TurnServiceTest {
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
-
 }

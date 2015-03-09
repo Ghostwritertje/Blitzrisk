@@ -83,6 +83,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
         $scope.friendRequests = [];
         $scope.newFriend = "";
         $scope.addFriendError = false;
+        $scope.recentlyPlayed = [{"name": "Joran"}];
         reloadFriends();
 
         $scope.addFriend = function () {
@@ -117,6 +118,12 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
             FriendService.getFriendRequests()
                 .then(function (payload) {
                     $scope.friendRequests = payload.data;
+                }
+            );
+            FriendService.getRecentlyPlayed()
+                .then(function (payload) {
+                    $scope.recentlyPlayed = payload.data;
+
                 }
             );
         }

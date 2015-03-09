@@ -125,7 +125,8 @@ public class PlayerService {
         }
     }
 
-
-
-
+    @Transactional
+    public List<User> getRecentlyPlayed(String username) {
+        return playerDao.getRecentlyPlayed(username);
+    }
 }
