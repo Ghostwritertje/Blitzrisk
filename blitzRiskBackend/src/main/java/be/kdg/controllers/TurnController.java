@@ -38,7 +38,8 @@ public class TurnController {
     private GameService gameService;
 
     @RequestMapping(value = "/createTurn", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Integer> createTurn(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
+    public ResponseEntity<Integer> createTurn(@RequestHeader("X-Auth-Token") String token,
+                                              @RequestHeader("playerId") String playerId) {
 
             User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
             if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
@@ -48,7 +49,8 @@ public class TurnController {
     }
 
     @RequestMapping(value = "/numberOfReinforcements", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Integer> numberOfReinforcements(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId) {
+    public ResponseEntity<Integer> numberOfReinforcements(@RequestHeader("X-Auth-Token") String token,
+                                                          @RequestHeader("playerId") String playerId) {
         User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
         if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
             return new ResponseEntity<>(-1,HttpStatus.FORBIDDEN);
@@ -57,14 +59,16 @@ public class TurnController {
     }
 
     @RequestMapping(value = "/getPlayerStatus", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> getPlayerStatus(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId){
+    public ResponseEntity<String> getPlayerStatus(@RequestHeader("X-Auth-Token") String token,
+                                                  @RequestHeader("playerId") String playerId){
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         PlayerStatus playerStatus = playerService.getPlayerStatus(player);
         return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getTurnId", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Integer> getTurnId(@RequestHeader("X-Auth-Token") String token, @RequestHeader("playerId") String playerId){
+    public ResponseEntity<Integer> getTurnId(@RequestHeader("X-Auth-Token") String token,
+                                             @RequestHeader("playerId") String playerId){
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         try {
             Turn turn = turnService.getTurn(player);
@@ -76,7 +80,8 @@ public class TurnController {
     }
 
     @RequestMapping(value = "/skipAttack", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> skipAttack(@RequestHeader("X-Auth-Token") java.lang.String token, @RequestHeader("playerId") java.lang.String playerId){
+    public ResponseEntity<String> skipAttack(@RequestHeader("X-Auth-Token") java.lang.String token,
+                                             @RequestHeader("playerId") java.lang.String playerId){
             Player player = playerService.getPlayerById(Integer.parseInt(playerId));
             try {
                 turnService.setPlayerTurn(player, PlayerStatus.MOVE);
@@ -87,7 +92,8 @@ public class TurnController {
     }
 
     @RequestMapping(value = "/skipMove", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> skipMove(@RequestHeader("X-Auth-Token") java.lang.String token, @RequestHeader("playerId") java.lang.String playerId){
+    public ResponseEntity<String> skipMove(@RequestHeader("X-Auth-Token") java.lang.String token,
+                                           @RequestHeader("playerId") java.lang.String playerId){
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         try {
             turnService.setPlayerTurn(player, PlayerStatus.WAITING);
@@ -99,7 +105,9 @@ public class TurnController {
     }
 
     @RequestMapping(value = "/getRecentTurns", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<TurnWrapper>> getRecentTurns(@RequestHeader("X-Auth-Token") String token, @RequestHeader("gameId") String gameId, @RequestHeader ("turnId") String turnId){
+    public ResponseEntity<List<TurnWrapper>> getRecentTurns(@RequestHeader("X-Auth-Token") String token,
+                                                            @RequestHeader("gameId") String gameId,
+                                                            @RequestHeader ("turnId") String turnId){
         int turnNumber = turnService.getTurnNumber(Integer.parseInt(turnId));
         List<Turn> turns = turnService.getRecentTurns(Integer.parseInt(gameId), turnNumber);
         List<TurnWrapper> turnWrappers = new ArrayList<>();
@@ -113,7 +121,7 @@ public class TurnController {
     @ResponseBody
     public ResponseEntity<List<MoveWrapper>> reinforce(@RequestHeader("X-Auth-Token") String token,
                                                        @RequestHeader("playerId") String playerId,
-                                                       @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
+                                                       @RequestBody List<MoveWrapper> moveWrappers){
         List <MoveWrapper> newMoveWrappers = new ArrayList<>();
         User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
         if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
@@ -122,7 +130,15 @@ public class TurnController {
 
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         List<Move> moves = getMoves(moveWrappers);
-        turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
+        try {
+            turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
+        }
+        catch (IllegalTurnException e) {
+            return new ResponseEntity<>(newMoveWrappers, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (IllegalMoveException e) {
+            return new ResponseEntity<>(newMoveWrappers, HttpStatus.METHOD_NOT_ALLOWED);
+        }
         newMoveWrappers = getUpdatedTerritories(moves);
         return new ResponseEntity<>(newMoveWrappers ,HttpStatus.OK);
     }
@@ -131,12 +147,21 @@ public class TurnController {
     @ResponseBody
     public ResponseEntity<List<MoveWrapper>> attack(@RequestHeader("X-Auth-Token") String token,
                                                     @RequestHeader("playerId") String playerId,
-                                                    @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
+                                                    @RequestBody List<MoveWrapper> moveWrappers) {
         log.warn("attack called");
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
-        turnService.attack(moves.get(0).getTurn(), moves, player);
-        List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
+        List<MoveWrapper> updatedMoves = new ArrayList<>();
+        try {
+            turnService.attack(moves.get(0).getTurn(), moves, player);
+        }
+        catch (IllegalTurnException e) {
+            return new ResponseEntity<>(updatedMoves, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (IllegalMoveException e) {
+            return new ResponseEntity<>(updatedMoves, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        updatedMoves = getUpdatedTerritories(moves);
         return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
     }
 
@@ -144,12 +169,21 @@ public class TurnController {
     @ResponseBody
     public ResponseEntity<List<MoveWrapper>> moveUnits(@RequestHeader("X-Auth-Token") String token,
                                                        @RequestHeader("playerId") String playerId,
-                                                       @RequestBody List<MoveWrapper> moveWrappers) throws IllegalMoveException, IllegalTurnException {
+                                                       @RequestBody List<MoveWrapper> moveWrappers) {
         log.warn("move called");
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
-        turnService.moveUnits(moves.get(0).getTurn(), player, moves);
-        List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
+        List<MoveWrapper> updatedMoves = new ArrayList<>();
+        try {
+            turnService.moveUnits(moves.get(0).getTurn(), player, moves);
+        }
+        catch (IllegalTurnException e) {
+            return new ResponseEntity<>(updatedMoves, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (IllegalMoveException e) {
+            return new ResponseEntity<>(updatedMoves, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        updatedMoves = getUpdatedTerritories(moves);
         return new ResponseEntity<>(updatedMoves, HttpStatus.OK);
     }
 
