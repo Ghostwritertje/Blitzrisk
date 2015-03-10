@@ -40,4 +40,6 @@ public interface UserService {
     List<User> getFriendRequests(String username);
 
     void acceptFriend(User requestingUser, String usernameToAccept) throws FriendRequestException;
+
+    void addFriendByEmail(User requestingUser, String email) throws FriendRequestException;
 }

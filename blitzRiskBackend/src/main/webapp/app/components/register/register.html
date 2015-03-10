@@ -5,15 +5,15 @@
             <form ng-show="!registering && !registerSuccess"  ng-submit="register()">
                 <div class="login-form-input">
                     <img src="assets/img/loginUserIcon.png">
-                  <label> <input ng-model="username" id="username" type="text" ></label>
+                  <label> <input ng-model="username" id="username" type="text" autofocus placeholder="username"></label>
                 </div>
                 <div class="login-form-input">
                     <img src="assets/img/loginLockIcon.png">
-                    <label><input ng-model="password" id="password" type="password"></label>
+                    <label><input ng-model="password" id="password" type="password" placeholder="password"></label>
                 </div>
                 <div ng-class="{'smallerMargin': registerError}" class="login-form-input">
                     <img src="assets/img/emailIcon.png">
-                    <label><input ng-model="email" id="email" type="email"></label>
+                    <label><input ng-model="email" id="email" type="email" placeholder="email address"></label>
                 </div>
                 <p ng-if="registerError" class="errorMessage">User already exists</p>
                 <input   type="submit" value="Register">

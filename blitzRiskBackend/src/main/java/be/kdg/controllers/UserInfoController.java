@@ -14,6 +14,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,17 +129,47 @@ public class UserInfoController {
         return friends;
     }
 
-    @RequestMapping(value = "/addFriend/{username}", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)
     public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
         logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");
+
+        boolean isEmail;
         try {
-            userService.addFriend(requestingUser, username);
+            InternetAddress internetAddress = new InternetAddress(username);
+            internetAddress.validate();
+            isEmail = true;
+        } catch (AddressException e) {
+            isEmail = false;
+        }
+
+
+        try {
+            if (isEmail) {
+                userService.addFriendByEmail(requestingUser, username);
+            }else {
+                userService.addFriend(requestingUser, username);
+            }
             return new ResponseEntity(HttpStatus.OK);
         } catch (FriendRequestException e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            logger.warn(e);
         }
-        //   userService.addFriend(TokenUtils.getUserNameFromToken(token), username);
+        //if friend didn't exist, invite him by email
+       if(isEmail){
+           SimpleMailMessage email = new SimpleMailMessage();
+           email.setTo(username);
+           email.setSubject("Invite BlitzRisk");
+           email.setText("Greetings, warrior!\n" +
+                   requestingUser.getUsername() + " has invited you to BlitzRisk!\n\n" +
+                   "You can start playing here: http://localhost:8080/BlitzRisk\n\n" +
+                   "We expect to see you on the battlefield soon!");
+           mailSender.send(email);
+           logger.info("Invite mail send to " + username);
+           return  new ResponseEntity(HttpStatus.OK);
+       }else {
+           return new ResponseEntity(HttpStatus.BAD_REQUEST);
+       }
+
     }
 
     @RequestMapping(value = "/acceptFriend/{username}", method = RequestMethod.POST)

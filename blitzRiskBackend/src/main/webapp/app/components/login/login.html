@@ -6,11 +6,11 @@
 
                 <div class="login-form-input">
                     <img src="assets/img/loginUserIcon.png">
-                  <label> <input ng-model="username" id="username" type="text" ></label>
+                  <label> <input autofocus ng-model="username" id="username" type="text" placeholder="username or email" ></label>
                 </div>
                 <div class="login-form-input">
                     <img src="assets/img/loginLockIcon.png">
-                    <label><input ng-model="password" id="password" type="password"></label>
+                    <label><input ng-model="password" id="password" type="password" placeholder="password"></label>
                 </div>
                 <p ng-if="loginError" class="errorMessage">Wrong credentials</p>
 
