@@ -1,40 +1,49 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8 lt-ie7" ng-controller="HomeController"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8" ng-controller="HomeController"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="blitzrisk" class="no-js lt-ie9" ng-controller="HomeController"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="blitzrisk" class="no-js" ng-controller="HomeController"> <!--<![endif]-->
+<!--[if lt IE 7]>
+<html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8 lt-ie7" ng-controller="HomeController"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="blitzrisk" class="no-js lt-ie9 lt-ie8" ng-controller="HomeController"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="blitzrisk" class="no-js lt-ie9" ng-controller="HomeController"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="blitzrisk" class="no-js" ng-controller="HomeController"> <!--<![endif]-->
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
-  <meta name="description" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BlitzRisk</title>
+    <link rel="shortcut icon" href="assets/img/icon.png">
+    <meta name="description" content="">
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="app/bower_components/bootstrap/dist/css/bootstrap.css">
 </head>
-<body ng-app="blitzrisk"  >
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+<body ng-app="blitzrisk">
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
 <div id="view">
 
   <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
+      <div class="container-fluid" ng-controller="AngularTranslateController">
           <div class="navbar-header">
-              <a class="navbar-brand" href="#">BlitzRisk</a>
+              <a class="navbar-brand" href="#">{{ HOME | translate}}</a>
           </div>
           <div>
               <ul class="nav navbar-nav">
-                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">Profile</a></li>
-                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">Overview</a></li>
+                  <li ng-class="{'active': currentPage == '/profile'}"><a id="profileTab" ng-click="go('/profile')" href="">{{'PROFILE'|translate}}</a></li>
+                  <li ng-class="{'active': currentPage == '/overview'}"><a id="overviewTab" ng-click="go('/overview')" href="">{{'OVERVIEW'|translate}}</a></li>
               </ul>
-              <ul ng-show="!loggedIn" class="nav navbar-nav navbar-right">
-                  <li ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                  <li ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              </ul>
-              <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
+              <ul  class="nav navbar-nav navbar-right">
+                  <li><a  href="" ng-click="changeLanguage('nl')">NL</span></a></li>
+                  <li><a  href="" ng-click="changeLanguage('en')">EN</span></a></li>
+
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/register'}"><a  href="" ng-click="go('/register')">{{'SIGNUP'|translate}} <span class="glyphicon glyphicon-user"></span></a></li>
+                  <li ng-show="!loggedIn" ng-class="{'active': currentPage == '/login'}"><a href="" ng-click="go('/login')">{{'LOGIN'|translate}} <span class="glyphicon glyphicon-log-in"></span></a></li>
+              <!--</ul>-->
+              <!--<ul class="nav navbar-nav navbar-right">-->
                   <!--<li><a ng-click="go('/game')" href="" ><span class="glyphicon glyphicon-user"></span> gameboardTest</a></li>-->
-                  <li><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
-                  <li><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span> Log out</a></li>
+                  <li  ng-show="loggedIn"><a ng-click="go('/profile')" href="" ><span class="glyphicon glyphicon-user"></span> {{myUsername}}</a></li>
+                  <li  ng-show="loggedIn"><a id="logOut" href="" ng-click="logOut()"><span class="glyphicon glyphicon-log-in"></span>{{'LOGOUT'|translate}}</a></li>
               </ul>
           </div>
       </div>
@@ -50,6 +59,7 @@
   <script src="app/bower_components/angular-css/angular-css.min.js"></script>
   <script src="app/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="app/bower_components/bootstrap/js/modal.js"></script>
+  <script src="app/bower_components/bower-angular-translate-2.6.1/angular-translate.js"></script>
   <!-- chat libraries -->
   <script src="assets/libs/sockjs-0.3.4.js"></script>
   <script src="app/bower_components/stomp/stomp.js"></script>
@@ -71,6 +81,10 @@
   <script src="app/components/services/gameService.js"></script>
   <script src="app/components/services/chatService.js"></script>
   <script src="app/components/services/loginService.js"></script>
+<script src="app/components/services/friendService.js"></script>
+
+  <script src="app/components/i18n/angularTranslate.js"></script>
+
   <script src="app/components/services/turnService.js"></script>
 
 

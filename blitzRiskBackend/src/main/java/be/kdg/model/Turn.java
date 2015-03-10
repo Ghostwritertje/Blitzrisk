@@ -24,12 +24,14 @@ public class Turn {
     @OneToMany(mappedBy = "turn", fetch = FetchType.EAGER)
     private List<Move> moves = new ArrayList<>();
 
-    @OneToMany(mappedBy = "turn")
+    @OneToMany(mappedBy = "turn", fetch = FetchType.EAGER)
     private List<Move> calculatedMoves = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "playerId")
     private Player player;
+
+    private boolean active;
 
     public Integer getId() {
         return Id;
@@ -73,5 +75,13 @@ public class Turn {
 
     public void setCalculatedMoves(List<Move> calculatedMoves) {
         this.calculatedMoves = calculatedMoves;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -1,5 +1,5 @@
 'use strict';
-var router = angular.module('blitzrisk', ['ngRoute','door3.css', 'blitzriskControllers']);
+var router = angular.module('blitzrisk', ['ngRoute','door3.css', 'blitzriskControllers', 'angularTranslate']);
 
 router.config(['$routeProvider',
     function ($routeProvider) {
@@ -37,7 +37,7 @@ router.config(['$routeProvider',
 //If user is not logged in, he is send to log-in page
 router.run(function ($rootScope, $location, LoginService) {
     //Add pages here that users can access without logging in
-    var unsecuredPages = ['/login', '/register'];
+    var unsecuredPages = ['/login', '/register', '/overview'];
 
 
     $rootScope.$on('$routeChangeStart', function (event, next, current) {

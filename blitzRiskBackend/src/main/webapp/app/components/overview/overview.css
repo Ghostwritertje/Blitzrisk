@@ -4,10 +4,17 @@
 
 .playButton {
     float: right;
-    
 
 }
 
 .acceptButton {
     float: right;
+}
+
+.acceptFriendBtn {
+    float: right;
+}
+
+.glyphicon-remove {
+    right: 4em;
 }
