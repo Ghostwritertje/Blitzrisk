@@ -2,6 +2,7 @@ package be.kdg.services;
 
 import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
+import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,15 @@ public class TurnService {
         return turnDao.getTurnById(turnId);
     }
 
+    public Turn getTurn(Player player) throws IllegalMoveException{
+        if(player.getPlayerStatus().equals(PlayerStatus.WAITING)) throw new IllegalMoveException("player is not on turn");
+        else {
+            Game game = player.getGame();
+            List<Turn> turns = game.getTurns();
+            return turns.get(turns.size()-1);
+        }
+    }
+
     public List<Turn> getRecentTurns(int gameId, int number) {
         List<Turn> turns = new ArrayList<>();
         Game game = gameDao.getGame(gameId);
@@ -79,20 +89,28 @@ public class TurnService {
     }
 
     public Turn createTurn(Game game, Player player){
+        List <Turn> turns = game.getTurns();
+        if (turns.size() > 0) {
+            Turn oldTurn = turns.get(turns.size() - 1);
+            oldTurn.setActive(false);
+            turnDao.updateTurn(oldTurn);
+        }
+
         Turn turn = new Turn();
         turn.setGame(game);
         turn.setPlayer(player);
-        turn.setNumber(game.getTurns().size());
+        turn.setNumber(turns.size());
+        turn.setActive(true);
         turnDao.updateTurn(turn);
         return turn;
     }
 
-    /*public void playerOnTurnCheck(Turn turn, Player player) throws IllegalMoveException {
-        if(!turn.getPlayer().getId().equals(player.getId())) throw new IllegalMoveException("Player is not on turn");
-        if(!turn.getGame().getPlayerTurn().equals(player.getId())) throw new IllegalMoveException("Player is not on turn");
-    }*/
+    public void playerOnTurnCheck(Turn turn, Player player) throws IllegalTurnException {
+        if (!turn.isActive() || !turn.getPlayer().getId().equals(player.getId())) throw new IllegalTurnException();
+    }
 
-    public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException {
+    public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException, IllegalTurnException {
+        playerOnTurnCheck(turn, player);
         log.warn("player 1" + player.getId());
         log.warn("turnPlayer:" + turn.getPlayer().getId());
         if(!player.getId().equals(turn.getPlayer().getId())) throw new IllegalMoveException("wrong turn");
@@ -234,7 +252,8 @@ public class TurnService {
         return calculateNumberOfReinforcements(player);
     }
 
-    public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
+    public void addReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException{
+        playerOnTurnCheck(turn, player);
         for(Move move: moves) {
             if (!move.getDestinationTerritory().getId().equals(move.getOriginTerritory().getId())) throw new IllegalMoveException("incorrect reinforecement - origin: " + move.getOriginTerritory().getId() + " - destination: " + move.getDestinationTerritory().getId());
         }
@@ -260,7 +279,8 @@ public class TurnService {
         setPlayerTurn(player, PlayerStatus.ATTACK);
     }
 
-    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException{
+    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
+        playerOnTurnCheck(turn, player);
         for (Move move: moves) {
             Territory origin = move.getOriginTerritory();
             Territory destination = move.getDestinationTerritory();
@@ -294,6 +314,7 @@ public class TurnService {
     }
 
     public void setPlayerTurn(Player player, PlayerStatus playerStatus) throws IllegalMoveException{
+        //TODO: player on turn check
         PlayerStatus currentPlayerStatus = player.getPlayerStatus();
         //checking if new playerStatus is a sequence of the current player status
         if ((playerStatus.equals(PlayerStatus.REINFORCE)&& currentPlayerStatus.equals(PlayerStatus.WAITING))
@@ -311,7 +332,6 @@ public class TurnService {
                 playerDao.updatePlayer(newPlayer);
                 game.setPlayerTurn(newPlayerTurn);
                 gameDao.updateGame(game);
-
             }
         }
         else throw new IllegalMoveException("new playerStatus isn't allowed: current = " + currentPlayerStatus + " new = " + playerStatus);

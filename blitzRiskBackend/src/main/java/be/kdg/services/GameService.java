@@ -63,65 +63,10 @@ public class GameService {
         return game;
     }
 
-/*    public void addUsersToGame(List<User> users, Game game) {
-
-        for (User user : users) {
-            Player player =  playerService.createPlayer(user, game);
-
-        }
-      //  game.setPlayers(players);
-
-        assignRandomTerritories(game);
-    }*/
-
-
     public void addUserToGame(User user, Game game) throws IllegalUserInviteException {
         playerService.createPlayer(user, game);
 
     }
-   /* public Game assignRandomTerritories(Game game) {
-
-
-        List<Territory> territoryList = new ArrayList<>(game.getTerritories());
-        Collections.shuffle(territoryList);
-
-        while(territoryList.size()%game.getPlayers().size() != 0) {
-            territoryList.remove(territoryList.size()-1);
-        }
-
-        List<Player> playerList = new ArrayList<>(game.getPlayers());
-        int i = 0;
-        for (Territory territory : territoryList) {
-            territory.setPlayer(playerList.get(i++));
-            territory.setNumberOfUnits(1);
-
-            if (i == playerList.size()) {
-                i = 0;
-            }
-        }
-        return game;
-    }
-*/
-   /* public Player CurrentPlayerforTurn(Game game) {
-        return game.getPlayers().get(game.getPlayerTurn());
-    }*/
-
-  /*  @Transactional
-    public void updateGame(Game game) {
-        gameDao.updateGame(game);
-    }
-
-
-    @Transactional
-    public Game getGame(int gameId) {
-        return gameDao.getGame(gameId);
-    }
-
-    @Transactional
-    public void removeGame(Game game) {
-        gameDao.removeGame(game);
-    }
-*/
 
     @Transactional
     public Player inviteUser(String userName, int gameId) throws IllegalUserInviteException {
@@ -201,6 +146,17 @@ public class GameService {
         User user = userDao.loadUserByUsername(username);
         List<Game> games = gameDao.getGamesForUser(user);
         return games;
+    }
+
+    @Transactional
+    public boolean isGameOfUser(User user, Game game) {
+        boolean isPlayer = false;
+        for (Player player: user.getPlayers()) {
+            for(Player gamePlayer: game.getPlayers()) {
+                if (gamePlayer.getId().equals(player.getId())) isPlayer = true;
+            }
+        }
+        return isPlayer;
     }
 
 

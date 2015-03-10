@@ -31,6 +31,8 @@ public class Turn {
     @JoinColumn(name = "playerId")
     private Player player;
 
+    private boolean active;
+
     public Integer getId() {
         return Id;
     }
@@ -73,5 +75,13 @@ public class Turn {
 
     public void setCalculatedMoves(List<Move> calculatedMoves) {
         this.calculatedMoves = calculatedMoves;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
