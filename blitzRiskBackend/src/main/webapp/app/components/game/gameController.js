@@ -39,7 +39,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
 
             var numberOfUnasignedReinforcments = 0;
             var numberOfAsignableReinforcments = 0;
-            var moves = {};
+            var moves = [];
 
 
             scope.$watch(TurnService.getTurnStatus, function(newValue){
@@ -71,14 +71,22 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     var id = selectedHomeRegion.toString().concat("-text");
                     changeTerritoryText(id, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
                     setNumberOfUnitsOnTerritory(selectedHomeRegion, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
-                    TurnService.setTurnStatus("MOVE");
+                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
                 }else{
                     $log.log("You are placing units you don't have.");
-                    TurnService.setTurnStatus("MOVE");
                 }
 
                 selectedHomeRegion = null;
             };
+
+            function clearMoves(){
+                moves = [];
+            }
+
+            function addMove(originRegion, destinationRegion, numberOfUnits){
+                moves.push({'turnId': 1, 'origin': originRegion, 'destination': destinationRegion, 'unitsToAttackOrReinforce': numberOfUnits});
+                $log.log(moves);
+            }
 
             scope.move = function(numberOfUnits){
                 var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
