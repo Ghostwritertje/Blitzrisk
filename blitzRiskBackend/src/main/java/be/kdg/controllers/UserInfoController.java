@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +44,12 @@ public class UserInfoController {
         email.setTo(emailaddress);
         email.setSubject("Welcome to BlitzRisk!");
         email.setText("Welcome to BlitzRisk, " + username);
-
-        mailSender.send(email);
+        try {
+            mailSender.send(email);
+            logger.info("Registration mail send to " + username);
+        } catch (Exception e) {
+            logger.warn("Couldn't send mail to " + username);
+        }
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
@@ -147,7 +153,7 @@ public class UserInfoController {
         try {
             if (isEmail) {
                 userService.addFriendByEmail(requestingUser, username);
-            }else {
+            } else {
                 userService.addFriend(requestingUser, username);
             }
             return new ResponseEntity(HttpStatus.OK);
@@ -155,20 +161,25 @@ public class UserInfoController {
             logger.warn(e);
         }
         //if friend didn't exist, invite him by email
-       if(isEmail){
-           SimpleMailMessage email = new SimpleMailMessage();
-           email.setTo(username);
-           email.setSubject("Invite BlitzRisk");
-           email.setText("Greetings, warrior!\n" +
-                   requestingUser.getUsername() + " has invited you to BlitzRisk!\n\n" +
-                   "You can start playing here: http://localhost:8080/BlitzRisk\n\n" +
-                   "We expect to see you on the battlefield soon!");
-           mailSender.send(email);
-           logger.info("Invite mail send to " + username);
-           return  new ResponseEntity(HttpStatus.OK);
-       }else {
-           return new ResponseEntity(HttpStatus.BAD_REQUEST);
-       }
+        if (isEmail) {
+            SimpleMailMessage email = new SimpleMailMessage();
+            email.setTo(username);
+            email.setSubject("Invite BlitzRisk");
+            email.setText("Greetings, warrior!\n" +
+                    requestingUser.getUsername() + " has invited you to BlitzRisk!\n\n" +
+                    "You can start playing here: http://localhost:8080/BlitzRisk\n\n" +
+                    "We expect to see you on the battlefield soon!");
+            try {
+                mailSender.send(email);
+                logger.info("Invite mail send to " + username);
+
+            } catch (Exception exception) {
+                logger.warn("Couldn't send mail to " + username);
+            }
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
     }
 
