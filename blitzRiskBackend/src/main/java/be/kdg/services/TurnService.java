@@ -65,7 +65,8 @@ public class TurnService {
     public Turn getTurn(Player player) throws IllegalMoveException{
         if(player.getPlayerStatus().equals(PlayerStatus.WAITING)) throw new IllegalMoveException("player is not on turn");
         else {
-            List<Turn> turns = player.getTurns();
+            Game game = player.getGame();
+            List<Turn> turns = game.getTurns();
             return turns.get(turns.size()-1);
         }
     }

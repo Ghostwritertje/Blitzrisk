@@ -39,7 +39,7 @@ public class Player {
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<Message> messages = new HashSet<>();
 
-    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "player")
     private List<Turn> turns = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
