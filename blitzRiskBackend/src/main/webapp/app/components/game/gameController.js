@@ -1,9 +1,31 @@
 'use strict';
-angular.module('blitzriskControllers').controller('GameController', ['$scope', "GameService",
-    function ($scope, GameService) {
+angular.module('blitzriskControllers').controller('GameController', ['$scope',
+    function ($scope) {
+        $scope.turnStatus = "WAITING";
 
+        $scope.reinforcePopupVisible = false;
+        $scope.reinforceNumberMax = 0;
+        $scope.reinforceValue = 0;
+
+        $scope.attackPopupVisible = false;
+        $scope.attackForceMax = 0;
+        $scope.attackValue = 0;
+
+        $scope.movePopupVisible = false;
+        $scope.moveForceMax = 0;
+        $scope.moveValue = 0;
+
+        $scope.submitReinforcment = function(){
+            $scope.reinforcePopupVisible = false;
+            $scope.reinforce($scope.reinforceValue);
+        };
+
+        $scope.submitMove = function(){
+            $scope.movePopupVisible = false;
+            $scope.move($scope.moveValue);
+        };
     }
-]).directive('riskmap', ["GameService", "LoginService", function (GameService, LoginService) {
+]).directive('riskmap', ["GameService", "LoginService", "TurnService", "$log", function (GameService, LoginService, TurnService, $log) {
     return {
         restrict: 'E',
         replace: true,
@@ -12,11 +34,67 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
             var gameBoard = "";
             var players = null;
             var thisPlayer = null;
+            var selectedHomeRegion = null;
+            var selectedDestinationRegion = null;
+
+            var numberOfUnasignedReinforcments = 0;
+            var numberOfAsignableReinforcments = 0;
+            var moves = {};
+
+
+            scope.$watch(TurnService.getTurnStatus, function(newValue){
+                $log.log("new turn status: " + newValue);
+                $scope.turnStatus = newValue;
+                if(newValue == "REINFORCE"){
+                    TurnService.createTurn().then(function(data){
+                        TurnService.getNumberOfReinforcments().then(function(data){
+                            numberOfAsignableReinforcments = data;
+                            numberOfUnasignedReinforcments = numberOfAsignableReinforcments;
+                        });
+                    });
+                }
+            });
+
+            scope.$on('$destroy', function () {
+                $log.log("destroy riskmap Directive.");
+                TurnService.clean();
+            });
 
             angular.element(document).ready(function () {
                 loadGameBoard();
                 loadTerritoryLayout();
             });
+
+            scope.reinforce = function(numberOfUnits){
+                if(numberOfUnasignedReinforcments >= numberOfUnits){
+                    numberOfUnasignedReinforcments -= numberOfUnits;
+                    var id = selectedHomeRegion.toString().concat("-text");
+                    changeTerritoryText(id, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
+                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
+                    TurnService.setTurnStatus("MOVE");
+                }else{
+                    $log.log("You are placing units you don't have.");
+                    TurnService.setTurnStatus("MOVE");
+                }
+
+                selectedHomeRegion = null;
+            };
+
+            scope.move = function(numberOfUnits){
+                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
+                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
+                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
+                    var homeId = selectedHomeRegion.toString().concat("-text");
+                    var destinationId = selectedDestinationRegion.toString().concat("-text");
+                    setNumberOfUnitsOnTerritory(homeId, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                    changeTerritoryText(homeId, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    changeTerritoryText(destinationId, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                }
+                scope.hideArrows();
+                selectedHomeRegion = null;
+                selectedDestinationRegion = null;
+            };
 
             function loadGameBoard() {
                 GameService.getCurrentGame()
@@ -38,6 +116,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 for(var i = 0; i < length; i++){
                     if(players[i].username == LoginService.getUserName()){
                         thisPlayer = players[i];
+                        TurnService.setPlayerId(thisPlayer.id);
                         break;
                     }
                 }
@@ -61,7 +140,40 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 }
             }
 
-            scope.changeTerritoryStyle = function (territory) {
+            scope.selectRegion = function(territoryId){
+                if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null){
+                    selectedHomeRegion = territoryId;
+                    scope.reinforceNumberMax = numberOfUnasignedReinforcments;
+                    scope.reinforceValue = 0;
+                    scope.reinforcePopupVisible = true;
+                    scope.$apply();
+                }else if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion != null){
+                    selectedHomeRegion= null;
+                    scope.reinforcePopupVisible = false;
+                    scope.$apply();
+                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion == null){
+                    selectedHomeRegion = territoryId;
+                    changeTerritoryStyle(territoryId);
+                    scope.moveForceMax = (parseInt(getNumberOfUnitsOnTerritory(territoryId)) - 1);
+                    alert(scope.moveForceMax);
+                    scope.moveValue = 0;
+                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                    selectedDestinationRegion = territoryId;
+                    scope.movePopupVisible = true;
+                    scope.$apply();
+                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion != null  && selectedDestinationRegion != null){
+                    selectedHomeRegion = null;
+                    selectedDestinationRegion = null;
+                    scope.attackPopupVisible = false;
+                    scope.$apply();
+                }else if(TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion == null){
+
+                }else if(TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null){
+
+                }
+            };
+
+            function changeTerritoryStyle(territory) {
                 scope.hideArrows();
                 if(isMyTerritory(territory)){
                     GameService.getTerritoryLayout().then(function (layout) {
@@ -88,8 +200,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var arrowId = 1;
                 for (var i = 0; i < lenght; i++) {
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
-                    var nX = null;
-                    var nY = null;
                     if(neighbours[i] == 1 && territoryId == 30){
                         drawArrow(arrowId, homeX, homeY, "1533.75", homeY, 1);
                         arrowId++;
@@ -111,9 +221,9 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                 var arrowline = "M ".concat(fromX).concat(",").concat(fromY).concat(" ").concat(toX).concat(",").concat(toY);
                 var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(arrowId)));
                 arrow.attr("d", arrowline);
-                if(isMyTerritory(destinationTerritoryId)){
+                if(isMyTerritory(destinationTerritoryId) && TurnService.getTurnStatus() == "MOVE"){
                     arrow.attr("class", "arrowToSelf");
-                }else{
+                }else if(TurnService.getTurnStatus() == "ATTACK"){
                     arrow.attr("class", "arrowToEnemy");
                 }
             }
@@ -126,6 +236,24 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
                     }
                 }
                 return false;
+            }
+
+            function getNumberOfUnitsOnTerritory(territory){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].key == territory){
+                        return gameBoard.territories[i].numberOfUnits;
+                    }
+                }
+            }
+
+            function setNumberOfUnitsOnTerritory(territory, numberOfUnits){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].key == territory){
+                        gameBoard.territories[i].numberOfUnits = numberOfUnits;
+                    }
+                }
             }
 
             scope.mouseOver = function (territory) {
@@ -154,6 +282,8 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope', "
 
             scope.voidClick = function () {
                 scope.hideArrows();
+                scope.reinforcePopupVisible = false;
+                selectedHomeRegion = null;
             }
         }
     }

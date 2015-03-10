@@ -1,13 +1,33 @@
-<!--<object id='riskMap' type='image/svg+xml' data='assets/img/herwerkteRiskMapMini.svg'></object>-->
-<!--<risk-map watch="status"></risk-map>
-<input type="button" value="alert" ng-click="status='alert'">-->
-
 <div id="gameBoardWrapper">
 
     <riskmap id="riskMap">
     </riskmap>
     <div id="chat">
         <div ng-include="'app/components/chat/chatBox.html'"></div>
+    </div>
+    <div class="popupWrapper" ng-show="reinforcePopupVisible">
+        <div id="reinforcePopup" ng-show="reinforcePopupVisible">
+            <!--<form name="reinforceForm" ng-submit="submitReinforcment(reinforceForm.slider.$viewValue)">
+                <input name="slider" type="range" ng-model="slider" value="{{valueRe}}" step="1" min="0" max="7">
+                <input type="submit" value="submit">
+            </form>-->
+            <form name="reinforceForm" ng-submit="submitReinforcment()">
+                <input type="range" ng-model="reinforceValue" value="{{reinforceValue}}" step="1" min="0" max="{{reinforceNumberMax}}">
+                <input type="submit" value="submit">
+            </form>
+        </div>
+    </div>
+    <div class="popupWrapper" ng-show="movePopupVisible">
+        <div id="movePopup" ng-show="movePopupVisible">
+            <!--<form name="reinforceForm" ng-submit="submitReinforcment(reinforceForm.slider.$viewValue)">
+                <input name="slider" type="range" ng-model="slider" value="{{valueRe}}" step="1" min="0" max="7">
+                <input type="submit" value="submit">
+            </form>-->
+            <form name="moveForm" ng-submit="submitMove()">
+                <input type="range" ng-model="moveValue" value="{{moveValue}}" step="1" min="0" max="{{moveForceMax}}">
+                <input type="submit" value="submit">
+            </form>
+        </div>
     </div>
 </div>
 <div >
