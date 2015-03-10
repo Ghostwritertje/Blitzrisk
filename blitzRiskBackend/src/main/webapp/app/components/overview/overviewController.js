@@ -83,7 +83,7 @@ angular.module('blitzriskControllers').controller('OverviewController', ['$scope
         $scope.friendRequests = [];
         $scope.newFriend = "";
         $scope.addFriendError = false;
-        $scope.recentlyPlayed = [{"name": "Joran"}];
+        $scope.recentlyPlayed = [];
         reloadFriends();
 
         $scope.addFriend = function () {

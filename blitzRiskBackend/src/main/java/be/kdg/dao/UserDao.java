@@ -109,16 +109,16 @@ public class UserDao {
         sessionFactory.getCurrentSession().save(user);
     }
 
-    public void addFriend(User requestingUser, String username) throws FriendRequestException {
-        if(!checkFriendRequestExists(requestingUser.getUsername(), username)){
+    public void addFriend(User requestingUser, User addingUser) throws FriendRequestException {
+        if(!checkFriendRequestExists(requestingUser.getUsername(), addingUser.getUsername())){
             Query query = sessionFactory.getCurrentSession().createQuery("from User user where user.name = :username");
-            query.setParameter("username", username);
+            query.setParameter("username", addingUser.getUsername());
             User user = (User) query.uniqueResult();
             if(user == null){
                 logger.warn("User doesn't exist");
                 throw new FriendRequestException("User doesn't exist");
             }
-            User user2 = loadUserByUsername(username);
+            User user2 = loadUserByUsername(addingUser.getUsername());
             FriendRequest friendRequest = new FriendRequest();
             friendRequest.setUser(requestingUser);
             friendRequest.setFriend(user2);
@@ -190,5 +190,11 @@ public class UserDao {
         FriendRequest friendRequest2 = (FriendRequest) query.uniqueResult();
 
         return !(friendRequest1 == null && friendRequest2 == null);
+    }
+
+    public User loadUserByEmail(String email) {
+        Query query = sessionFactory.getCurrentSession().createQuery("from User where email = :email");
+        query.setParameter("email", email);
+        return (User) query.uniqueResult();
     }
 }
