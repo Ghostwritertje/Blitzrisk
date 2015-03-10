@@ -54,7 +54,7 @@ public class TurnController {
 
         User user = userService.getUser(TokenUtils.getUserNameFromToken(token));
         if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
-            return new ResponseEntity<>(-1,HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(-1, HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<>(turnService.calculateNumberOfReinforcements(playerId), HttpStatus.OK);
@@ -165,10 +165,7 @@ public class TurnController {
         try {
             turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
         }
-        catch (IllegalTurnException e) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
-        }
-        catch (IllegalMoveException e) {
+        catch (IllegalTurnException  | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List <MoveWrapper> newMoveWrappers = getUpdatedTerritories(moves);
@@ -191,10 +188,7 @@ public class TurnController {
         try {
             turnService.attack(moves.get(0).getTurn(), moves, player);
         }
-        catch (IllegalTurnException e) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
-        }
-        catch (IllegalMoveException e) {
+        catch (IllegalTurnException | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
@@ -217,10 +211,7 @@ public class TurnController {
         try {
             turnService.moveUnits(moves.get(0).getTurn(), player, moves);
         }
-        catch (IllegalTurnException e) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
-        }
-        catch (IllegalMoveException e) {
+        catch (IllegalTurnException | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
