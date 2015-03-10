@@ -29,6 +29,12 @@ public class TurnController {
     @Autowired
     private TurnService turnService;
     @Autowired
+    private AttackService attackService;
+    @Autowired
+    private ReinforceService reinforceService;
+    @Autowired
+    private MoveUnitsService moveUnitsService;
+    @Autowired
     private TerritoryService territoryService;
     @Autowired
     private PlayerService playerService;
@@ -57,7 +63,7 @@ public class TurnController {
             return new ResponseEntity<>(-1, HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(turnService.calculateNumberOfReinforcements(playerId), HttpStatus.OK);
+        return new ResponseEntity<>(reinforceService.calculateNumberOfReinforcements(playerId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getPlayerStatus", method = RequestMethod.GET, produces = "application/json")
@@ -163,7 +169,7 @@ public class TurnController {
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         List<Move> moves = getMoves(moveWrappers);
         try {
-            turnService.addReinforcements(moves.get(0).getTurn(), player, moves);
+            reinforceService.reinforce(moves.get(0).getTurn(), player, moves);
         }
         catch (IllegalTurnException  | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
@@ -186,7 +192,7 @@ public class TurnController {
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         try {
-            turnService.attack(moves.get(0).getTurn(), moves, player);
+            attackService.attack(moves.get(0).getTurn(), moves, player);
         }
         catch (IllegalTurnException | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
@@ -209,7 +215,7 @@ public class TurnController {
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         try {
-            turnService.moveUnits(moves.get(0).getTurn(), player, moves);
+            moveUnitsService.moveUnits(moves.get(0).getTurn(), player, moves);
         }
         catch (IllegalTurnException | IllegalMoveException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);

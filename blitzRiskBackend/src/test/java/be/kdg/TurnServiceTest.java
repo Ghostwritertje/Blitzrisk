@@ -4,8 +4,7 @@ import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
-import be.kdg.services.TerritoryService;
-import be.kdg.services.TurnService;
+import be.kdg.services.*;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.hibernate.Hibernate;
@@ -61,6 +60,12 @@ public class TurnServiceTest {
     private TurnService turnService;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private AttackService attackService;
+    @Autowired
+    private ReinforceService reinforceService;
+    @Autowired
+    private MoveUnitsService moveUnitsService;
 
     @Before
     public void createGame() throws IllegalAccessException {
@@ -132,11 +137,11 @@ public class TurnServiceTest {
         moves.add(move);
 
         Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        turn = attackService.attack(turn, moves, player);
         Assert.assertTrue("turn isn't valid", turn.getCalculatedMoves().size() == 1);
     }
 
-    @Test
+    @Test(expected = IllegalMoveException.class)
     public void attackWithWrongStatus() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.WAITING);
@@ -148,7 +153,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        attackService.attack(turn, moves, player);
     }
 
     @Test(expected = IllegalTurnException.class)
@@ -163,7 +168,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, players.get(1));
+        attackService.attack(turn, moves, players.get(1));
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -178,7 +183,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        attackService.attack(turn, moves, player);
     }
 
     /*@Test(expected = IllegalMoveException.class)
@@ -193,7 +198,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turn = turnService.attack(turn, moves, players.get(0));
+        turn = attackService.attack(turn, moves, players.get(0));
     }*/
 
     @Test(expected = IllegalMoveException.class)
@@ -207,7 +212,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.attack(turn, moves, player);
+        attackService.attack(turn, moves, player);
     }
 
     @Test
@@ -227,7 +232,7 @@ public class TurnServiceTest {
             territories.get(0).setNumberOfUnits(40);
             territories.get(1).setNumberOfUnits(40);
             Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            attackService.attack(turn, moves, player);
             if (move.getDestinationTerritoryRemainingNrUnits() == 40 || move.getOriginTerritoryRemainingNrUnits() == 40) {
                 count++;
             }
@@ -253,12 +258,12 @@ public class TurnServiceTest {
             territories.get(0).setNumberOfUnits(40);
             territories.get(1).setNumberOfUnits(40);
             Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            attackService.attack(turn, moves, player);
             if (move.getDestinationTerritoryRemainingNrUnits() == 0 || move.getOriginTerritoryRemainingNrUnits() < 2) {
                 count++;
             }
         }
-        Assert.assertFalse("Not all units should survive", count>4);
+        Assert.assertFalse("Not all units should survive", count > 4);
     }
 
     @Test
@@ -280,7 +285,7 @@ public class TurnServiceTest {
             List<Move> moves = new ArrayList<>();
             moves.add(move);
             Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            attackService.attack(turn, moves, player);
             if(move.getDestinationTerritory().getPlayer() == player) attackersCount++;
             else defendersCount++;
         }
@@ -300,7 +305,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
         Assert.assertTrue("player should have 5 units", territories.get(0).getNumberOfUnits() == 5);
     }
 
@@ -315,7 +320,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test(expected = IllegalTurnException.class)
@@ -329,7 +334,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test
@@ -355,7 +360,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
         Assert.assertTrue("Origin should have 6 units", territories.get(0).getNumberOfUnits() == 6);
     }
 
@@ -370,7 +375,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -384,7 +389,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, players.get(0), reinforcements);
+        reinforceService.reinforce(turn, players.get(0), reinforcements);
 
     }
 
@@ -399,7 +404,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test
@@ -412,7 +417,7 @@ public class TurnServiceTest {
         }
         player.setTerritories(subSelectTerritories);
 
-        Assert.assertEquals("Player should have 8 units", 8, turnService.calculateNumberOfReinforcements(player));
+        Assert.assertEquals("Player should have 8 units", 8, reinforceService.calculateNumberOfReinforcements(player));
     }
 
     @Test
@@ -425,7 +430,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.attack(turn, moves, players.get(0));
+        attackService.attack(turn, moves, players.get(0));
         Assert.assertTrue("playerstatus isn't move", players.get(0).getPlayerStatus().equals(PlayerStatus.MOVE));
     }
 
@@ -439,7 +444,7 @@ public class TurnServiceTest {
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.addReinforcements(turn, players.get(0), reinforcements);
+        reinforceService.reinforce(turn, players.get(0), reinforcements);
         Assert.assertTrue("playerstatus isn't move", players.get(0).getPlayerStatus().equals(PlayerStatus.ATTACK));
     }
 
@@ -461,7 +466,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("playerstatus isn't waiting", players.get(0).getPlayerStatus().equals(PlayerStatus.WAITING));
         Assert.assertTrue("new player should have status reinforce", players.get(1).getPlayerStatus().equals(PlayerStatus.REINFORCE));
     }
@@ -484,7 +489,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
@@ -507,7 +512,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
@@ -528,7 +533,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -547,7 +552,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -568,7 +573,7 @@ public class TurnServiceTest {
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
