@@ -74,27 +74,61 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
 
                 if(numberOfUnassignedReinforcements == 0){
-                    sendReinforcementMoves();
+                    sendMoves();
                 }
 
                 selectedHomeRegion = null;
             };
 
-            function sendReinforcementMoves(){
+            function sendMoves(){
                 //TODO send the moves;
                 //TODO catch exception. or fix in turnservice.
-                /*TurnService.sendReinforcementMoves(moves).then(function(calculatedMoves){
+                /*TurnService.sendMoves(moves).then(function(calculatedMoves){
                     var length = calculatedMoves.length;
                     for(var i = 0; i < length; i++){
                         //TODO process calculated moves. waiting for turnservice methode to implement.
+                        $log.log(moves);
                     }
                     clearMoves();
                 });*/
 
-                //TODO remove thi line. for test reasons only.
-                TurnService.setTurnStatus("MOVE");
+                //TODO remove this line. for test reasons only.
+                TurnService.setTurnStatus("ATTACK");
                 clearMoves();
             }
+
+            scope.move = function(numberOfUnits){
+                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
+                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
+                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
+                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
+
+                    if(TurnService.getTurnStatus() == "MOVE"){
+                        setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                        changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                    }
+                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
+                }
+                hideArrows();
+                selectedHomeRegion = null;
+                selectedDestinationRegion = null;
+            };
+
+            /*scope.attack = function(numberOfUnits){
+                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
+                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
+                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
+                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
+                }
+                scope.hideArrows();
+                selectedHomeRegion = null;
+                selectedDestinationRegion = null;
+            };*/
 
             function clearMoves(){
                 moves = [];
@@ -104,20 +138,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 moves.push({'turnId': 1, 'origin': originRegion, 'destination': destinationRegion, 'unitsToAttackOrReinforce': numberOfUnits});
                 $log.log(moves);
             }
-
-            scope.move = function(numberOfUnits){
-                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
-                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
-                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
-                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                }
-                scope.hideArrows();
-                selectedHomeRegion = null;
-                selectedDestinationRegion = null;
-            };
 
             function loadGameBoard() {
                 GameService.getCurrentGame()
@@ -173,30 +193,26 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     selectedHomeRegion= null;
                     scope.reinforcePopupVisible = false;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion == null){
+                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion == null){
                     selectedHomeRegion = territoryId;
                     changeTerritoryStyle(territoryId);
                     scope.moveForceMax = (parseInt(getNumberOfUnitsOnTerritory(territoryId)) - 1);
-                    alert(scope.moveForceMax);
                     scope.moveValue = 0;
-                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null  && selectedDestinationRegion == null){
                     selectedDestinationRegion = territoryId;
                     scope.movePopupVisible = true;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" && selectedHomeRegion != null  && selectedDestinationRegion != null){
+                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
                     selectedHomeRegion = null;
                     selectedDestinationRegion = null;
-                    scope.attackPopupVisible = false;
+                    scope.movePopupVisible = false;
+                    hideArrows();
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion == null){
-
-                }else if(TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null){
-
                 }
             };
 
             function changeTerritoryStyle(territory) {
-                scope.hideArrows();
+                hideArrows();
                 if(isMyTerritory(territory)){
                     GameService.getTerritoryLayout().then(function (layout) {
                         showNeighbour(layout, territory);
@@ -245,7 +261,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 arrow.attr("d", arrowline);
                 if(isMyTerritory(destinationTerritoryId) && TurnService.getTurnStatus() == "MOVE"){
                     arrow.attr("class", "arrowToSelf");
-                }else if(TurnService.getTurnStatus() == "ATTACK"){
+                }else if(!isMyTerritory(destinationTerritoryId) && TurnService.getTurnStatus() == "ATTACK"){
                     arrow.attr("class", "arrowToEnemy");
                 }
             }
@@ -294,16 +310,16 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
             };
 
-            scope.hideArrows = function () {
+            function hideArrows() {
                 var i;
                 for (i = 1; i < 7; ++i) {
                     var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i)));
                     arrow.attr("class", "arrowhidden");
                 }
-            };
+            }
 
             scope.voidClick = function () {
-                scope.hideArrows();
+                hideArrows();
                 scope.reinforcePopupVisible = false;
                 selectedHomeRegion = null;
             }

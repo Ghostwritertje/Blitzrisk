@@ -71,7 +71,7 @@ public class TurnController {
 
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         PlayerStatus playerStatus = playerService.getPlayerStatus(player);
-        return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);//TODO geeft soms een nullpointer.
     }
 
     @RequestMapping(value = "/getTurnId", method = RequestMethod.GET, produces = "application/json")
