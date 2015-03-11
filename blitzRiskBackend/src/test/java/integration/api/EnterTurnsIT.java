@@ -260,6 +260,7 @@ public class EnterTurnsIT {
         Player player = origin.getPlayer();
         Turn turn = turnService.createTurn(gameService.getGame(game),player);
         turn.setPlayer(player);
+        destination.setPlayer(destination.getPlayer());
         turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.saveTurn(turn);

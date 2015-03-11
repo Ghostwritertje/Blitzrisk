@@ -76,10 +76,13 @@ public class NewTurnServiceTest {
         gameService.saveTerritories(gameObject, territories);
         origin.setPlayer(players.get(0));
         origin.setNumberOfUnits(3);
+        origin.setGameKey(1);
         territoryService.updateTerritory(origin);
         destination.setPlayer(players.get(1));
         destination.setNumberOfUnits(1);
+        destination.setGameKey(2);
         territoryService.updateTerritory(destination);
+
     }
 
     @After
@@ -99,7 +102,7 @@ public class NewTurnServiceTest {
     }
 
     @Test
-    public void Attack() throws IllegalMoveException, IllegalTurnException{
+    public void attack() throws IllegalMoveException, IllegalTurnException{
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.ATTACK);
         playerService.updatePlayer(player);
@@ -151,7 +154,7 @@ public class NewTurnServiceTest {
 
     @Test(expected = IllegalMoveException.class)
     public void attackFromForeignCountry() throws IllegalMoveException, IllegalTurnException {
-        Player player = players.get(2);
+        Player player = players.get(1);
         player.setPlayerStatus(PlayerStatus.ATTACK);
         playerService.updatePlayer(player);
         Move move = new Move();
@@ -352,7 +355,7 @@ public class NewTurnServiceTest {
         Turn turn = turnService.createTurn(gameService.getGame(game), player);
         move.setTurn(turn);
         reinforceService.reinforce(turn, player, reinforcements);
-        Assert.assertTrue("Origin should have 6 units", origin.getNumberOfUnits() == 6);
+        Assert.assertTrue("Origin should have 7 units", origin.getNumberOfUnits() == 7);
     }
 
     @Test(expected = IllegalMoveException.class)

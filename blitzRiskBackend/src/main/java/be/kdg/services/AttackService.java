@@ -34,15 +34,22 @@ public class AttackService {
     @Autowired
     private TurnService turnService;
 
-    @Autowired
-    private TerritoryDao territoryDao;
-
     public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException, IllegalTurnException {
         checkAttack(turn, player, moveList);
         List<Move> calculatedMoves = calculateAttack(moveList);
         turnService.setPlayerTurn(player, PlayerStatus.MOVE);
         turnService.updateTurnAfterMove(turn, calculatedMoves);
+        Turn t = turnService.getTurn(turn.getId());
+        for(Move move: t.getMoves()) {
+            try {
+                log.warn(move.getId());
+                log.warn(move.getOriginTerritoryRemainingNrUnits());
+            }catch (Exception e) {
+                log.warn(e.getStackTrace());
+            }
+        }
         return turnService.getTurn(turn.getId());
+
     }
 
     private void checkAttack(Turn turn, Player player, List<Move> moves) throws IllegalTurnException, IllegalMoveException{
