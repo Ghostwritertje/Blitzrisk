@@ -102,18 +102,30 @@ public class TurnService {
         turn.setPlayer(player);
         turn.setNumber(turns.size());
         turn.setActive(true);
-        turnDao.updateTurn(turn);
+        turnDao.createTurn(turn);
         return turn;
     }
 
     public void updateTurnAfterMove(Turn turn, List<Move> moves) {
+        List<Move> calculatedMoves = turn.getMoves();
         for (Move move : moves) {
-            turn.getCalculatedMoves().add(move);
+            calculatedMoves.add(move);
             moveDao.updateMove(move);
-            territoryDao.updateTerritory(move.getOriginTerritory());
-            territoryDao.updateTerritory(move.getDestinationTerritory());
+
+            Territory territory = territoryDao.getTerritoryById(move.getOriginTerritory().getId());
+            territory.setNumberOfUnits(move.getOriginTerritoryRemainingNrUnits());
+            territoryDao.updateTerritory(territory);
+
+            territory = territoryDao.getTerritoryById(move.getDestinationTerritory().getId());
+            territory.setNumberOfUnits(move.getDestinationTerritoryRemainingNrUnits());
+            territory.setPlayer(move.getDestinationTerritory().getPlayer());
+            territoryDao.updateTerritory(territory);
         }
-        turnDao.updateTurn(turn);
+        Turn thisTurn = turnDao.getTurnById(turn.getId());
+        thisTurn.setCalculatedMoves(moves);
+        thisTurn.setMoves(moves);
+        turnDao.updateTurn(thisTurn);
+
     }
 
     public void playerOnTurnCheck(Turn turn, Player player) throws IllegalTurnException {

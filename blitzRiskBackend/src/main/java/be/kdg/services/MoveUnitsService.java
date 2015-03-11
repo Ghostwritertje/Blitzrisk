@@ -33,7 +33,7 @@ public class MoveUnitsService {
 
     public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
         checkMove(turn, player, moves);
-        List<Move> calculatedMoves = executeMoves(turn, moves);
+        List<Move> calculatedMoves = executeMoves(moves);
         turnService.setPlayerTurn(player, PlayerStatus.WAITING);
         turnService.updateTurnAfterMove(turn, calculatedMoves);
     }
@@ -60,7 +60,7 @@ public class MoveUnitsService {
         }
     }
 
-    private List<Move> executeMoves(Turn turn,  List<Move> moves) {
+    private List<Move> executeMoves( List<Move> moves) {
         List<Move> calculatedMoves = new ArrayList<>();
         for(Move move: moves) {
             Territory origin = move.getOriginTerritory();

@@ -63,7 +63,9 @@ public class TurnController {
             return new ResponseEntity<>(-1, HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(reinforceService.calculateNumberOfReinforcements(playerId), HttpStatus.OK);
+        Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+
+        return new ResponseEntity<>(reinforceService.calculateNumberOfReinforcements(player), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getPlayerStatus", method = RequestMethod.GET, produces = "application/json")

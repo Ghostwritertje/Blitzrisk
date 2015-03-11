@@ -26,7 +26,11 @@ public class TerritoryDao {
     }
 
     public void updateTerritory(Territory territory) {
-        sessionFactory.getCurrentSession().saveOrUpdate(territory);
+        sessionFactory.getCurrentSession().update(territory);
+    }
+    
+    public void saveTerritory(Territory territory) {
+        sessionFactory.getCurrentSession().save(territory);
     }
 
     public void removeTerritory(Territory territory) {

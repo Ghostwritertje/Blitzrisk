@@ -203,6 +203,9 @@ public class EnterTurnsIT {
         Player player = origin.getPlayer();
         Turn turn = turnService.createTurn(gameService.getGame(game), player);
         turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.saveTurn(turn);
+        territoryService.updateTerritory(origin);
+
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)

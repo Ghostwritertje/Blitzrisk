@@ -28,11 +28,13 @@ public class ReinforceService {
     private TurnService turnService;
 
     public void reinforce(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
+        log.warn("turn-list-size " + turn.getMoves().size());
         turnService.playerOnTurnCheck(turn, player);
         checkReinforcements(turn, player, moves);
         List<Move> calculatedMoves = addReinforcements(moves);
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.updateTurnAfterMove(turn, calculatedMoves);
+        log.warn("turn-list-size " + turn.getMoves().size());
     }
 
     public int calculateNumberOfReinforcements(Player player) {
@@ -67,13 +69,6 @@ public class ReinforceService {
         else return (int) nrOfUnits;
     }
 
-    @Transactional
-    public int calculateNumberOfReinforcements(String playerIdStr) {
-        int playerId = Integer.parseInt(playerIdStr);
-        Player player = playerDao.getPlayerById(playerId);
-        return calculateNumberOfReinforcements(player);
-    }
-
     private void checkReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
         turnService.playerOnTurnCheck(turn, player);
         for(Move move: moves) {
@@ -103,6 +98,7 @@ public class ReinforceService {
             move.setOriginTerritoryRemainingNrUnits(newUnits);
             origin.setNumberOfUnits(newUnits);
             calculatedMoves.add(move);
+            log.warn("reinforcement added");
         }
         return calculatedMoves;
     }
