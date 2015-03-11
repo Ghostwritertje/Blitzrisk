@@ -90,6 +90,15 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             },
             clean: function(){
                 $interval.cancel(statusPoller);
+            },
+            sendMoves: function(moves){
+               if(turnStatus === 'REINFORCE'){
+                    return $http.post('api/reinforce', moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                }else if(turnStatus === 'ATTACK'){
+                    return $http.post('api/attack' , moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                }else if(turnStatus === 'MOVE'){
+                    return $http.post('api/moveUnits' , moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                }
             }
         }
     }]);
