@@ -88,25 +88,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<User> getFriendRequests(String username){
+    public List<User> getFriendRequests(String username) {
         return userDao.getFriendRequests(username);
 
     }
 
     @Override
     public void addFriend(User requestingUser, String username) throws FriendRequestException {
-        if(requestingUser.getUsername().toLowerCase().equals(username.toLowerCase())){
+        if (requestingUser.getUsername().toLowerCase().equals(username.toLowerCase())) {
             logger.warn("Can't add yourself as a friend");
             throw new FriendRequestException("Can't add yourself as a friend");
         }
 
-        userDao.addFriend(requestingUser, username);
+        userDao.addFriend(requestingUser, userDao.loadUserByUsername(username));
+    }
+
+    @Override
+    public void addFriendByEmail(User requestingUser, String email) throws FriendRequestException {
+        User user = userDao.loadUserByEmail(email);
+        if(user == null){
+            logger.warn("User " + email + " not found");
+            throw new FriendRequestException("User " + email + " not found");
+        }
+        userDao.addFriend(requestingUser, user);
     }
 
     @Override
     public void acceptFriend(User requestingUser, String usernameToAccept) throws FriendRequestException {
-        userDao.acceptFriend(requestingUser,usernameToAccept);
+        userDao.acceptFriend(requestingUser, usernameToAccept);
     }
-
 
 }
