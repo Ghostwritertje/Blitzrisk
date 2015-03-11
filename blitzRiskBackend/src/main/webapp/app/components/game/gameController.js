@@ -37,19 +37,17 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             var selectedHomeRegion = null;
             var selectedDestinationRegion = null;
 
-            var numberOfUnasignedReinforcments = 0;
-            var numberOfAsignableReinforcments = 0;
+            var numberOfUnassignedReinforcements = 0;
             var moves = [];
 
 
             scope.$watch(TurnService.getTurnStatus, function(newValue){
                 $log.log("new turn status: " + newValue);
-                $scope.turnStatus = newValue;
+                scope.turnStatus = newValue;
                 if(newValue == "REINFORCE"){
                     TurnService.createTurn().then(function(data){
-                        TurnService.getNumberOfReinforcments().then(function(data){
-                            numberOfAsignableReinforcments = data;
-                            numberOfUnasignedReinforcments = numberOfAsignableReinforcments;
+                        TurnService.getNumberOfReinforcments().then(function(availableReinforcements){
+                            numberOfUnassignedReinforcements = availableReinforcements;
                         });
                     });
                 }
@@ -66,18 +64,37 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             });
 
             scope.reinforce = function(numberOfUnits){
-                if(numberOfUnasignedReinforcments >= numberOfUnits){
-                    numberOfUnasignedReinforcments -= numberOfUnits;
-                    var id = selectedHomeRegion.toString().concat("-text");
-                    changeTerritoryText(id, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
+                if(numberOfUnassignedReinforcements >= numberOfUnits){
+                    numberOfUnassignedReinforcements -= numberOfUnits;
+                    changeTerritoryText(selectedHomeRegion, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
                     setNumberOfUnitsOnTerritory(selectedHomeRegion, (parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion)) + parseInt(numberOfUnits)));
-                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
+                    addMove(selectedHomeRegion, selectedHomeRegion, numberOfUnits);
                 }else{
                     $log.log("You are placing units you don't have.");
                 }
 
+                if(numberOfUnassignedReinforcements == 0){
+                    sendReinforcementMoves();
+                }
+
                 selectedHomeRegion = null;
             };
+
+            function sendReinforcementMoves(){
+                //TODO send the moves;
+                //TODO catch exception. or fix in turnservice.
+                /*TurnService.sendReinforcementMoves(moves).then(function(calculatedMoves){
+                    var length = calculatedMoves.length;
+                    for(var i = 0; i < length; i++){
+                        //TODO process calculated moves. waiting for turnservice methode to implement.
+                    }
+                    clearMoves();
+                });*/
+
+                //TODO remove thi line. for test reasons only.
+                TurnService.setTurnStatus("MOVE");
+                clearMoves();
+            }
 
             function clearMoves(){
                 moves = [];
@@ -92,12 +109,10 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
                 var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
                 if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
-                    var homeId = selectedHomeRegion.toString().concat("-text");
-                    var destinationId = selectedDestinationRegion.toString().concat("-text");
-                    setNumberOfUnitsOnTerritory(homeId, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
                     setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    changeTerritoryText(homeId, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    changeTerritoryText(destinationId, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
+                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
+                    changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
                 }
                 scope.hideArrows();
                 selectedHomeRegion = null;
@@ -134,8 +149,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     var region = angular.element(element[0].getSVGDocument().getElementById(gameBoard.territories[i].key));
                     var colorClass = "player".concat(getPlayer(gameBoard.territories[i].playerId).color + 1).concat("color");
                     region.attr("class", colorClass);
-                    var id = gameBoard.territories[i].key.toString().concat("-text");
-                    changeTerritoryText(id, gameBoard.territories[i].numberOfUnits);
+                    changeTerritoryText(gameBoard.territories[i].key, gameBoard.territories[i].numberOfUnits);
                 }
             }
 
@@ -151,7 +165,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             scope.selectRegion = function(territoryId){
                 if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null){
                     selectedHomeRegion = territoryId;
-                    scope.reinforceNumberMax = numberOfUnasignedReinforcments;
+                    scope.reinforceNumberMax = numberOfUnassignedReinforcements;
                     scope.reinforceValue = 0;
                     scope.reinforcePopupVisible = true;
                     scope.$apply();
@@ -188,25 +202,25 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                         showNeighbour(layout, territory);
                     });
                 }
-            };
+            }
 
             function showNeighbour(layout, territoryId) {
                 var territoryLayout = layout;
                 var neighbours = null;
 
-                var lenght = territoryLayout.length;
-                for (var i = 0; i < lenght; i++) {
+                var length = territoryLayout.length;
+                for (var i = 0; i < length; i++) {
                     if (territoryLayout[i].territoryKey == territoryId) {
                         neighbours = territoryLayout[i].neighbours;
                     }
                 }
 
-                lenght = neighbours.length;
+                length = neighbours.length;
                 var homeTerritory = angular.element(element[0].getSVGDocument().getElementById(territoryId));
                 var homeX = homeTerritory.attr("xcoord");
                 var homeY = homeTerritory.attr("ycoord");
                 var arrowId = 1;
-                for (var i = 0; i < lenght; i++) {
+                for (var i = 0; i < length; i++) {
                     var neighbourTerritory = angular.element(element[0].getSVGDocument().getElementById(neighbours[i]));
                     if(neighbours[i] == 1 && territoryId == 30){
                         drawArrow(arrowId, homeX, homeY, "1533.75", homeY, 1);
@@ -286,7 +300,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i)));
                     arrow.attr("class", "arrowhidden");
                 }
-            }
+            };
 
             scope.voidClick = function () {
                 scope.hideArrows();

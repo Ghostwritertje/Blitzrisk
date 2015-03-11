@@ -14,7 +14,8 @@ function voidClick(){
     angular.element(document.getElementById('riskMap')).scope().voidClick();
 }
 
-function changeTerritoryText(territoryTextId, text) {
+function changeTerritoryText(id, text) {
+    var territoryTextId = id.toString().concat("-text");
     var map = document.getElementById("riskMap");
     var svgDoc = map.contentDocument;
     var svgItem = svgDoc.getElementById(territoryTextId);
