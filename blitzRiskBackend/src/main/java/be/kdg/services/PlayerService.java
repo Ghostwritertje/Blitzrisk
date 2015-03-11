@@ -71,6 +71,11 @@ public class PlayerService {
     }
 
     @Transactional
+    public void updatePlayer(Player player) {
+        playerDao.updatePlayer(player);
+    }
+
+    @Transactional
     public void acceptGame(int playerId) {
         acceptGameForPlayer(playerId);
         checkIfGameCanStart(playerId);

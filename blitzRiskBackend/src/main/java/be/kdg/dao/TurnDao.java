@@ -25,8 +25,13 @@ public class TurnDao {
         return (Turn) query.uniqueResult();
     }
 
+    public void createTurn(Turn turn) {
+        sessionFactory.getCurrentSession().save(turn);
+    }
+
     public void updateTurn(Turn turn) {
-        sessionFactory.getCurrentSession().saveOrUpdate(turn);
+        sessionFactory.getCurrentSession().update(turn);
+
     }
 
     public void removeTurn(Turn turn) {
