@@ -79,7 +79,7 @@ public class TurnController {
 
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         PlayerStatus playerStatus = playerService.getPlayerStatus(player);
-        return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(playerStatus.toString(), HttpStatus.OK);//TODO geeft soms een nullpointer.
     }
 
     @RequestMapping(value = "/player/{playerId}/getTurnId", method = RequestMethod.GET, produces = "application/json")
@@ -174,6 +174,7 @@ public class TurnController {
             reinforceService.reinforce(moves.get(0).getTurn(), player, moves);
         }
         catch (IllegalTurnException  | IllegalMoveException e) {
+            log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List <MoveWrapper> newMoveWrappers = getUpdatedTerritories(moves);
