@@ -21,7 +21,7 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
 
         function checkStatus() {
             var defer = $q.defer();
-            $http.get('api/getPlayerStatus', {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}})
+            $http.get('api/player/' + playerId + '/getPlayerStatus', {headers: {'X-Auth-Token': LoginService.getToken()}})
                 .success(function (data) {
                     if (data != turnStatus && turnStatus != "MOVE")
                         turnStatus = data;
@@ -38,7 +38,7 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
         return {
             createTurn: function(){
                 var defer = $q.defer();
-                $http.get('api/createTurn', {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}})
+                $http.get('api/player/' + playerId + '/createTurn', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         defer.resolve(data);
                     })
@@ -51,7 +51,7 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             },
             getNumberOfReinforcments: function () {
                 var defer = $q.defer();
-                $http.get('api/numberOfReinforcements', {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}})
+                $http.get('api/player/' + playerId + '/numberOfReinforcements', {headers: {'X-Auth-Token': LoginService.getToken()}})
                     .success(function (data) {
                         defer.resolve(data);
                     })
@@ -64,10 +64,9 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             },
             getPlayerStatus: function (playerId) {
                 var defer = $q.defer();
-                $http.get('api/getPlayerStatus', {
+                $http.get('api/player/' + playerId + '/getPlayerStatus', {
                     headers: {
-                        'X-Auth-Token': LoginService.getToken(),
-                        'playerId': playerId
+                        'X-Auth-Token': LoginService.getToken()
                     }
                 })
                     .success(function (data) {
@@ -93,11 +92,11 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             },
             sendMoves: function(moves){
                if(turnStatus === 'REINFORCE'){
-                    return $http.post('api/reinforce', moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                    return $http.post('api/player/' + playerId + '/reinforce', moves, {headers: {'X-Auth-Token': LoginService.getToken()}});
                 }else if(turnStatus === 'ATTACK'){
-                    return $http.post('api/attack' , moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                    return $http.post('api/player/' + playerId + '/attack' , moves, {headers: {'X-Auth-Token': LoginService.getToken()}});
                 }else if(turnStatus === 'MOVE'){
-                    return $http.post('api/moveUnits' , moves, {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId': playerId}});
+                    return $http.post('api/player/' + playerId + '/moveUnits' , moves, {headers: {'X-Auth-Token': LoginService.getToken()}});
                 }
             }
         }
