@@ -71,6 +71,7 @@ public class CreateGameIT {
     public void testAcceptGame() {
         String token = given().header("name", "testgameuser").header("password", "testuserpass").get(URL + "login").getBody().asString();
         given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
+        given().header("X-Auth-Token", token).get(URL + "createGame").getBody().asString();
         List<Player> players = gameService.getPlayers("testgameuser");
         for (Player player : players) {
             if (player.getInvitationStatus().equals(InvitationStatus.PENDING))

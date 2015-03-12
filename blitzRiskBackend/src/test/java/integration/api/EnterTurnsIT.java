@@ -60,11 +60,8 @@ public class EnterTurnsIT {
         for (Player player: players) {
             player.setInvitationStatus(InvitationStatus.ACCEPTED);
             player.setPlayerStatus(PlayerStatus.WAITING);
-            //playerService.save(player);
         }
-        //gameObject.setTerritories();
         gameService.saveTerritories(gameObject,new ArrayList<>(territoryService.getTerritories() ));
-        //gameObject.assignRandomTerritories();
 
 
 
@@ -104,27 +101,38 @@ public class EnterTurnsIT {
     public void askReinforcementNumber() {
         turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "numberOfReinforcements").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token).get( URL + "player/" + origin.getPlayer().getId() + "/numberOfReinforcements")
+                .then().assertThat().statusCode(200);
     }
 
     @Test
     public void askReinforcementNumberWrongUser() {
         turnService.createTurn(gameService.getGame(game), origin.getPlayer());
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "numberOfReinforcements").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .get(URL + "player/" + origin.getPlayer().getId() + "/numberOfReinforcements")
+                .then().assertThat().statusCode(403);
     }
 
     @Test
     public void getPlayerStatus() {
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "getPlayerStatus").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .get(URL + "player/" + origin.getPlayer().getId() + "/getPlayerStatus")
+                .then().assertThat().statusCode(200);
 
     }
 
     @Test
     public void getPlayerStatusWrongUser() {
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", origin.getPlayer().getId()).get(URL + "getPlayerStatus").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .get(URL + "player/"+ origin.getPlayer().getId() + "/getPlayerStatus")
+                .then().assertThat().statusCode(403);
 
     }
 
@@ -137,7 +145,10 @@ public class EnterTurnsIT {
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipAttack").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipAttack")
+                .then().assertThat().statusCode(200);
     }
 
     @Test
@@ -149,7 +160,10 @@ public class EnterTurnsIT {
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipAttack").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipAttack")
+                .then().assertThat().statusCode(403);
     }
 
     @Test
@@ -162,7 +176,10 @@ public class EnterTurnsIT {
         turnService.setPlayerTurn(player, PlayerStatus.MOVE);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipMove").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipMove")
+                .then().assertThat().statusCode(200);
     }
 
     @Test
@@ -175,7 +192,10 @@ public class EnterTurnsIT {
         turnService.setPlayerTurn(player, PlayerStatus.MOVE);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipMove").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipMove")
+                .then().assertThat().statusCode(403);
     }
 
     @Test
@@ -185,7 +205,10 @@ public class EnterTurnsIT {
         turn.setPlayer(player);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipAttack").then().assertThat().statusCode(405);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipAttack")
+                .then().assertThat().statusCode(405);
     }
 
     @Test
@@ -195,7 +218,10 @@ public class EnterTurnsIT {
         turn.setPlayer(player);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).post(URL + "skipMove").then().assertThat().statusCode(405);
+        given().contentType(ContentType.JSON)
+                .headers("X-Auth-Token", token)
+                .post(URL + "player/" + origin.getPlayer().getId() + "/skipMove")
+                .then().assertThat().statusCode(405);
     }
 
     @Test
@@ -203,12 +229,15 @@ public class EnterTurnsIT {
         Player player = origin.getPlayer();
         Turn turn = turnService.createTurn(gameService.getGame(game), player);
         turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
+        turnService.saveTurn(turn);
+        territoryService.updateTerritory(origin);
+
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "reinforce").then().assertThat().statusCode(200);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/reinforce").then().assertThat().statusCode(200);
     }
 
     @Test
@@ -219,9 +248,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "reinforce").then().assertThat().statusCode(403);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/reinforce").then().assertThat().statusCode(403);
     }
 
     @Test
@@ -234,9 +263,10 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "reinforce").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/reinforce").then()
+                .assertThat().statusCode(405);
     }
 
     @Test
@@ -247,9 +277,10 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "reinforce").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/reinforce")
+                .then().assertThat().statusCode(405);
     }
 
     @Test
@@ -257,6 +288,7 @@ public class EnterTurnsIT {
         Player player = origin.getPlayer();
         Turn turn = turnService.createTurn(gameService.getGame(game),player);
         turn.setPlayer(player);
+        destination.setPlayer(destination.getPlayer());
         turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.saveTurn(turn);
@@ -265,9 +297,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "attack").then().assertThat().statusCode(200);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/attack").then().assertThat().statusCode(200);
     }
 
     @Test
@@ -283,9 +315,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "attack").then().assertThat().statusCode(403);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/attack").then().assertThat().statusCode(403);
     }
 
     @Test
@@ -301,9 +333,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "attack").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/attack").then().assertThat().statusCode(405);
     }
 
     @Test
@@ -319,9 +351,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), destination.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + origin.getPlayer().getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "attack").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/attack").then().assertThat().statusCode(405);
     }
 
     @Test
@@ -340,9 +372,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + player.getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "moveUnits").then().assertThat().statusCode(200);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/moveUnits").then().assertThat().statusCode(200);
     }
 
     @Test
@@ -361,9 +393,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + player.getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "moveUnits").then().assertThat().statusCode(403);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/moveUnits").then().assertThat().statusCode(403);
     }
 
     @Test
@@ -382,9 +414,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + player.getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "moveUnits").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/moveUnits").then().assertThat().statusCode(405);
     }
 
     @Test
@@ -401,9 +433,9 @@ public class EnterTurnsIT {
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
-                .headers("X-Auth-Token", token, "playerId", "" + player.getId())
+                .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
-                .post(URL + "moveUnits").then().assertThat().statusCode(405);
+                .post(URL + "player/" + origin.getPlayer().getId() + "/moveUnits").then().assertThat().statusCode(405);
     }
 
     @Test
@@ -417,7 +449,9 @@ public class EnterTurnsIT {
         }
 
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "gameId", game, "turnId", turnId ).get(URL + "getRecentTurns").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token)
+                .get(URL + "game/" + game + "/getRecentTurns" + "/turn/" + turnId )
+                .then().assertThat().statusCode(200);
 
     }
 
@@ -433,7 +467,9 @@ public class EnterTurnsIT {
 
         userService.addUser("wrongUser", "wrongUser", "wrongUser@test.be");
         String token = given().header("name", "wrongUser").header("password", "wrongUser").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "gameId", game, "turnId", turnId ).get(URL + "getRecentTurns").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token)
+                .get(URL + "game/" + game + "/getRecentTurns" + "/turn/" + turnId)
+                .then().assertThat().statusCode(403);
         userService.removeUser("wrongUser");
     }
 
@@ -445,7 +481,9 @@ public class EnterTurnsIT {
         turnService.setPlayerTurn(player, PlayerStatus.REINFORCE);
         turnService.saveTurn(turn);
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).get(URL + "getTurnId").then().assertThat().statusCode(200);
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token)
+                .get(URL + "player/" + origin.getPlayer().getId() + "/getTurnId")
+                .then().assertThat().statusCode(200);
     }
 
     @Test
@@ -457,7 +495,9 @@ public class EnterTurnsIT {
         turnService.saveTurn(turn);
         userService.addUser("wrongUser", "wrongUser", "wrongUser@test.be");
         String token = given().header("name", "wrongUser").header("password", "wrongUser").get(URL + "login").getBody().asString();
-        given().contentType(ContentType.JSON).headers("X-Auth-Token", token, "playerId", player.getId()).get(URL + "getTurnId").then().assertThat().statusCode(403);
+        given().contentType(ContentType.JSON).headers("X-Auth-Token", token)
+                .get(URL + "player/" + origin.getPlayer().getId() + "/getTurnId")
+                .then().assertThat().statusCode(403);
         userService.removeUser("wrongUser");
     }
 }

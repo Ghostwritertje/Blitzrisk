@@ -1,213 +1,202 @@
 package be.kdg;
 
-import be.kdg.dao.*;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
+import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
-import be.kdg.services.TerritoryService;
-import be.kdg.services.TurnService;
-import com.google.common.collect.Lists;
+import be.kdg.services.*;
 import junit.framework.Assert;
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.when;
-
 /**
- * Created by Marlies on 22/02/2015.
+ * Created by Marlies on 10/03/2015.
  */
 
-@ContextConfiguration(locations = {"file:src/test/resources/testcontext.xml"})
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TurnServiceTest {
-    private @Mock Game game;
+    @Autowired
+    public UserService userService;
+    @Autowired
+    public GameService gameService;
+    @Autowired
+    public PlayerService playerService;
+    @Autowired
+    public TurnService turnService;
+    @Autowired
+    public TerritoryService territoryService;
+    @Autowired
+    private AttackService attackService;
+    @Autowired
+    private ReinforceService reinforceService;
+    @Autowired
+    private MoveUnitsService moveUnitsService;
+
     private List<Player> players;
-    private List<Territory> territories;
-    private @Mock SessionFactory sessionFactory;
-    private @Mock Session session;
-    private @Mock Query query;
-    private @Mock User user;
-
-    @Autowired
-    private TerritoryDao territoryDao;
-    @Autowired
-    private TurnDao turnDao;
-    @Autowired
-    private MoveDao moveDao;
-    @Autowired
-    private GameDao gameDao;
-    @Autowired
-    private PlayerDao playerDao;
-
-    @Autowired
-    private TurnService turnService;
-    @Autowired
-    private TerritoryService territoryService;
+    private int game;
+    private Territory origin;
+    private Territory destination;
 
     @Before
-    public void createGame() throws IllegalAccessException {
-        MockitoAnnotations.initMocks(this);
-        territoryDao.setSessionFactory(sessionFactory);
-        turnDao.setSessionFactory(sessionFactory);
-        moveDao.setSessionFactory(sessionFactory);
-        gameDao.setSessionFactory(sessionFactory);
-        playerDao.setSessionFactory(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(game.getPlayerTurn()).thenReturn(0);
-        players = new ArrayList<>();
-        for (int i = 0 ; i<3 ; i++) {
-            Player player = new Player();
-            player.setGame(game);
-            players.add(player);
+    public void setUp() throws IllegalUserInviteException{
+        userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
+        userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
 
-            Class playerClass = player.getClass();
-            List<Field> fields = Lists.newArrayList(playerClass.getDeclaredFields());
-            Field playerId = fields.get(0);
-            playerId.setAccessible(true);
-            playerId.set(player, i + 1);
+        Game gameObject = gameService.createNewGame();
+        game = gameObject.getId();
+        gameService.addUserToGame(userService.getUser("turntestgameuser"), gameObject);
+        gameService.addUserToGame(userService.getUser("turntestgameuser2"), gameObject);
 
+        players = gameObject.getPlayers();
+        for (Player player: players) {
+            player.setInvitationStatus(InvitationStatus.ACCEPTED);
+            player.setPlayerStatus(PlayerStatus.WAITING);
+            playerService.updatePlayer(player);
         }
-        when(game.getPlayers()).thenReturn(players);
 
-        Territory origin = new Territory();
-        Class territoryClass = origin.getClass();
-        List<Field> fields = Lists.newArrayList(territoryClass.getDeclaredFields());
-        Field territoryId = fields.get(0);
-        territoryId.setAccessible(true);
-        territoryId.set(origin, 1);
-        origin.setNumberOfUnits(2);
-        origin.setPlayer(players.get(0));
-        origin.setGameKey(1);
 
-        Territory destination = new Territory();
-        territoryId.set(destination, 2);
-        destination.setNumberOfUnits(1);
-        destination.setPlayer(players.get(1));
+        origin = new Territory();
+        destination = new Territory();
         destination.addNeighbour(origin);
-        destination.setGameKey(2);
         origin.addNeighbour(destination);
-        territories = new ArrayList<>();
+        List<Territory> territories = new ArrayList<>();
         territories.add(origin);
         territories.add(destination);
-
-        Set<Territory> playerTerritories = new HashSet<>();
-        playerTerritories.add(origin);
-        players.get(0).setTerritories(playerTerritories);
-        playerTerritories = new HashSet<>();
-        playerTerritories.add(destination);
-        players.get(1).setTerritories(playerTerritories);
-        session.saveOrUpdate(origin);
-        session.saveOrUpdate(destination);
+        gameService.saveTerritories(gameObject, territories);
+        origin.setPlayer(players.get(0));
+        origin.setNumberOfUnits(3);
+        origin.setGameKey(1);
+        territoryService.updateTerritory(origin);
+        destination.setPlayer(players.get(1));
+        destination.setNumberOfUnits(1);
+        destination.setGameKey(2);
+        territoryService.updateTerritory(destination);
 
     }
 
+    @After
+    public void cleanUp() {
+        Game gameObject = gameService.getGame(game);
+        turnService.removeTurns(gameObject);
+
+        territoryService.removeTerritory(origin);
+        territoryService.removeTerritory(destination);
+
+        for(Player player: players) {
+            playerService.removePlayer(player);
+        }
+        gameService.removeGame(gameService.getGame(game));
+        userService.removeUser("turntestgameuser");
+        userService.removeUser("turntestgameuser2");
+    }
+
     @Test
-    public void attack() throws IllegalMoveException, IllegalTurnException {
+    public void attack() throws IllegalMoveException, IllegalTurnException{
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.ATTACK);
-        playerDao.savePlayer(player);
+        playerService.updatePlayer(player);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
+
         List<Move> moves = new ArrayList<>();
         moves.add(move);
 
-        Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        turn = attackService.attack(turn, moves, player);
         Assert.assertTrue("turn isn't valid", turn.getCalculatedMoves().size() == 1);
     }
 
-    @Test
+    @Test(expected = IllegalMoveException.class)
     public void attackWithWrongStatus() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.WAITING);
-        playerDao.savePlayer(player);
+        playerService.updatePlayer(player);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(destination);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        attackService.attack(turn, moves, player);
     }
 
     @Test(expected = IllegalTurnException.class)
     public void AttackWhenNotOnTurn() throws  IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.ATTACK);
-        playerDao.savePlayer(player);
+        playerService.updatePlayer(player);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, players.get(1));
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        attackService.attack(turn, moves, players.get(1));
     }
 
     @Test(expected = IllegalMoveException.class)
     public void attackFromForeignCountry() throws IllegalMoveException, IllegalTurnException {
-        Player player = players.get(2);
+        Player player = players.get(1);
         player.setPlayerStatus(PlayerStatus.ATTACK);
-        playerDao.savePlayer(player);
+        playerService.updatePlayer(player);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turn = turnService.attack(turn, moves, player);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        attackService.attack(turn, moves, player);
     }
 
     /*@Test(expected = IllegalMoveException.class)
     public void isNoNeighbourTest() throws IllegalMoveException, IllegalTurnException {
         Set <Territory> emptyTerritories = new HashSet<>();
-        territories.get(0).setNeighbourTerritories(emptyTerritories);
-        territories.get(1).setNeighbourTerritories(emptyTerritories);
+        origin.setNeighbourTerritories(emptyTerritories);
+        destination.setNeighbourTerritories(emptyTerritories);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
         Turn turn = turnService.createTurn(game, players.get(0));
-        turn = turnService.attack(turn, moves, players.get(0));
+        turn = attackService.attack(turn, moves, players.get(0));
     }*/
 
     @Test(expected = IllegalMoveException.class)
     public void attackWithTooManyUnits() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.ATTACK);
+        playerService.updatePlayer(player);
         Move move = new Move();
-        move.setNumberOfUnitsToAttack(2);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setNumberOfUnitsToAttack(5);
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.attack(turn, moves, player);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        attackService.attack(turn, moves, player);
     }
 
     @Test
@@ -215,19 +204,20 @@ public class TurnServiceTest {
         int count = 0;
         Move move = new Move();
         move.setNumberOfUnitsToAttack(35);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
 
         for(int i = 0; i< 5; i++) {
             Player player = players.get(0);
             player.setPlayerStatus(PlayerStatus.ATTACK);
-            playerDao.savePlayer(player);
-            territories.get(0).setNumberOfUnits(40);
-            territories.get(1).setNumberOfUnits(40);
-            Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            playerService.updatePlayer(player);
+            origin.setNumberOfUnits(40);
+            destination.setNumberOfUnits(40);
+            Turn turn = turnService.createTurn(gameService.getGame(game), player);
+            move.setTurn(turn);
+            attackService.attack(turn, moves, player);
             if (move.getDestinationTerritoryRemainingNrUnits() == 40 || move.getOriginTerritoryRemainingNrUnits() == 40) {
                 count++;
             }
@@ -241,24 +231,25 @@ public class TurnServiceTest {
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(35);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
 
         for(int i = 0; i< 5; i++) {
             Player player = players.get(0);
             player.setPlayerStatus(PlayerStatus.ATTACK);
-            playerDao.savePlayer(player);
-            territories.get(0).setNumberOfUnits(40);
-            territories.get(1).setNumberOfUnits(40);
-            Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            playerService.updatePlayer(player);
+            origin.setNumberOfUnits(40);
+            destination.setNumberOfUnits(40);
+            Turn turn = turnService.createTurn(gameService.getGame(game), player);
+            move.setTurn(turn);
+            attackService.attack(turn, moves, player);
             if (move.getDestinationTerritoryRemainingNrUnits() == 0 || move.getOriginTerritoryRemainingNrUnits() < 2) {
                 count++;
             }
         }
-        Assert.assertFalse("Not all units should survive", count>4);
+        Assert.assertFalse("Not all units should survive", count > 4);
     }
 
     @Test
@@ -269,18 +260,19 @@ public class TurnServiceTest {
         for(int i = 0; i< 20; i++) {
             Player player = players.get(0);
             player.setPlayerStatus(PlayerStatus.ATTACK);
-            territories.get(0).setPlayer(player);
-            territories.get(1).setPlayer(players.get(1));
-            territories.get(0).setNumberOfUnits(2);
-            territories.get(1).setNumberOfUnits(1);
+            origin.setPlayer(player);
+            destination.setPlayer(players.get(1));
+            origin.setNumberOfUnits(2);
+            destination.setNumberOfUnits(1);
             Move move = new Move();
             move.setNumberOfUnitsToAttack(1);
-            move.setDestinationTerritory(territories.get(1));
-            move.setOriginTerritory(territories.get(0));
+            move.setDestinationTerritory(destination);
+            move.setOriginTerritory(origin);
             List<Move> moves = new ArrayList<>();
             moves.add(move);
-            Turn turn = turnService.createTurn(game, player);
-            turnService.attack(turn, moves, player);
+            Turn turn = turnService.createTurn(gameService.getGame(game), player);
+            move.setTurn(turn);
+            attackService.attack(turn, moves, player);
             if(move.getDestinationTerritory().getPlayer() == player) attackersCount++;
             else defendersCount++;
         }
@@ -295,13 +287,14 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
-        Assert.assertTrue("player should have 5 units", territories.get(0).getNumberOfUnits() == 5);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
+        Assert.assertTrue("player should have 5 units", origin.getNumberOfUnits() == 6);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -310,12 +303,13 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.ATTACK);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test(expected = IllegalTurnException.class)
@@ -324,20 +318,24 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(1));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(destination);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.addReinforcements(turn, player, reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), players.get(0));
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test
     public void reinforceWithManyTerritories() throws IllegalMoveException, IllegalTurnException {
         HashSet playerTerritories = new HashSet();
-        playerTerritories.add(territories.get(0));
+        playerTerritories.add(origin);
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.REINFORCE);
+        List <Territory>territories = new ArrayList<>();
+        territories.add(origin);
+        territories.add(destination);
         for (int i = 0; i < 12; i++) {
             Territory territory = new Territory();
             territory.setPlayer(players.get(0));
@@ -350,13 +348,14 @@ public class TurnServiceTest {
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(4);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
-        Assert.assertTrue("Origin should have 6 units", territories.get(0).getNumberOfUnits() == 6);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
+        Assert.assertTrue("Origin should have 7 units", origin.getNumberOfUnits() == 7);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -365,12 +364,13 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(5);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test(expected = IllegalMoveException.class)
@@ -379,12 +379,13 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(1));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(destination);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, players.get(0), reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, players.get(0), reinforcements);
 
     }
 
@@ -394,12 +395,13 @@ public class TurnServiceTest {
         player.setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(1));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(destination);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.addReinforcements(turn, player, reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, player, reinforcements);
     }
 
     @Test
@@ -412,7 +414,7 @@ public class TurnServiceTest {
         }
         player.setTerritories(subSelectTerritories);
 
-        Assert.assertEquals("Player should have 8 units", 8, turnService.calculateNumberOfReinforcements(player));
+        Assert.assertEquals("Player should have 8 units", 8, reinforceService.calculateNumberOfReinforcements(player));
     }
 
     @Test
@@ -420,12 +422,13 @@ public class TurnServiceTest {
         players.get(0).setPlayerStatus(PlayerStatus.ATTACK);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
-        move.setDestinationTerritory(territories.get(1));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(destination);
+        move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.attack(turn, moves, players.get(0));
+        Turn turn = turnService.createTurn(gameService.getGame(game), players.get(0));
+        move.setTurn(turn);
+        attackService.attack(turn, moves, players.get(0));
         Assert.assertTrue("playerstatus isn't move", players.get(0).getPlayerStatus().equals(PlayerStatus.MOVE));
     }
 
@@ -434,12 +437,13 @@ public class TurnServiceTest {
         players.get(0).setPlayerStatus(PlayerStatus.REINFORCE);
         Move move = new Move();
         move.setNumberOfUnitsToAttack(3);
-        move.setDestinationTerritory(territories.get(0));
-        move.setOriginTerritory(territories.get(0));
+        move.setDestinationTerritory(origin);
+        move.setOriginTerritory(origin);
         List<Move> reinforcements = new ArrayList<>();
         reinforcements.add(move);
-        Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.addReinforcements(turn, players.get(0), reinforcements);
+        Turn turn = turnService.createTurn(gameService.getGame(game), players.get(0));
+        move.setTurn(turn);
+        reinforceService.reinforce(turn, players.get(0), reinforcements);
         Assert.assertTrue("playerstatus isn't move", players.get(0).getPlayerStatus().equals(PlayerStatus.ATTACK));
     }
 
@@ -447,10 +451,10 @@ public class TurnServiceTest {
     public void testPlayerStatusAfterMove() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(0);
+        /*Territory origin = origin;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(1);
+        Territory destination = destination;*/
         destination.setPlayer(player);
         territoryService.updateTerritory(destination);
 
@@ -460,8 +464,9 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("playerstatus isn't waiting", players.get(0).getPlayerStatus().equals(PlayerStatus.WAITING));
         Assert.assertTrue("new player should have status reinforce", players.get(1).getPlayerStatus().equals(PlayerStatus.REINFORCE));
     }
@@ -470,12 +475,13 @@ public class TurnServiceTest {
     public void move() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(0);
+        /*Territory origin = origin;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(1);
+        Territory destination = destination;*/
         destination.setPlayer(player);
         territoryService.updateTerritory(destination);
+
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
@@ -483,8 +489,9 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
@@ -493,10 +500,10 @@ public class TurnServiceTest {
     public void moveWhenNotOnTurn() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(1);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(1);
+        Territory origin = destination;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(0);
+        Territory destination = origin;
         destination.setPlayer(player);
         territoryService.updateTerritory(destination);
 
@@ -506,8 +513,9 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, players.get(0));
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), players.get(0));
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }
@@ -516,10 +524,10 @@ public class TurnServiceTest {
     public void moveFromEnemyTerritory() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(1);
+        Territory origin = destination;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(0);
+        Territory destination = origin;
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
@@ -527,18 +535,19 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
     }
 
     @Test(expected = IllegalMoveException.class)
     public void moveToEnemyTerritory() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(0);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(0);
+        /*Territory origin = origin;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(1);
+        Territory destination = destination;*/
 
         Move move = new Move();
         move.setNumberOfUnitsToAttack(1);
@@ -546,18 +555,19 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
     }
 
     @Test(expected = IllegalMoveException.class)
     public void moveWithWrongPlayer() throws IllegalMoveException, IllegalTurnException {
         Player player = players.get(1);
         player.setPlayerStatus(PlayerStatus.MOVE);
-        Territory origin = territories.get(0);
+        /*Territory origin = origin;
         origin.setNumberOfUnits(3);
         territoryService.updateTerritory(origin);
-        Territory destination = territories.get(1);
+        Territory destination = destination;*/
         destination.setPlayer(players.get(0));
         territoryService.updateTerritory(destination);
 
@@ -567,8 +577,9 @@ public class TurnServiceTest {
         move.setOriginTerritory(origin);
         List<Move> moves = new ArrayList<>();
         moves.add(move);
-        Turn turn = turnService.createTurn(game, player);
-        turnService.moveUnits(turn, player, moves);
+        Turn turn = turnService.createTurn(gameService.getGame(game), player);
+        move.setTurn(turn);
+        moveUnitsService.moveUnits(turn, player, moves);
         Assert.assertTrue("origin should have 2 units", origin.getNumberOfUnits() == 2);
         Assert.assertTrue("destination should have 2 units", destination.getNumberOfUnits() == 2);
     }

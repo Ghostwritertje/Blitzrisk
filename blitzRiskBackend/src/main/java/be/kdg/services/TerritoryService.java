@@ -21,7 +21,7 @@ public class TerritoryService {
 
     @Transactional
     public void removeTerritory (Territory territory){
-        Set<Territory> territories = territory.getPlayer().getTerritories();
+        //Set<Territory> territories = territory.getPlayer().getTerritories();
         territoryDao.removeTerritory(territory);
     }
 
@@ -30,6 +30,13 @@ public class TerritoryService {
         territoryDao.updateTerritory(territory);
         return territory;
     }
+
+    @Transactional
+    public Territory saveTerritory(Territory territory) {
+        territoryDao.saveTerritory(territory);
+        return territory;
+    }
+
 
     @Transactional
     public Territory getTerritory(int territoryId) {
