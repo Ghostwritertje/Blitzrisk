@@ -174,6 +174,7 @@ public class TurnController {
             reinforceService.reinforce(moves.get(0).getTurn(), player, moves);
         }
         catch (IllegalTurnException  | IllegalMoveException e) {
+            log.warn(e.getMessage());
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List <MoveWrapper> newMoveWrappers = getUpdatedTerritories(moves);

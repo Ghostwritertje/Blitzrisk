@@ -1,6 +1,8 @@
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope',
     function ($scope) {
+        $scope.players = null;
+
         $scope.turnStatus = "WAITING";
 
         $scope.reinforcePopupVisible = false;
@@ -81,20 +83,25 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             };
 
             function sendMoves(){
-                //TODO send the moves;
-                //TODO catch exception. or fix in turnservice.
-                /*TurnService.sendMoves(moves).then(function(calculatedMoves){
-                    var length = calculatedMoves.length;
+                TurnService.sendMoves(moves).then(function(calculatedMoves){
+                    $log.log("calulated moves");
+                    $log.log(calculatedMoves);
+                    var length = calculatedMoves.data.length;
                     for(var i = 0; i < length; i++){
                         //TODO process calculated moves. waiting for turnservice methode to implement.
-                        $log.log(moves);
+                        $log.log(calculatedMoves.data[i]);
+                        updateCalculatedMoves(calculatedMoves.data[i]);
                     }
                     clearMoves();
-                });*/
+                });
+            }
 
-                //TODO remove this line. for test reasons only.
-                TurnService.setTurnStatus("ATTACK");
-                clearMoves();
+            function updateCalculatedMoves(calculatedMove){
+                if(calculatedMove.origin == calculatedMove.destination){
+                    var territoryId = getTerritoryIdFromDBId(calculatedMove.origin);
+                    changeTerritoryText(territoryId, parseInt(calculatedMove.originNrOfUnits));
+                    setNumberOfUnitsOnTerritory(territoryId, parseInt(calculatedMove.originNrOfUnits));
+                }
             }
 
             scope.move = function(numberOfUnits){
@@ -135,8 +142,26 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             function addMove(originRegion, destinationRegion, numberOfUnits){
-                moves.push({'turnId': 1, 'origin': originRegion, 'destination': destinationRegion, 'unitsToAttackOrReinforce': numberOfUnits});
+                moves.push({'turnId': 1, 'origin': getTerritoryDBId(originRegion), 'destination': getTerritoryDBId(destinationRegion), 'unitsToAttackOrReinforce': numberOfUnits});
                 $log.log(moves);
+            }
+
+            function getTerritoryDBId(territoryId){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].key == territoryId){
+                        return gameBoard.territories[i].id;
+                    }
+                }
+            }
+
+            function getTerritoryIdFromDBId(territoryDBId){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].id == territoryDBId){
+                        return gameBoard.territories[i].key;
+                    }
+                }
             }
 
             function loadGameBoard() {
@@ -154,11 +179,13 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             function initializeBoard() {
-                players = gameBoard.players;
-                var length = players.length;
+                //players = gameBoard.players;
+                scope.players = gameBoard.players;
+                $log.log(scope.players);
+                var length = scope.players.length;
                 for(var i = 0; i < length; i++){
-                    if(players[i].username == LoginService.getUserName()){
-                        thisPlayer = players[i];
+                    if(scope.players[i].username == LoginService.getUserName()){
+                        thisPlayer = scope.players[i];
                         TurnService.setPlayerId(thisPlayer.id);
                         break;
                     }
@@ -174,16 +201,16 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             function getPlayer(playerId) {
-                var length = players.length;
+                var length = scope.players.length;
                 for (var i = 0; i < length; i++) {
-                    if (players[i].id == playerId) {
-                        return players[i];
+                    if (scope.players[i].id == playerId) {
+                        return scope.players[i];
                     }
                 }
             }
 
             scope.selectRegion = function(territoryId){
-                if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null){
+                if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null && isMyTerritory(territoryId)){
                     selectedHomeRegion = territoryId;
                     scope.reinforceNumberMax = numberOfUnassignedReinforcements;
                     scope.reinforceValue = 0;

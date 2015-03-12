@@ -35,15 +35,11 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                         deferred.resolve(data);
                     });
                 return deferred.promise;
-
             },
             createNewGame: function () {
-
                 return $http.get('api/createGame', {headers: {'X-Auth-Token': LoginService.getToken()}});
-
             },
             acceptGame: function (playerId) {
-
                 return $http.put('api/acceptGame/' + playerId, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             },
             setCurrentGame: function (gameId) {
