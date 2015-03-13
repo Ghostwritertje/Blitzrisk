@@ -26,10 +26,6 @@ public class UserDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     public User checkLogin(String username, String password) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.name = :username and u.password = :password");
         query.setParameter("username", username);
@@ -46,7 +42,7 @@ public class UserDao {
         return user;
     }
 
-    public void addUser(String username, String password, String email) throws DuplicateUsernameException, DuplicateEmailException {
+    public void addUser(String username, String password, String email){
         User user = new User();
         user.setName(username);
         user.setEmail(email);
@@ -54,13 +50,6 @@ public class UserDao {
         try {
             sessionFactory.getCurrentSession().save(user);
         } catch (ConstraintViolationException e) {
-            if(e.getConstraintName().equals("unique_name_constraint")){
-                logger.warn("Username " + username + " already exists.");
-                throw new DuplicateUsernameException();
-            }else {
-                logger.warn("Email adress " + email + " already exists.");
-                throw new DuplicateEmailException();
-            }
         }
     }
 

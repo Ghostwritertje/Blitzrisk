@@ -1,7 +1,7 @@
 package be.kdg.exceptions;
 
 /**
- * Created by Alexander on 16/2/2015.
+ * Exception thrown upon trying an illegal move.
  */
 public class IllegalMoveException extends Exception {
 

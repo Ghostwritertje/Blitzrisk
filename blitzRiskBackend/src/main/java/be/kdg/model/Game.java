@@ -10,8 +10,7 @@ import javax.persistence.Table;
 import java.util.*;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * Game that contains the state for a current game
  */
 @Entity
 @Table(name = "t_game")

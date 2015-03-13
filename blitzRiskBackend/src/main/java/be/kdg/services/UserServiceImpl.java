@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * Created by Marlies on 9/02/2015.
+ * Attack service provides a service for users
  */
 @Service("userServiceImpl")
 @Transactional(rollbackOn = {DuplicateEmailException.class, DuplicateUsernameException.class})
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     //@Transactional
     @Override
-    public void addUser(String username, String password, String email) throws DuplicateUsernameException, DuplicateEmailException {
+    public void addUser(String username, String password, String email)  {
         userDao.addUser(username, password, email);
     }
 

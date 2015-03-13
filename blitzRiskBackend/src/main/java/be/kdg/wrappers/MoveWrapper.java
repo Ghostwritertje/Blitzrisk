@@ -7,7 +7,7 @@ import be.kdg.model.Territory;
 import org.apache.log4j.Logger;
 
 /**
- * Created by Marlies on 28/02/2015.
+ * Wraps the move model in a simple wrapper that is used in REST-calls
  */
 public class MoveWrapper {
     static Logger log = Logger.getLogger(MoveWrapper.class);

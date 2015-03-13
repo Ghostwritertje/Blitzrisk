@@ -3,7 +3,7 @@ package be.kdg.wrappers;
 import be.kdg.model.Territory;
 
 /**
- * Created by Alexander on 16/2/2015.
+ * Wraps the territory model in a simple wrapper that is used in REST-calls
  */
 public class TerritoryWrapper {
     private Integer Id;

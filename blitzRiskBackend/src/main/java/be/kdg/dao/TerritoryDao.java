@@ -8,17 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Marlies on 27/02/2015.
+ * Save and retrieve territories.
  */
 
 @Service("territoryDao")
 public class TerritoryDao {
     @Autowired
     private SessionFactory sessionFactory;
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public Territory getTerritoryById(int id) {
         Query query = sessionFactory.getCurrentSession().createQuery("from Territory where id = :id");

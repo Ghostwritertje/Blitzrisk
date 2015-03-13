@@ -1,25 +1,22 @@
-package be.kdg.beans;
+package be.kdg.wrappers;
 
 import be.kdg.model.User;
 import org.springframework.stereotype.Component;
 
-
 /**
- * Created by user jorandeboever
- * Date:13/02/15.
+ * Wraps the user model in a simple wrapper that is used in REST-calls
  */
 @Component
-public class UserBean {
+public class UserWrapper {
 
     private String name;
     private String password;
-
     private String email;
 
-    public UserBean() {
+    public UserWrapper() {
     }
 
-    public UserBean(User user) {
+    public UserWrapper(User user) {
         this.name = user.getName();
         this.email = user.getEmail();
     }

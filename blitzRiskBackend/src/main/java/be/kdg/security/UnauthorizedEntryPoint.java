@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * Response that is shown when a token was invalid or missing
+ */
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint
 {
 

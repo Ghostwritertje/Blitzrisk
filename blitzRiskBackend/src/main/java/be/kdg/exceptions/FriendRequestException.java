@@ -1,8 +1,7 @@
 package be.kdg.exceptions;
 
 /**
- * Created by user jorandeboever
- * Date:6/03/15.
+ * Exception that can be thrown when a Friend request can not be saved.
  */
 public class FriendRequestException extends Exception {
     public FriendRequestException(String message) {

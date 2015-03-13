@@ -1,10 +1,8 @@
 package be.kdg.controllers;
 
 
-import be.kdg.beans.UserBean;
-import be.kdg.exceptions.DuplicateEmailException;
+import be.kdg.wrappers.UserWrapper;
 import be.kdg.exceptions.FriendRequestException;
-import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserService;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
-
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
@@ -36,30 +33,26 @@ public class UserInfoController {
     MailSender mailSender;
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
-    public ResponseEntity register(@PathVariable("username") String username, @RequestHeader("email") String emailaddress, @RequestHeader("password") String password) {
+    public void register(@PathVariable("username") String username, @RequestHeader("email") String emailaddress, @RequestHeader("password") String password) {
         logger.info(username + " is registering");
+        userService.addUser(username, password, emailaddress);
+
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(emailaddress);
+        email.setSubject("Welcome to BlitzRisk!");
+        email.setText("Welcome to BlitzRisk, " + username);
         try {
-            userService.addUser(username, password, emailaddress);
-
-
-            SimpleMailMessage email = new SimpleMailMessage();
-            email.setTo(emailaddress);
-            email.setSubject("Welcome to BlitzRisk!");
-            email.setText("Welcome to BlitzRisk, " + username);
             mailSender.send(email);
             logger.info("Registration mail send to " + username);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (DuplicateUsernameException duplicateUsernameException) {
-            return new ResponseEntity<>("Duplicate username" , HttpStatus.BAD_REQUEST);
-        } catch (DuplicateEmailException e) {
-            return new ResponseEntity<>("Duplicate email" , HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.warn("Couldn't send mail to " + username);
         }
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public UserBean getUser(@RequestHeader("X-Auth-Token") String token) {
+    public UserWrapper getUser(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        return new UserBean(userService.getUser(username));
+        return new UserWrapper(userService.getUser(username));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
@@ -80,7 +73,7 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
-    public void updateUser(@RequestBody UserBean updatedUser, @RequestHeader("X-Auth-Token") String token) {
+    public void updateUser(@RequestBody UserWrapper updatedUser, @RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
         User originalUser = userService.getUser(username);
 
@@ -94,34 +87,13 @@ public class UserInfoController {
             userService.changeUsername(originalUser.getName(), updatedUser.getName());
     }
 
-
-/*
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<User> getUsers() {
-        return this.userService.findall();
-    }
-*/
-
- /*   @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public ResponseEntity getSecuredUsers() {
-        try {
-            return new ResponseEntity<>(this.userService.findall(), HttpStatus.OK);
-        } catch (Exception e){
-            logger.error(e.getMessage());
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-    }*/
-
     @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriends(@RequestHeader("X-Auth-Token") String token) {
+    public List<UserWrapper> getFriends(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        List<UserBean> friends = new ArrayList<>();
+        List<UserWrapper> friends = new ArrayList<>();
         for (User user : userService.getFriends(username)) {
-            friends.add(new UserBean(user));
+            friends.add(new UserWrapper(user));
         }
 
         return friends;
@@ -129,17 +101,17 @@ public class UserInfoController {
 
     @RequestMapping(value = "/friendRequests", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
+    public List<UserWrapper> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        List<UserBean> friends = new ArrayList<>();
+        List<UserWrapper> friends = new ArrayList<>();
         for (User user : userService.getFriendRequests(username)) {
-            friends.add(new UserBean(user));
+            friends.add(new UserWrapper(user));
         }
 
         return friends;
     }
 
-    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)  //.+ zodat email-adressen ook altijd volledig worden opgenomen
     public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
         logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");

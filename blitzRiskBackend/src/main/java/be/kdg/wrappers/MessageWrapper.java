@@ -5,8 +5,7 @@ import be.kdg.model.Message;
 import java.util.Date;
 
 /**
- * Created by user jorandeboever
- * Date:2/03/15.
+ * Wraps the message model in a simple wrapper that is used in REST-calls
  */
 public class MessageWrapper {
 

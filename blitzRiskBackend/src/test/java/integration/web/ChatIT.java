@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Selenium tests for Chat
  */
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ChatIT {
     private static WebDriver driver;

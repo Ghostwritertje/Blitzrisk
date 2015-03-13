@@ -26,7 +26,7 @@ import static com.jayway.restassured.RestAssured.given;
  * Created by Marlies on 12/03/2015.
  */
 
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class EnterTurns {
     private final String URL = MyServerConfiguration.getURL() + "api/";
@@ -53,8 +53,11 @@ public class EnterTurns {
 
     @Before
     public void setUp() throws IllegalUserInviteException, DuplicateEmailException, DuplicateUsernameException {
-        userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
-        userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
+        try {
+            userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
+            userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
+        }
+        catch (Exception e){}
 
         Game gameObject = gameService.createNewGame();
         game = gameObject.getId();
@@ -96,24 +99,6 @@ public class EnterTurns {
         territoryService.updateTerritory(territory2);
 
 
-    }
-
-    //@After
-    public void cleanUp() {
-        Game gameObject = gameService.getGame(game);
-        turnService.removeTurns(gameObject);
-
-        territoryService.removeTerritory(origin);
-        territoryService.removeTerritory(destination);
-        territoryService.removeTerritory(territory1);
-        territoryService.removeTerritory(territory2);
-
-        for(Player player: players) {
-            playerService.removePlayer(player);
-        }
-        gameService.removeGame(gameService.getGame(game));
-        userService.removeUser("turntestgameuser");
-        userService.removeUser("turntestgameuser2");
     }
 
     @Test
@@ -298,7 +283,7 @@ public class EnterTurns {
         gameObject.setEnded(false);
         gameService.updateGame(gameObject);
 
-        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"unitsToAttackOrReinforce\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token)
@@ -314,7 +299,7 @@ public class EnterTurns {
         Game gameObject = gameService.getGame(game);
         gameObject.setEnded(false);
         gameService.updateGame(gameObject);
-        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"unitsToAttackOrReinforce\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser2").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token)
@@ -332,7 +317,7 @@ public class EnterTurns {
         Game gameObject = gameService.getGame(game);
         gameObject.setEnded(false);
         gameService.updateGame(gameObject);
-        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), origin.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"unitsToAttackOrReinforce\":0}]", turn.getId(), origin.getId(), origin.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token)
@@ -349,7 +334,7 @@ public class EnterTurns {
         Game gameObject = gameService.getGame(game);
         gameObject.setEnded(false);
         gameService.updateGame(gameObject);
-        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"calculatedUnits\":0}]", turn.getId(), origin.getId(), destination.getId());
+        String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"units\":3,\"unitsToAttackOrReinforce\":0}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token)

@@ -11,7 +11,6 @@ import java.util.Random;
  * Service for tests to register and log in.
  */
 public class TestUserService {
-
     public static void registerUser(WebDriver driver, String username, String password, String email) {
         driver.get(MyServerConfiguration.getURL() + "#/register");
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.id("username")));

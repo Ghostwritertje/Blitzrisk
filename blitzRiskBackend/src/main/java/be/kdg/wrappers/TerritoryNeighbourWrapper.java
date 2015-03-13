@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Gunther Claessens.
+ * A wrapper for territory neighbours
  */
 public class TerritoryNeighbourWrapper {
     private int territoryKey;

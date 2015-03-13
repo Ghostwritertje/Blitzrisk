@@ -1,7 +1,7 @@
 package be.kdg.model;
 
 /**
- * Created by Marlies on 6/03/2015.
+ * Status that a player has in a game.
  */
 public enum PlayerStatus {
     WAITING, REINFORCE, ATTACK, MOVE

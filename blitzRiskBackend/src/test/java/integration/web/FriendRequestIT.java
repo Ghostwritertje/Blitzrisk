@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Selenium test for friend-requests
  */
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class FriendRequestIT {
     private final String URL = MyServerConfiguration.getURL();

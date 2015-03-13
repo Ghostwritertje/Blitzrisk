@@ -12,8 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * Territories on the gameboard
  */
 @Entity
 @Table(name = "t_territory")
