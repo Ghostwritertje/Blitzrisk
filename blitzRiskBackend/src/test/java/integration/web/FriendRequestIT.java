@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,35 +32,36 @@ public class FriendRequestIT {
     @BeforeClass
     public static void insertUser() {
         System.setProperty("webdriver.chrome.driver", MyServerConfiguration.getChromedriverlocation());
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver2 = new ChromeDriver();
-        driver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
 
-    @AfterClass
-    public static void quitDriver() {
-        driver.quit();
-        driver2.quit();
+
     }
 
     @Before
-    public void registerUsers() {
-        TestUserService.registerUser(driver, "testfriend1", "test", "testfriend1@test.be");
-        TestUserService.registerUser(driver2, "testfriend2", "test", "testfriend2@test.be");
-    }
+    public void startDrivers() {
+        driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
+        driver2 = new ChromeDriver();
+        driver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Random random = new Random();
+
+        int getal = random.nextInt(9999);
+        TestUserService.registerUser(driver, "testfriend" + getal, "test", "testfriend" + getal + "@test.be");
+        TestUserService.loginUser(driver, "testfriend" + getal, "test");
+    }
 
     @After
-    public void removeSeleniumUsers() {
-
+    public void closeDrivers() {
+        driver2.quit();
+        driver.quit();
     }
+
 
     @Test
     public void addFriend() {
 
+        TestUserService.registerUser(driver2, "testfriend2", "test", "testfriend2@test.be");
 
-        TestUserService.loginUser(driver, "testfriend1", "test");
 
         //user 1: add friend 2
         (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("newFriend")));
@@ -75,6 +77,45 @@ public class FriendRequestIT {
         (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElement(By.className("acceptFriendBtn")));
 
         element = driver2.findElement(By.className("acceptFriendBtn"));
+        element.click();
+
+
+    }
+
+    @Test
+    public void addFriendAsEmail() {
+
+        TestUserService.registerUser(driver2, "testfriend3", "test", "testfriend3@test.be");
+
+
+        //user 1: add friend 2
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("newFriend")));
+
+        WebElement element = driver.findElement(By.id("newFriend"));
+        element.sendKeys("testfriend3@test.be");
+
+        element = driver.findElement(By.id("addFriendBtn"));
+        element.click();
+
+        //friend 2 accept request
+        TestUserService.loginUser(driver2, "testfriend3", "test");
+        (new WebDriverWait(driver2, 15)).until((WebDriver d) -> d.findElement(By.className("acceptFriendBtn")));
+
+        element = driver2.findElement(By.className("acceptFriendBtn"));
+        element.click();
+
+    }
+
+    @Test
+    public void addFriendThatIsNoUser() {
+
+        //user 1: add friend 2
+        (new WebDriverWait(driver, 5)).until((WebDriver d) -> d.findElement(By.id("newFriend")));
+
+        WebElement element = driver.findElement(By.id("newFriend"));
+        element.sendKeys("testfriendnewuser@test.be");
+
+        element = driver.findElement(By.id("addFriendBtn"));
         element.click();
 
     }
