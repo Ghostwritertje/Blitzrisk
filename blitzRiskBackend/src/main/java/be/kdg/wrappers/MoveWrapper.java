@@ -13,17 +13,17 @@ public class MoveWrapper {
     static Logger log = Logger.getLogger(MoveWrapper.class);
 
 
-    private int id;
-    private int turnId;
-    private int turnNumber;
-    private int origin;
-    private int originNrOfUnits;
-    private int originPlayer;
-    private int destination;
-    private int destinationNrOfUnits;
-    private int destinationPlayer;
-    private int unitsToAttackOrReinforce;
-    private int playerOnTurn;
+    private Integer id;
+    private Integer turnId;
+    private Integer turnNumber;
+    private Integer origin;
+    private Integer originNrOfUnits;
+    private Integer originPlayer;
+    private Integer destination;
+    private Integer destinationNrOfUnits;
+    private Integer destinationPlayer;
+    private Integer unitsToAttackOrReinforce;
+    private Integer playerOnTurn;
     private PlayerStatus playerStatus;
 
     public MoveWrapper (Move move) {
@@ -37,7 +37,12 @@ public class MoveWrapper {
         destination = dest.getId();
         destinationNrOfUnits = dest.getNumberOfUnits();
         Player player = dest.getPlayer();
-        destinationPlayer = player.getId();
+        try {
+            destinationPlayer = player.getId();
+        }
+        catch (Exception e) {
+            log.warn(e.getCause());
+        }
         unitsToAttackOrReinforce = move.getNumberOfUnitsToAttack();
         playerOnTurn = move.getTurn().getGame().getPlayerTurn();
         playerStatus = move.getTurn().getGame().getPlayers().get(playerOnTurn).getPlayerStatus();

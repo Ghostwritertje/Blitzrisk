@@ -11,9 +11,9 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
         var territoryLayout = null;
 
         return {
-            loadTerritoryLayout: function(){
+            loadTerritoryLayout: function(playerId){
                 var defer = $q.defer();
-                $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken()}}).success(function(data){ defer.resolve(data); territoryLayout = data;}).error(function(data, status){defer.reject(status)});
+                $http.get('api/territoryLayout', {headers: {'X-Auth-Token': LoginService.getToken(), 'playerId' : playerId}}).success(function(data){ defer.resolve(data); territoryLayout = data;}).error(function(data, status){defer.reject(status)});
                 return defer.promise;
             },
             getTerritoryLayout: function () {
@@ -35,15 +35,11 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                         deferred.resolve(data);
                     });
                 return deferred.promise;
-
             },
             createNewGame: function () {
-
                 return $http.get('api/createGame', {headers: {'X-Auth-Token': LoginService.getToken()}});
-
             },
             acceptGame: function (playerId) {
-
                 return $http.put('api/acceptGame/' + playerId, null, {headers: {'X-Auth-Token': LoginService.getToken()}});
             },
             setCurrentGame: function (gameId) {

@@ -1,7 +1,3 @@
-<!--<object id='riskMap' type='image/svg+xml' data='assets/img/herwerkteRiskMapMini.svg'></object>-->
-<!--<risk-map watch="status"></risk-map>
-<input type="button" value="alert" ng-click="status='alert'">-->
-
 <div id="gameBoardWrapper">
 
     <riskmap id="riskMap">
@@ -9,9 +5,25 @@
     <div id="chat">
         <div ng-include="'app/components/chat/chatBox.html'"></div>
     </div>
+    <div class="popupWrapper" ng-show="reinforcePopupVisible">
+        <div id="reinforcePopup" ng-show="reinforcePopupVisible">
+            <form name="reinforceForm" ng-submit="submitReinforcment()">
+                <input type="range" ng-model="reinforceValue" value="{{reinforceValue}}" step="1" min="0" max="{{reinforceNumberMax}}">
+                <input type="submit" value="submit">
+            </form>
+        </div>
+    </div>
+    <div class="popupWrapper" ng-show="movePopupVisible">
+        <div id="movePopup" ng-show="movePopupVisible">
+            <form name="moveForm" ng-submit="submitMove()">
+                <input type="range" ng-model="moveValue" value="{{moveValue}}" step="1" min="0" max="{{moveForceMax}}">
+                <input type="submit" value="submit">
+            </form>
+        </div>
+    </div>
 </div>
 <div >
     <ul id="playerDiv" class="nav nav-pills">
-        <li ng-repeat="player in game.players" id="player{{player.color}}" class="colorTab" ng-class="{'playing': player.color == game.playerTurn}"><a>{{player.username}}</a></li>
+        <li ng-repeat="player in players" id="player{{player.color}}" class="colorTab" ng-class="{'playing': player.color == game.playerTurn}"><a>{{player.username}}</a></li>
     </ul>
 </div>

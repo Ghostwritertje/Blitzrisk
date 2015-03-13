@@ -91,15 +91,16 @@ public class ReinforceService {
     }
 
     private List<Move> addReinforcements(List<Move> moves) {
-        List<Move> calculatedMoves = new ArrayList<>();
         for(Move move: moves) {
             Territory origin = move.getOriginTerritory();
             int newUnits = origin.getNumberOfUnits() + move.getNumberOfUnitsToAttack();
+            move.getOriginTerritory().setNumberOfUnits(newUnits);
             move.setOriginTerritoryRemainingNrUnits(newUnits);
+            move.getDestinationTerritory().setNumberOfUnits(newUnits);
+            move.setDestinationTerritoryRemainingNrUnits(newUnits);
             origin.setNumberOfUnits(newUnits);
-            calculatedMoves.add(move);
             log.warn("reinforcement added");
         }
-        return calculatedMoves;
+        return moves;
     }
 }

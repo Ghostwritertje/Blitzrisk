@@ -92,9 +92,11 @@ public class EnterTurns {
         territoryService.updateTerritory(destination);
         territoryService.updateTerritory(territory1);
         territoryService.updateTerritory(territory2);
+
+
     }
 
-    @After
+    //@After
     public void cleanUp() {
         Game gameObject = gameService.getGame(game);
         turnService.removeTurns(gameObject);
@@ -130,6 +132,7 @@ public class EnterTurns {
         territoryService.updateTerritory(origin);
         String moveWrapperList = String.format("[{\"id\":1,\"turnId\":%d,\"origin\":%d,\"destination\":%d,\"unitsToAttackOrReinforce\":1}]", turn.getId(), origin.getId(), destination.getId());
         String token = given().header("name", "turntestgameuser").header("password", "turntestuserpass").get(URL + "login").getBody().asString();
+        players.get(1).getId();
         given().contentType(ContentType.JSON)
                 .headers("X-Auth-Token", token)
                 .request().body(moveWrapperList)
