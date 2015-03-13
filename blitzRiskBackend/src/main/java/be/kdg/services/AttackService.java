@@ -57,7 +57,7 @@ public class AttackService {
             boolean isNeighbour = false;
             log.warn("Neighbour size: " + move.getOriginTerritory().getNeighbourTerritories().size());
             for(Territory territory: move.getOriginTerritory().getNeighbourTerritories()) {
-            if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
+                if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
             if (!isNeighbour) {

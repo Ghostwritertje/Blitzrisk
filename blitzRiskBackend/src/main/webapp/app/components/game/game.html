@@ -32,6 +32,7 @@
 <div >
     <ul id="playerDiv" class="nav nav-pills">
         <li ng-repeat="player in players" id="player{{player.color}}" class="colorTab" ng-class="{'playing': player.color == game.playerTurn}"><a>{{player.username}}</a>
-        <input type="button" value="attack" ng-click="commitAttacks()"> </li>
+        <input type="button" value="attack" ng-click="commitAttacks()">
+        <p>{{turnStatus}}</p></li>
     </ul>
 </div>

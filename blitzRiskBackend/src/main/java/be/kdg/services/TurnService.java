@@ -145,7 +145,7 @@ public class TurnService {
                 || playerStatus.equals(PlayerStatus.WAITING) && currentPlayerStatus.equals(PlayerStatus.MOVE) ) {
             player.setPlayerStatus(playerStatus);
             playerDao.updatePlayer(player);
-
+            log.info(playerDao.getPlayerById(player.getId()).getPlayerStatus());
             if(playerStatus.equals(PlayerStatus.WAITING)) {
                 try {
                     Player newPlayer = endGameService.getNextActivePlayer(player);
