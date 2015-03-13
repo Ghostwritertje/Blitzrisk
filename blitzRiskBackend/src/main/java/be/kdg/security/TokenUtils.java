@@ -6,7 +6,9 @@ import org.springframework.security.crypto.codec.Hex;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+/**
+ * Makes tokens for security
+ */
 public class TokenUtils
 {
 

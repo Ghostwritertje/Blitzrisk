@@ -2,6 +2,7 @@ package be.kdg.model;
 
 import be.kdg.services.TerritoryService;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.ForeignKey;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
@@ -11,8 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * Territories on the gameboard
  */
 @Entity
 @Table(name = "t_territory")
@@ -23,17 +23,15 @@ public class Territory {
     private Integer numberOfUnits;
     private Integer gameKey;
 
-    //@Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name = "playerId")
     private Player player;
 
-    //@Cascade(value=CascadeType.PERSIST)
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
+    @ForeignKey(name="FK_neighbourkey")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 
-    //@Cascade(value= CascadeType.PERSIST)
     @ManyToOne
     @JoinColumn(name= "gameId")
     private Game game;

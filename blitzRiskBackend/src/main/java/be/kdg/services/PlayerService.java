@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexander on 20/2/2015.
+ * Attack service provides a service for saving and retrieving players
  */
 @Service("playerService")
 public class PlayerService {
@@ -78,7 +78,6 @@ public class PlayerService {
     @Transactional
     public void acceptGame(int playerId) {
         acceptGameForPlayer(playerId);
-        checkIfGameCanStart(playerId);
     }
 
     @Transactional
@@ -104,7 +103,8 @@ public class PlayerService {
         playerDao.updatePlayer(player);
     }
 
-    private void checkIfGameCanStart(int playerId) {
+    @Transactional
+    public void checkIfGameCanStart(int playerId) {
         Player player = playerDao.getPlayerById(playerId);
         Game game = player.getGame();
         //Check if game can begin

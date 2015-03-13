@@ -1,7 +1,7 @@
 package be.kdg.exceptions;
 
 /**
- * Created by Marlies on 9/03/2015.
+ * Exception thrown upon trying an illegal turn.
  */
 public class IllegalTurnException extends Exception {
     public IllegalTurnException() {

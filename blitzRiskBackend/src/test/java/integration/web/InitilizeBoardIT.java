@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Gunther Claessens.
  */
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class InitilizeBoardIT {
     private final String URL = MyServerConfiguration.getURL();

@@ -18,7 +18,7 @@ import static com.jayway.restassured.RestAssured.given;
  * Date:5/02/15.
  */
 
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SecurityIT {
 
@@ -84,7 +84,7 @@ public class SecurityIT {
 
     @Test
     public void registerExistingUser() {
-        given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "user/testuser").then().assertThat().statusCode(400);
+        given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "user/testuser").then().assertThat().statusCode(500);
     }
 
 }

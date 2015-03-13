@@ -21,11 +21,6 @@
     <context:component-scan base-package="be.kdg"/>
     <context:annotation-config/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
-
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <!-- SMTP settings -->
         <property name="host" value="smtp.gmail.com" />
@@ -43,7 +38,6 @@
             </props>
         </property>
     </bean>
-
 
     <security:http
             realm="Protected API"
@@ -69,13 +63,11 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
-    <bean id="userDao" class="be.kdg.dao.UserDao">
-
-    </bean>
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userServiceImpl" />
     </bean>
+
     <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint"/>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -87,7 +79,7 @@
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"></property>
+        <property name="dataSource" ref="dataSource"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
@@ -99,14 +91,6 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <bean id="userService" class="be.kdg.dao.UserDao">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <bean id="gameDao" class="be.kdg.dao.GameDao">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexander on 20/2/2015.
+ * Save and retrieve players
  */
 
 @Service("playerDao")
@@ -22,10 +22,6 @@ public class PlayerDao {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public void savePlayer(Player player) {
         sessionFactory.getCurrentSession().save(player);

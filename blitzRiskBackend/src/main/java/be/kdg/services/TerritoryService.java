@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Alexander on 6/2/2015.
+ * Attack service provides a service for territories
  */
 
 @Service("territoryService")
@@ -21,7 +21,6 @@ public class TerritoryService {
 
     @Transactional
     public void removeTerritory (Territory territory){
-        //Set<Territory> territories = territory.getPlayer().getTerritories();
         territoryDao.removeTerritory(territory);
     }
 

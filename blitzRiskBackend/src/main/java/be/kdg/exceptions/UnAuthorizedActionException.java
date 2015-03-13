@@ -1,7 +1,7 @@
 package be.kdg.exceptions;
 
 /**
- * Created by Alexander on 27/2/2015.
+ * Exception thrown upon unauthorized action.
  */
 public class UnAuthorizedActionException extends Exception {
     public UnAuthorizedActionException(String message) {

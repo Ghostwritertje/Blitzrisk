@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Created by user jorandeboever
  * Date:19/02/15.
  */
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ChangeProfileIT {
     private final String URL = MyServerConfiguration.getURL();

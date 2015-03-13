@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Alexander on 16/2/2015.
+ * Wraps the player model in a simple wrapper that is used in REST-calls
  */
 public class PlayerWrapper {
     private Integer id;

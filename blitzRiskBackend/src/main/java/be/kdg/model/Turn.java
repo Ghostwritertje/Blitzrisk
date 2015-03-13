@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * A turn contains multiple moves for 1 player
  */
 @Entity
 @Table(name= "t_turn")

@@ -36,7 +36,7 @@ public class EndGameService {
     }
 
     public boolean isActive(Player player) {
-        if(player.getTerritories().size() > 0) return true;
+        if(player.getTerritories() != null && player.getTerritories().size() > 0) return true;
         else return false;
     }
 

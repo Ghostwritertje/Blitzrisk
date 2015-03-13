@@ -11,8 +11,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * User credentials that allow a user to login
  */
 @Entity
 @Table(name = "t_user", uniqueConstraints = {@UniqueConstraint(name = "unique_name_constraint", columnNames = "name"), @UniqueConstraint(name = "unique_email_constraint", columnNames = "email")})

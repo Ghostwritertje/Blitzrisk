@@ -14,10 +14,8 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 /**
- * Created by Alexander on 6/2/2015.
+ * Attack service provides a service for general methods about a game
  */
-
-
 @Service("gameService")
 public class GameService {
 

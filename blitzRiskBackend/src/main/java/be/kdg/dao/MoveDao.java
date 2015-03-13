@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by Marlies on 27/02/2015.
+ * Saves and retrieves moves in the database.
  */
 
 @Service("moveDao")

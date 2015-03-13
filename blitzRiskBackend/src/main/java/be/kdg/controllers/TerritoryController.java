@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Gunther Claessens.
+ * Retrieve the layout for the territories.
  */
 @RestController
 public class TerritoryController {
