@@ -1,5 +1,6 @@
 package be.kdg.controllers;
 
+import be.kdg.exceptions.GameAlreadyOverException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
@@ -169,12 +170,14 @@ public class TurnController {
         }
 
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
+        log.warn(moveWrappers.size());
         List<Move> moves = getMoves(moveWrappers);
         try {
             reinforceService.reinforce(moves.get(0).getTurn(), player, moves);
         }
-        catch (IllegalTurnException  | IllegalMoveException e) {
+        catch (IllegalTurnException  | IllegalMoveException | GameAlreadyOverException e) {
             log.warn(e.getMessage());
+            log.warn(e.getCause());
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List <MoveWrapper> newMoveWrappers = getUpdatedTerritories(moves);
@@ -191,13 +194,13 @@ public class TurnController {
         if (!playerService.isPlayerOfUser(user, Integer.parseInt(playerId))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
+        log.warn("MoveWrappers.size: " + moveWrappers.size());
         List<Move> moves = getMoves(moveWrappers);
         Player player = playerService.getPlayerById(Integer.parseInt(playerId));
         try {
             attackService.attack(moves.get(0).getTurn(), moves, player);
         }
-        catch (IllegalTurnException | IllegalMoveException e) {
+        catch (IllegalTurnException | IllegalMoveException | GameAlreadyOverException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);
@@ -220,7 +223,7 @@ public class TurnController {
         try {
             moveUnitsService.moveUnits(moves.get(0).getTurn(), player, moves);
         }
-        catch (IllegalTurnException | IllegalMoveException e) {
+        catch (IllegalTurnException | IllegalMoveException | GameAlreadyOverException e) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
         List<MoveWrapper> updatedMoves = getUpdatedTerritories(moves);

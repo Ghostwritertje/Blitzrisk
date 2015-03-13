@@ -2,6 +2,7 @@ package be.kdg.services;
 
 import be.kdg.dao.GameDao;
 import be.kdg.dao.PlayerDao;
+import be.kdg.dao.TerritoryDao;
 import be.kdg.dao.UserDao;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.exceptions.UnAuthorizedActionException;
@@ -30,7 +31,7 @@ public class GameService {
     private PlayerService playerService;
 
     @Autowired
-    private TerritoryService territoryService;
+    private TerritoryDao territoryDao;
 
     @Autowired
     private GameDao gameDao;
@@ -45,6 +46,9 @@ public class GameService {
     public Game saveTerritories(Game game, List<Territory> territories) {
         game.setTerritories(territories);
         game.assignRandomTerritories();
+        for (Territory territory: territories) {
+            territoryDao.saveTerritory(territory);
+        }
         gameDao.updateGame(game);
         return game;
     }
@@ -52,9 +56,7 @@ public class GameService {
     @Transactional
     public Game createNewGame() {
         Game game = new Game();
-        //Wordt al gedaan in constructor van game
-        // game.setTerritories(territoryService.getTerritories());
-
+        game.setEnded(false);
         game.setPlayerTurn(0);
         for (int i = 1; i< game.getPlayers().size(); i++) {
             game.getPlayers().get(i).setPlayerStatus(PlayerStatus.WAITING);
@@ -66,6 +68,11 @@ public class GameService {
     public void addUserToGame(User user, Game game) throws IllegalUserInviteException {
         playerService.createPlayer(user, game);
 
+    }
+
+    @Transactional
+    public void updateGame(Game game) {
+        gameDao.updateGame(game);
     }
 
     @Transactional

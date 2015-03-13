@@ -1,24 +1,29 @@
 package be.kdg.wrappers;
 
 import be.kdg.model.Move;
+import be.kdg.model.Player;
 import be.kdg.model.PlayerStatus;
 import be.kdg.model.Territory;
+import org.apache.log4j.Logger;
 
 /**
  * Created by Marlies on 28/02/2015.
  */
 public class MoveWrapper {
-    private int id;
-    private int turnId;
-    private int turnNumber;
-    private int origin;
-    private int originNrOfUnits;
-    private int originPlayer;
-    private int destination;
-    private int destinationNrOfUnits;
-    private int destinationPlayer;
-    private int unitsToAttackOrReinforce;
-    private int playerOnTurn;
+    static Logger log = Logger.getLogger(MoveWrapper.class);
+
+
+    private Integer id;
+    private Integer turnId;
+    private Integer turnNumber;
+    private Integer origin;
+    private Integer originNrOfUnits;
+    private Integer originPlayer;
+    private Integer destination;
+    private Integer destinationNrOfUnits;
+    private Integer destinationPlayer;
+    private Integer unitsToAttackOrReinforce;
+    private Integer playerOnTurn;
     private PlayerStatus playerStatus;
 
     public MoveWrapper (Move move) {
@@ -28,9 +33,16 @@ public class MoveWrapper {
         originPlayer = move.getOriginTerritory().getPlayer().getId();
         turnId = move.getTurn().getId();
         turnNumber = move.getTurn().getNumber();
-        destination = move.getDestinationTerritory().getId();
-        destinationNrOfUnits = move.getDestinationTerritory().getNumberOfUnits();
-        destinationPlayer = move.getDestinationTerritory().getPlayer().getId();
+        Territory dest = move.getDestinationTerritory();
+        destination = dest.getId();
+        destinationNrOfUnits = dest.getNumberOfUnits();
+        Player player = dest.getPlayer();
+        try {
+            destinationPlayer = player.getId();
+        }
+        catch (Exception e) {
+            log.warn(e.getCause());
+        }
         unitsToAttackOrReinforce = move.getNumberOfUnitsToAttack();
         playerOnTurn = move.getTurn().getGame().getPlayerTurn();
         playerStatus = move.getTurn().getGame().getPlayers().get(playerOnTurn).getPlayerStatus();

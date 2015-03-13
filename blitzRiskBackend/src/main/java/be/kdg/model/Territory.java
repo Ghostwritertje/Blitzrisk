@@ -1,8 +1,10 @@
 package be.kdg.model;
 
+import be.kdg.services.TerritoryService;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -27,7 +29,7 @@ public class Territory {
     private Player player;
 
     //@Cascade(value=CascadeType.PERSIST)
-    @OneToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="territoryId")
     private Set<Territory> neighbourTerritories = new HashSet<Territory>();
 
@@ -55,6 +57,14 @@ public class Territory {
 
     public Set<Territory> getNeighbourTerritories() {
         return neighbourTerritories;
+        /*TerritoryService territoryService = new TerritoryService();
+        //territoryService.getTerritories();
+        for (Territory terr : territoryService.getTerritories()){
+            if(terr.getId()==this.Id){
+                return terr.getNeighbourTerritories();
+            }
+        }
+        return null;*/
     }
 
     public void setNeighbourTerritories(Set<Territory> neighbourTerritories) {

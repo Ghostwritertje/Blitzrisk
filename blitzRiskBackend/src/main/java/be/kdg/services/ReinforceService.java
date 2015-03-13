@@ -1,6 +1,7 @@
 package be.kdg.services;
 
 import be.kdg.dao.*;
+import be.kdg.exceptions.GameAlreadyOverException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
@@ -27,14 +28,12 @@ public class ReinforceService {
     @Autowired
     private TurnService turnService;
 
-    public void reinforce(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
-        log.warn("turn-list-size " + turn.getMoves().size());
+    public void reinforce(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException, GameAlreadyOverException {
         turnService.playerOnTurnCheck(turn, player);
         checkReinforcements(turn, player, moves);
         List<Move> calculatedMoves = addReinforcements(moves);
         turnService.setPlayerTurn(player, PlayerStatus.ATTACK);
         turnService.updateTurnAfterMove(turn, calculatedMoves);
-        log.warn("turn-list-size " + turn.getMoves().size());
     }
 
     public int calculateNumberOfReinforcements(Player player) {
@@ -69,7 +68,8 @@ public class ReinforceService {
         else return (int) nrOfUnits;
     }
 
-    private void checkReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
+    private void checkReinforcements(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException, GameAlreadyOverException {
+        if(player.getGame().isEnded()) throw new GameAlreadyOverException();
         turnService.playerOnTurnCheck(turn, player);
         for(Move move: moves) {
             if (!move.getDestinationTerritory().getId().equals(move.getOriginTerritory().getId())) {
@@ -91,15 +91,16 @@ public class ReinforceService {
     }
 
     private List<Move> addReinforcements(List<Move> moves) {
-        List<Move> calculatedMoves = new ArrayList<>();
         for(Move move: moves) {
             Territory origin = move.getOriginTerritory();
             int newUnits = origin.getNumberOfUnits() + move.getNumberOfUnitsToAttack();
+            move.getOriginTerritory().setNumberOfUnits(newUnits);
             move.setOriginTerritoryRemainingNrUnits(newUnits);
+            move.getDestinationTerritory().setNumberOfUnits(newUnits);
+            move.setDestinationTerritoryRemainingNrUnits(newUnits);
             origin.setNumberOfUnits(newUnits);
-            calculatedMoves.add(move);
             log.warn("reinforcement added");
         }
-        return calculatedMoves;
+        return moves;
     }
 }

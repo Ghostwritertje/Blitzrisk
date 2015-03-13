@@ -107,6 +107,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }else{
                     var homeTerrId = getTerritoryIdFromDBId(calculatedMove.origin);
                     var destTerrId = getTerritoryIdFromDBId(calculatedMove.destination);
+
                     changeTerritoryText(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
                     setNumberOfUnitsOnTerritory(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
                     changeTerritoryText(destTerrId, parseInt(calculatedMove.destinationNrOfUnits));
