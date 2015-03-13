@@ -111,7 +111,7 @@ public class UserInfoController {
         return friends;
     }
 
-    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)  //.+ zodat email-adressen ook altijd volledig worden opgenomen
     public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
         logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");
