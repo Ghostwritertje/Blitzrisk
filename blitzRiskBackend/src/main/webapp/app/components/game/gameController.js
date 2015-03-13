@@ -1,3 +1,6 @@
+/**
+ * controller en directive responsible for the game and svg map.
+ */
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope',
     function ($scope) {
@@ -38,7 +41,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
         template: "<object type='image/svg+xml' data='assets/img/riskMap.svg'></object>",
         link: function (scope, element, attrs) {
             var gameBoard = "";
-            //var players = null;
             var thisPlayer = null;
             var selectedHomeRegion = null;
             var selectedDestinationRegion = null;
@@ -92,10 +94,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             };
 
             scope.move = function(numberOfUnits){
-                if(selectedHomeRegion == selectedDestinationRegion){
-                    return;
-                }
-
                 var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
                 var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
                 if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
@@ -203,10 +201,10 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
 
             scope.selectRegion = function(territoryId){
                 var isMyTerr = isMyTerritory(territoryId);
-                $log.log(isMyTerr);
                 var status = TurnService.getTurnStatus();
-                $log.log((status == "MOVE" && isMyTerr) || (status == "ATTACK" && !isMyTerr) && selectedHomeRegion != null  && selectedDestinationRegion == null);
-                if(status == "REINFORCE" && selectedHomeRegion == null && isMyTerr){
+                if(status == "WAITING"){
+                    $log.log("you have to wait for your turn.");
+                }else if(status == "REINFORCE" && selectedHomeRegion == null && isMyTerr){
                     $log.log(1);
                     selectedHomeRegion = territoryId;
                     scope.reinforceNumberMax = numberOfUnassignedReinforcements;
