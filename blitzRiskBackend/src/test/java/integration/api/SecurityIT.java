@@ -84,7 +84,7 @@ public class SecurityIT {
 
     @Test
     public void registerExistingUser() {
-        given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "user/testuser").then().assertThat().statusCode(500);
+        given().header("password", "testuserpass").header("email", "testuser@test.be").put(URL + "user/testuser").then().assertThat().statusCode(400);
     }
 
 }

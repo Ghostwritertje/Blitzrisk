@@ -1,8 +1,6 @@
 package be.kdg;
 
-import be.kdg.exceptions.IllegalMoveException;
-import be.kdg.exceptions.IllegalTurnException;
-import be.kdg.exceptions.IllegalUserInviteException;
+import be.kdg.exceptions.*;
 import be.kdg.model.*;
 import be.kdg.services.*;
 import junit.framework.Assert;
@@ -49,7 +47,7 @@ public class TurnServiceTest {
     private Territory destination;
 
     @Before
-    public void setUp() throws IllegalUserInviteException{
+    public void setUp() throws IllegalUserInviteException, DuplicateEmailException, DuplicateUsernameException {
         userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
         userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
 

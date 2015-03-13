@@ -82,6 +82,9 @@ a {
     margin-left: -70px;
     margin-top: -70px;
     position: fixed;
+    background-color: rgb(000, 70, 180);
+    padding: 1em;
+    border: dotted;
 }
 
 #movePopup{
@@ -92,4 +95,7 @@ a {
     margin-left: -70px;
     margin-top: -70px;
     position: fixed;
+    background-color: rgb(100, 170, 210);
+    padding: 1em;
+    border: dotted;
 }

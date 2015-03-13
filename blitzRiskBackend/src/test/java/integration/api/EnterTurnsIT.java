@@ -1,5 +1,7 @@
 package integration.api;
 
+import be.kdg.exceptions.DuplicateEmailException;
+import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.model.*;
@@ -46,7 +48,7 @@ public class EnterTurnsIT {
     private Territory destination;
 
     @Before
-    public void setUp() throws IllegalUserInviteException{
+    public void setUp() throws IllegalUserInviteException, DuplicateEmailException, DuplicateUsernameException {
 
         userService.addUser("turntestgameuser", "turntestuserpass", "turntestgameuser@test.be");
         userService.addUser("turntestgameuser2", "turntestuserpass", "turntestgameuser2@test.be");
@@ -456,7 +458,7 @@ public class EnterTurnsIT {
     }
 
     @Test
-    public void recentTurnsWrongUser() {
+    public void recentTurnsWrongUser() throws DuplicateEmailException, DuplicateUsernameException {
         int turnId = 0;
         for (int i = 0; i< 3; i++) {
             Turn turn = turnService.createTurn(gameService.getGame(game), origin.getPlayer());
@@ -487,7 +489,7 @@ public class EnterTurnsIT {
     }
 
     @Test
-    public void getTurnIdWrongUser() throws IllegalMoveException{
+    public void getTurnIdWrongUser() throws IllegalMoveException, DuplicateEmailException, DuplicateUsernameException {
         Player player = origin.getPlayer();
         Turn turn = turnService.createTurn(gameService.getGame(game),player);
         turn.setPlayer(player);

@@ -1,7 +1,9 @@
 package be.kdg.services;
 
 import be.kdg.dao.UserDao;
+import be.kdg.exceptions.DuplicateEmailException;
 import be.kdg.exceptions.FriendRequestException;
+import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import java.util.List;
  * Created by Marlies on 9/02/2015.
  */
 @Service("userServiceImpl")
-@Transactional
+@Transactional(rollbackOn = {DuplicateEmailException.class, DuplicateUsernameException.class})
 public class UserServiceImpl implements UserService, UserDetailsService {
     private static final Logger logger = Logger.getLogger(UserServiceImpl.class);
 
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     //@Transactional
     @Override
-    public void addUser(String username, String password, String email) {
+    public void addUser(String username, String password, String email) throws DuplicateUsernameException, DuplicateEmailException {
         userDao.addUser(username, password, email);
     }
 

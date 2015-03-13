@@ -8,16 +8,23 @@
     <div class="popupWrapper" ng-show="reinforcePopupVisible">
         <div id="reinforcePopup" ng-show="reinforcePopupVisible">
             <form name="reinforceForm" ng-submit="submitReinforcment()">
-                <input type="range" ng-model="reinforceValue" value="{{reinforceValue}}" step="1" min="0" max="{{reinforceNumberMax}}">
-                <input type="submit" value="submit">
+                <label for="reinforceInput">Aantal legers</label>
+                <input id="reinforceInput" onchange="document.getElementById('reinforceLabel').innerHTML = this.value;" type="range" ng-model="reinforceValue" value="{{reinforceValue}}" step="1" min="0" max="{{reinforceNumberMax}}">
+                <em id="reinforceLabel" style="font-style: normal;"></em>
+                <br/>
+                <input class="btn btn-default" type="submit" value="submit">
             </form>
         </div>
     </div>
     <div class="popupWrapper" ng-show="movePopupVisible">
         <div id="movePopup" ng-show="movePopupVisible">
             <form name="moveForm" ng-submit="submitMove()">
-                <input type="range" ng-model="moveValue" value="{{moveValue}}" step="1" min="0" max="{{moveForceMax}}">
-                <input type="submit" value="submit">
+                <label  for="reinforceInput">Aantal legers</label>
+                <input onchange="document.getElementById('moveLabel').innerHTML = this.value;" type="range" ng-model="moveValue" value="{{moveValue}}" step="1" min="0" max="{{moveForceMax}}">
+                <em id="moveLabel" style="font-style: normal;"></em>
+                <br/>
+
+                <input  class="btn btn-default" type="submit" value="submit">
             </form>
         </div>
     </div>
