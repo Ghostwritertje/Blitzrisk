@@ -37,12 +37,7 @@ public class MoveWrapper {
         destination = dest.getId();
         destinationNrOfUnits = dest.getNumberOfUnits();
         Player player = dest.getPlayer();
-        try {
-            destinationPlayer = player.getId();
-        }
-        catch (Exception e) {
-            log.warn(e.getCause());
-        }
+        destinationPlayer = player.getId();
         unitsToAttackOrReinforce = move.getNumberOfUnitsToAttack();
         playerOnTurn = move.getTurn().getGame().getPlayerTurn();
         playerStatus = move.getTurn().getGame().getPlayers().get(playerOnTurn).getPlayerStatus();
