@@ -1,6 +1,5 @@
 package integration.web;
 
-import be.kdg.model.User;
 import integration.MyServerConfiguration;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
