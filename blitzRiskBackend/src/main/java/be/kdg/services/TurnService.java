@@ -1,6 +1,7 @@
 package be.kdg.services;
 
 import be.kdg.dao.*;
+import be.kdg.exceptions.GameAlreadyOverException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
@@ -36,6 +37,9 @@ public class TurnService {
 
     @Autowired
     private TerritoryDao territoryDao;
+
+    @Autowired
+    private EndGameService endGameService;
 
     public void saveTurn(Turn turn) {
         turnDao.updateTurn(turn);
@@ -142,15 +146,17 @@ public class TurnService {
                 || playerStatus.equals(PlayerStatus.WAITING) && currentPlayerStatus.equals(PlayerStatus.MOVE) ) {
             player.setPlayerStatus(playerStatus);
             playerDao.updatePlayer(player);
-            if (playerStatus.equals(PlayerStatus.WAITING)) {
-                Game game = player.getGame();
-                int newPlayerTurn = game.getPlayerTurn() + 1;
-                if (newPlayerTurn >= game.getPlayers().size()) newPlayerTurn = 0;
-                Player newPlayer = game.getPlayers().get(newPlayerTurn);
+
+            try {
+                Player newPlayer = endGameService.getNextActivePlayer(player);
                 newPlayer.setPlayerStatus(PlayerStatus.REINFORCE);
                 playerDao.updatePlayer(newPlayer);
-                game.setPlayerTurn(newPlayerTurn);
+            }
+            catch (GameAlreadyOverException e) {
+                Game game = player.getGame();
+                game.setEnded(true);
                 gameDao.updateGame(game);
+                log.warn("game: setEnded excecuted");
             }
         }
         else throw new IllegalMoveException("new playerStatus isn't allowed: current = " + currentPlayerStatus + " new = " + playerStatus);

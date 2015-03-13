@@ -1,13 +1,18 @@
 package be.kdg.wrappers;
 
 import be.kdg.model.Move;
+import be.kdg.model.Player;
 import be.kdg.model.PlayerStatus;
 import be.kdg.model.Territory;
+import org.apache.log4j.Logger;
 
 /**
  * Created by Marlies on 28/02/2015.
  */
 public class MoveWrapper {
+    static Logger log = Logger.getLogger(MoveWrapper.class);
+
+
     private int id;
     private int turnId;
     private int turnNumber;
@@ -28,9 +33,11 @@ public class MoveWrapper {
         originPlayer = move.getOriginTerritory().getPlayer().getId();
         turnId = move.getTurn().getId();
         turnNumber = move.getTurn().getNumber();
-        destination = move.getDestinationTerritory().getId();
-        destinationNrOfUnits = move.getDestinationTerritory().getNumberOfUnits();
-        destinationPlayer = move.getDestinationTerritory().getPlayer().getId();
+        Territory dest = move.getDestinationTerritory();
+        destination = dest.getId();
+        destinationNrOfUnits = dest.getNumberOfUnits();
+        Player player = dest.getPlayer();
+        destinationPlayer = player.getId();
         unitsToAttackOrReinforce = move.getNumberOfUnitsToAttack();
         playerOnTurn = move.getTurn().getGame().getPlayerTurn();
         playerStatus = move.getTurn().getGame().getPlayers().get(playerOnTurn).getPlayerStatus();

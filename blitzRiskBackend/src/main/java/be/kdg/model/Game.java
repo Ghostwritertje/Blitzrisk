@@ -20,6 +20,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
     private boolean started = false;
+    private boolean ended = false;
 
     private Integer playerTurn;
 
@@ -31,8 +32,6 @@ public class Game {
     //  @Cascade(CascadeType.PERSIST)
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<Turn> turns = new ArrayList<>();
-
-
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Territory> territories = new ArrayList<>();
@@ -112,5 +111,13 @@ public class Game {
             }
         }
 
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public void setEnded(boolean ended) {
+        this.ended = ended;
     }
 }
