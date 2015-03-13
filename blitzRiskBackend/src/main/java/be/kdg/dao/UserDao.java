@@ -28,10 +28,6 @@ public class UserDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     public User checkLogin(String username, String password) {
         Query query = sessionFactory.getCurrentSession().createQuery("from User u where u.name = :username and u.password = :password");
         query.setParameter("username", username);

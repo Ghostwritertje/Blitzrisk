@@ -14,11 +14,11 @@ public class FriendRequest {
     private Integer Id;
     private boolean accepted = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "friendId")
     private User friend;
 

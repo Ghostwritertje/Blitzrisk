@@ -15,10 +15,6 @@ public class TerritoryDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     public Territory getTerritoryById(int id) {
         Query query = sessionFactory.getCurrentSession().createQuery("from Territory where id = :id");
         query.setParameter("id", id);

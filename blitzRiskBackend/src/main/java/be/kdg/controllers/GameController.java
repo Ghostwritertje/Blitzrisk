@@ -111,21 +111,6 @@ public class GameController {
         return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.OK);
     }
 
-    /* @RequestMapping(value = "/user/{username}/players", method = RequestMethod.GET, produces = "application/json")
-      @ResponseBody
-      public List<PlayerBean> getPlayers(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
-          User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
-          if
-          List<Player> players = gameService.getPlayers(username);
-          List<PlayerBean> playerBeanList = new ArrayList<>();
-
-          for (Player player : players) {
-              playerBeanList.add(new PlayerBean(player));
-          }
-
-          return playerBeanList;
-      }
-  */
     @RequestMapping(value = "/user/{username}/games", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<List<GameWrapper>> getGames(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
