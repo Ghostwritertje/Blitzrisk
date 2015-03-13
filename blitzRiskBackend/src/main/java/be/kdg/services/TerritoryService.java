@@ -21,7 +21,6 @@ public class TerritoryService {
 
     @Transactional
     public void removeTerritory (Territory territory){
-        //Set<Territory> territories = territory.getPlayer().getTerritories();
         territoryDao.removeTerritory(territory);
     }
 

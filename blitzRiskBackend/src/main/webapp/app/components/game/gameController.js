@@ -26,6 +26,10 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             $scope.movePopupVisible = false;
             $scope.move($scope.moveValue);
         };
+
+        $scope.commitAttacks= function(){
+            $scope.commitAttack();
+        };
     }
 ]).directive('riskmap', ["GameService", "LoginService", "TurnService", "$log", function (GameService, LoginService, TurnService, $log) {
     return {
@@ -88,7 +92,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     $log.log(calculatedMoves);
                     var length = calculatedMoves.data.length;
                     for(var i = 0; i < length; i++){
-                        //TODO process calculated moves. waiting for turnservice methode to implement.
                         $log.log(calculatedMoves.data[i]);
                         updateCalculatedMoves(calculatedMoves.data[i]);
                     }
@@ -101,6 +104,14 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     var territoryId = getTerritoryIdFromDBId(calculatedMove.origin);
                     changeTerritoryText(territoryId, parseInt(calculatedMove.originNrOfUnits));
                     setNumberOfUnitsOnTerritory(territoryId, parseInt(calculatedMove.originNrOfUnits));
+                }else{
+                    var homeTerrId = getTerritoryIdFromDBId(calculatedMove.origin);
+                    var destTerrId = getTerritoryIdFromDBId(calculatedMove.destination);
+
+                    changeTerritoryText(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
+                    setNumberOfUnitsOnTerritory(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
+                    changeTerritoryText(destTerrId, parseInt(calculatedMove.destinationNrOfUnits));
+                    setNumberOfUnitsOnTerritory(destTerrId, parseInt(calculatedMove.destinationNrOfUnits));
                 }
             }
 
@@ -120,6 +131,10 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 hideArrows();
                 selectedHomeRegion = null;
                 selectedDestinationRegion = null;
+            };
+
+            scope.commitAttack = function(){
+                sendMoves();
             };
 
             /*scope.attack = function(numberOfUnits){
@@ -210,26 +225,28 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             scope.selectRegion = function(territoryId){
-                if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null && isMyTerritory(territoryId)){
+                var isMyTerr = isMyTerritory(territoryId);
+                var status = TurnService.getTurnStatus();
+                if(status == "REINFORCE" && selectedHomeRegion == null && isMyTerr){
                     selectedHomeRegion = territoryId;
                     scope.reinforceNumberMax = numberOfUnassignedReinforcements;
                     scope.reinforceValue = 0;
                     scope.reinforcePopupVisible = true;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion != null){
+                }else if(status == "REINFORCE" && selectedHomeRegion != null){
                     selectedHomeRegion= null;
                     scope.reinforcePopupVisible = false;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion == null){
+                }else if(status == "MOVE" || status == "ATTACK" && selectedHomeRegion == null && isMyTerr){
                     selectedHomeRegion = territoryId;
                     changeTerritoryStyle(territoryId);
                     scope.moveForceMax = (parseInt(getNumberOfUnitsOnTerritory(territoryId)) - 1);
                     scope.moveValue = 0;
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                }else if((status == "MOVE" && isMyTerr) || (status == "ATTACK" && !isMyTerr) && selectedHomeRegion != null  && selectedDestinationRegion == null){
                     selectedDestinationRegion = territoryId;
                     scope.movePopupVisible = true;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
+                }else if(status == "MOVE" || status == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
                     selectedHomeRegion = null;
                     selectedDestinationRegion = null;
                     scope.movePopupVisible = false;

@@ -1,17 +1,15 @@
 package be.kdg.dao;
 
+import be.kdg.exceptions.DuplicateEmailException;
 import be.kdg.exceptions.FriendRequestException;
+import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.model.FriendRequest;
 import be.kdg.model.User;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,7 +42,7 @@ public class UserDao {
         return user;
     }
 
-    public void addUser(String username, String password, String email) {
+    public void addUser(String username, String password, String email){
         User user = new User();
         user.setName(username);
         user.setEmail(email);
@@ -52,7 +50,6 @@ public class UserDao {
         try {
             sessionFactory.getCurrentSession().save(user);
         } catch (ConstraintViolationException e) {
-            throw e;
         }
     }
 

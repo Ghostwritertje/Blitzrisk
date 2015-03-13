@@ -1,6 +1,7 @@
 package be.kdg.services;
 
 import be.kdg.dao.*;
+import be.kdg.exceptions.GameAlreadyOverException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
 import be.kdg.model.*;
@@ -20,16 +21,10 @@ public class MoveUnitsService {
     static Logger log = Logger.getLogger(TurnService.class);
 
     @Autowired
-    private MoveDao moveDao;
-
-    @Autowired
-    private TurnDao turnDao;
-
-    @Autowired
     private TurnService turnService;
 
 
-    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
+    public void moveUnits(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException, GameAlreadyOverException {
         checkMove(turn, player, moves);
         List<Move> calculatedMoves = executeMoves(moves);
         turnService.setPlayerTurn(player, PlayerStatus.WAITING);
@@ -37,7 +32,8 @@ public class MoveUnitsService {
     }
 
 
-    private void checkMove(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException {
+    private void checkMove(Turn turn, Player player, List<Move> moves) throws IllegalMoveException, IllegalTurnException, GameAlreadyOverException {
+        if(player.getGame().isEnded()) throw new GameAlreadyOverException();
         turnService.playerOnTurnCheck(turn, player);
         for (Move move : moves) {
             Territory origin = move.getOriginTerritory();
@@ -50,11 +46,12 @@ public class MoveUnitsService {
             if (!(destination.getPlayer().getId().equals(player.getId())))
                 throw new IllegalMoveException("player doesn't own destination");
 
-            /*boolean isNeighbour = true;
-            for (Territory territory : origin.getNeighbourTerritories()) {
-                if (territory.getId().equals(destination.getId())) isNeighbour = true;
+            boolean isNeighbour = false;
+            log.warn("Neighbour size: " + move.getOriginTerritory().getNeighbourTerritories().size());
+            for(Territory territory: move.getOriginTerritory().getNeighbourTerritories()) {
+                if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
-            if (!isNeighbour) throw new IllegalMoveException("territories aran't neighbours");*/
+            if(!isNeighbour) throw new IllegalMoveException("territories aren't neighbours");
         }
     }
 

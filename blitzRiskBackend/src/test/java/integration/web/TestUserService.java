@@ -29,7 +29,7 @@ public class TestUserService {
         WebElement usernameElement = driver.findElement(By.id("username"));
         try {
             usernameElement.sendKeys(username);
-        }catch (StaleElementReferenceException e){
+        }catch (StaleElementReferenceException|ElementNotVisibleException exception){
             usernameElement = driver.findElement(By.id("username"));
             usernameElement.sendKeys(username);
         }

@@ -14,16 +14,16 @@ import java.util.*;
  * User credentials that allow a user to login
  */
 @Entity
-@Table(name = "t_user")
+@Table(name = "t_user", uniqueConstraints = {@UniqueConstraint(name = "unique_name_constraint", columnNames = "name"), @UniqueConstraint(name = "unique_email_constraint", columnNames = "email")})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
