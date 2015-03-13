@@ -2,7 +2,9 @@ package be.kdg.controllers;
 
 
 import be.kdg.beans.UserBean;
+import be.kdg.exceptions.DuplicateEmailException;
 import be.kdg.exceptions.FriendRequestException;
+import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
 import be.kdg.services.UserService;
@@ -10,8 +12,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailAuthenticationException;
-import org.springframework.mail.MailSendException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
@@ -36,19 +36,23 @@ public class UserInfoController {
     MailSender mailSender;
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.PUT)
-    public void register(@PathVariable("username") String username, @RequestHeader("email") String emailaddress, @RequestHeader("password") String password) {
+    public ResponseEntity register(@PathVariable("username") String username, @RequestHeader("email") String emailaddress, @RequestHeader("password") String password) {
         logger.info(username + " is registering");
-        userService.addUser(username, password, emailaddress);
-
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(emailaddress);
-        email.setSubject("Welcome to BlitzRisk!");
-        email.setText("Welcome to BlitzRisk, " + username);
         try {
+            userService.addUser(username, password, emailaddress);
+
+
+            SimpleMailMessage email = new SimpleMailMessage();
+            email.setTo(emailaddress);
+            email.setSubject("Welcome to BlitzRisk!");
+            email.setText("Welcome to BlitzRisk, " + username);
             mailSender.send(email);
             logger.info("Registration mail send to " + username);
-        } catch (Exception e) {
-            logger.warn("Couldn't send mail to " + username);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (DuplicateUsernameException duplicateUsernameException) {
+            return new ResponseEntity<>("Duplicate username" , HttpStatus.BAD_REQUEST);
+        } catch (DuplicateEmailException e) {
+            return new ResponseEntity<>("Duplicate email" , HttpStatus.BAD_REQUEST);
         }
     }
 

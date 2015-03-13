@@ -15,7 +15,9 @@
                     <img src="assets/img/emailIcon.png">
                     <label><input ng-model="email" id="email" type="email" placeholder="email address"></label>
                 </div>
-                <p ng-if="registerError" class="errorMessage">{{'REGISTER_PAGE_USR_EXISTS'|translate}}</p>
+                <p ng-if="duplicateUsername" class="errorMessage">{{'REGISTER_PAGE_USR_EXISTS'|translate}}</p>
+                <p ng-if="duplicateEmail " class="errorMessage">{{'REGISTER_PAGE_EMAIL_EXISTS'|translate}}</p>
+
                 <input   type="submit" value="{{'REGISTER_PAGE_BTN'|translate}}">
                 <p>{{'REGISTER_PAGE_HAVE_ACCT'|translate}} <b><a href="" ng-click="go('/login')">{{'REGISTER_PAGE_PLEASE_LOGIN'|translate}}</a></b></p>
             </form>

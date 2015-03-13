@@ -39,7 +39,6 @@ public class ChatIT {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver2 = new ChromeDriver();
         driver2.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
     }
 
     @AfterClass

@@ -1,6 +1,8 @@
 package be.kdg.services;
 
+import be.kdg.exceptions.DuplicateEmailException;
 import be.kdg.exceptions.FriendRequestException;
+import be.kdg.exceptions.DuplicateUsernameException;
 import be.kdg.model.User;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface UserService {
     User checkLoginByEmail(String mail, String password);
 
     //@Transactional
-    void addUser(String username, String password, String email);
+    void addUser(String username, String password, String email) throws DuplicateUsernameException, DuplicateEmailException;
 
     //@Transactional
     User getUser(String username);
