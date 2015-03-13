@@ -1,7 +1,7 @@
 package be.kdg.exceptions;
 
 /**
- * Created by Alexander on 27/2/2015.
+ * Exception thrown on error with inviting a user
  */
 public class IllegalUserInviteException extends Exception {
 

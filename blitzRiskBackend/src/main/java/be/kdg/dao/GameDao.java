@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Marlies on 20/02/2015.
+ * Simple dao for Games
  */
 
 @Service("gameDao")

@@ -1,7 +1,7 @@
 package be.kdg.controllers;
 
 
-import be.kdg.beans.UserBean;
+import be.kdg.wrappers.UserWrapper;
 import be.kdg.exceptions.FriendRequestException;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
@@ -10,8 +10,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailAuthenticationException;
-import org.springframework.mail.MailSendException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +51,9 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public UserBean getUser(@RequestHeader("X-Auth-Token") String token) {
+    public UserWrapper getUser(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        return new UserBean(userService.getUser(username));
+        return new UserWrapper(userService.getUser(username));
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/plain")
@@ -76,7 +74,7 @@ public class UserInfoController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.PUT)
-    public void updateUser(@RequestBody UserBean updatedUser, @RequestHeader("X-Auth-Token") String token) {
+    public void updateUser(@RequestBody UserWrapper updatedUser, @RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
         User originalUser = userService.getUser(username);
 
@@ -113,11 +111,11 @@ public class UserInfoController {
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriends(@RequestHeader("X-Auth-Token") String token) {
+    public List<UserWrapper> getFriends(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        List<UserBean> friends = new ArrayList<>();
+        List<UserWrapper> friends = new ArrayList<>();
         for (User user : userService.getFriends(username)) {
-            friends.add(new UserBean(user));
+            friends.add(new UserWrapper(user));
         }
 
         return friends;
@@ -125,11 +123,11 @@ public class UserInfoController {
 
     @RequestMapping(value = "/friendRequests", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<UserBean> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
+    public List<UserWrapper> getFriendRequests(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
-        List<UserBean> friends = new ArrayList<>();
+        List<UserWrapper> friends = new ArrayList<>();
         for (User user : userService.getFriendRequests(username)) {
-            friends.add(new UserBean(user));
+            friends.add(new UserWrapper(user));
         }
 
         return friends;

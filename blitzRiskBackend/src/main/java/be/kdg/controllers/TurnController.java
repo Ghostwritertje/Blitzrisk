@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Created by Marlies on 27/02/2015.
+ * Handles the turns and the moves for a game
  */
 
 @RestController

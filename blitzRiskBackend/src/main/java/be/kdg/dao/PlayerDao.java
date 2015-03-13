@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexander on 20/2/2015.
+ * Save and retrieve players
  */
 
 @Service("playerDao")

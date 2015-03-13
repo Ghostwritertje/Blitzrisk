@@ -3,8 +3,7 @@ package be.kdg.model;
 import javax.persistence.*;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * A move of a certain amount of units between 2 territories
  */
 @Entity
 @Table(name = "t_move")

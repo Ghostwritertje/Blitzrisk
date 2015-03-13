@@ -14,7 +14,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * Created by Alexander on 13/2/2015.
+ * Attack service provides a service for turns
  */
 
 @Transactional

@@ -5,7 +5,7 @@ import be.kdg.model.PlayerStatus;
 import be.kdg.model.Territory;
 
 /**
- * Created by Marlies on 28/02/2015.
+ * Wraps the move model in a simple wrapper that is used in REST-calls
  */
 public class MoveWrapper {
     private int id;

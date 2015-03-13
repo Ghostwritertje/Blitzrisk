@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Alexander on 6/2/2015.
+ * Attack service provides a service for territories
  */
 
 @Service("territoryService")

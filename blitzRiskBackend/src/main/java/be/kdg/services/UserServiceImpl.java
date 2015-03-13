@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * Created by Marlies on 9/02/2015.
+ * Attack service provides a service for users
  */
 @Service("userServiceImpl")
 @Transactional

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Marlies on 27/02/2015.
+ * Save and retrieve territories.
  */
 
 @Service("territoryDao")

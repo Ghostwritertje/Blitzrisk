@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by user jorandeboever
- * Date:2/02/15.
+ * Every user plays as a new Player for every game.
  */
 @Entity
 @Table(name = "t_player")

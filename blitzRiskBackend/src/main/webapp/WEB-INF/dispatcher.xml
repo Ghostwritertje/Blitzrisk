@@ -72,7 +72,7 @@
     <bean id="userDao" class="be.kdg.dao.UserDao">
 
     </bean>
-    <bean id="testDataInitialisationService" class="be.kdg.services.TestDataInitialisationService"></bean>
+
 
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userServiceImpl" />

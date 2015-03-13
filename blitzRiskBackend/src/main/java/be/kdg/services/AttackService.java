@@ -16,9 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Marlies on 10/03/2015.
+ * Attack service provides a service for attacking territories
  */
-
 @Transactional
 @Service("attackService")
 public class AttackService {

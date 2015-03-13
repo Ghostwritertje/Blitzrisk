@@ -14,7 +14,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-
+/**
+ * Security filter that retrieves the token fom the request and validates this request.
+ */
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean
 {
 

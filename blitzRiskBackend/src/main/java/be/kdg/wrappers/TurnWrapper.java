@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Marlies on 9/03/2015.
+ * Wraps the turn model in a simple wrapper that is used in REST-calls
  */
 public class TurnWrapper {
     private int id;

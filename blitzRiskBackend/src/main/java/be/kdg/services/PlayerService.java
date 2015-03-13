@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexander on 20/2/2015.
+ * Attack service provides a service for saving and retrieving players
  */
 @Service("playerService")
 public class PlayerService {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Marlies on 10/03/2015.
+ * Attack service provides a service for reïnforcing territories with new units
  */
 
 @Service("reinforceService")

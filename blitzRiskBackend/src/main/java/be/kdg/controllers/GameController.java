@@ -1,11 +1,9 @@
 package be.kdg.controllers;
 
-import be.kdg.beans.PlayerBean;
-import be.kdg.beans.UserBean;
+import be.kdg.wrappers.UserWrapper;
 import be.kdg.exceptions.IllegalUserInviteException;
 import be.kdg.exceptions.UnAuthorizedActionException;
 import be.kdg.model.Game;
-import be.kdg.model.InvitationStatus;
 import be.kdg.model.Player;
 import be.kdg.model.User;
 import be.kdg.security.TokenUtils;
@@ -22,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexander on 16/2/2015.
+ * Creating games, retrieving games and inviting players to a game.
  */
 
 @RestController
@@ -154,18 +152,18 @@ public class GameController {
 
     @RequestMapping(value = "/recentlyplayed", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<List<UserBean>> getRecentlyPlayedUsers(@RequestHeader("X-Auth-Token") String token) {
+    public ResponseEntity<List<UserWrapper>> getRecentlyPlayedUsers(@RequestHeader("X-Auth-Token") String token) {
         String username = TokenUtils.getUserNameFromToken(token);
        try {
            List<User> users = playerService.getRecentlyPlayed(username);
-           List<UserBean> userBeans = new ArrayList<>();
+           List<UserWrapper> userWrappers = new ArrayList<>();
            for(User user : users){
-               userBeans.add(new UserBean(user));
+               userWrappers.add(new UserWrapper(user));
            }
-           return new ResponseEntity<List<UserBean>>(userBeans, HttpStatus.OK);
+           return new ResponseEntity<List<UserWrapper>>(userWrappers, HttpStatus.OK);
        }catch (Exception e ){
            logger.warn(e);
-           return new ResponseEntity<List<UserBean>>(HttpStatus.BAD_REQUEST);
+           return new ResponseEntity<List<UserWrapper>>(HttpStatus.BAD_REQUEST);
 
        }
     }
