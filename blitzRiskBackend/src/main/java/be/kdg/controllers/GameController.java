@@ -50,6 +50,7 @@ public class GameController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+        logger.info("Game " + game.getId() + " has been created");
         return new ResponseEntity<>(game.getId().toString(), HttpStatus.CREATED);
     }
 
@@ -59,10 +60,13 @@ public class GameController {
         User user = userServiceImpl.getUser(TokenUtils.getUserNameFromToken(token));
         Player player = playerService.getPlayerById(playerId);
         if (player.getUser().getId() != user.getId()) {
-            return new ResponseEntity<String>("You may not accept other peoples games", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("You may not accept other peoples games", HttpStatus.FORBIDDEN);
         }
         //player.setAccepted(true);
         playerService.acceptGame(playerId);
+        logger.info("Player " + playerId + "accepts his game") ;
+        playerService.checkIfGameCanStart(playerId);
+
         return null;
     }
 
@@ -82,6 +86,8 @@ public class GameController {
         } catch (IllegalUserInviteException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+        logger.info("User " + userName + " is invited to game " + gameId);
+
         return new ResponseEntity<>(newPlayer.getUser().getUsername(), HttpStatus.ACCEPTED);
     }
 

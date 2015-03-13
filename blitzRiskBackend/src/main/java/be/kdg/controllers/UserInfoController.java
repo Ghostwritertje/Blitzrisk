@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
-
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
@@ -87,27 +86,6 @@ public class UserInfoController {
         if (updatedUser.getEmail() != null && !updatedUser.getName().equals(originalUser.getUsername()))
             userService.changeUsername(originalUser.getName(), updatedUser.getName());
     }
-
-
-/*
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<User> getUsers() {
-        return this.userService.findall();
-    }
-*/
-
- /*   @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public ResponseEntity getSecuredUsers() {
-        try {
-            return new ResponseEntity<>(this.userService.findall(), HttpStatus.OK);
-        } catch (Exception e){
-            logger.error(e.getMessage());
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-    }*/
 
     @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
