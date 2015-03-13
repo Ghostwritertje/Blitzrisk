@@ -1,5 +1,7 @@
+/**
+ * service responsible for login calls
+ */
 'use strict';
-
 angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
     function ($http, $q) {
         var hosturl = 'api/';
@@ -10,7 +12,7 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
 
 
         function logMeIn() {
-            var deferred = $q.defer();  //maak promise
+            var deferred = $q.defer();
             var passwordHash = hashPassword(password);
             $http.get(hosturl + 'login', {headers: {'name': username, 'password': passwordHash}})
                 .success(function (data) {
@@ -25,10 +27,7 @@ angular.module('blitzriskServices').factory('LoginService', ['$http', '$q',
         }
 
         function hashPassword(password){
-            // DONE: all tests have to get changed for this xd
-            return CryptoJS.SHA256(password).toString()
-
-            return password;
+            return CryptoJS.SHA256(password).toString();
         }
 
         return {

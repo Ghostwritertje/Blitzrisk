@@ -1,3 +1,6 @@
+/**
+ * controller for registering
+ */
 'use strict';
 angular.module('blitzriskControllers').controller('RegisterController', ['$scope', '$http', '$location', '$log', 'LoginService',
     function ($scope, $http, $location, $log, LoginService) {

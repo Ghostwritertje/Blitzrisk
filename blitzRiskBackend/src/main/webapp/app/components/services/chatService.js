@@ -1,5 +1,5 @@
 /**
- * Created by vman on 7/02/2015.
+ * service responsible for chat calls
  */
 angular.module('blitzriskServices').service("ChatService", ['$q', '$timeout', '$log', 'GameService', function ($q, $timeout, $log, GameService) {
     var service = {},

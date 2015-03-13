@@ -1,4 +1,6 @@
-
+/**
+ * language file
+ */
 var angularTranslate = angular.module('angularTranslate', ['pascalprecht.translate']);
 
 angularTranslate.config(function ($translateProvider) {

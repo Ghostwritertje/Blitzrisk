@@ -1,5 +1,5 @@
 /**
- * Created by jorandeboever on 19/02/15.
+ * controlling the user profile page
  */
 'use strict';
 angular.module('blitzriskControllers').controller('ProfileController', ['$scope', '$rootScope', '$http', '$location', 'LoginService',

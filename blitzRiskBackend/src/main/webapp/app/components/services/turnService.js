@@ -5,7 +5,6 @@
 
 angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'LoginService', '$log', '$interval',
     function ($http, $q, LoginService, $log, $interval) {
-        var currentGameId = null;
         var turnId = null;
         var turnStatus = "WAITING";
         var playerId = null;

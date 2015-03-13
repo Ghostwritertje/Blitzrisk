@@ -1,3 +1,6 @@
+/**
+ * javascript that catches svg events and sends them to the gamecontroller
+ */
 function clickRegion(regionId){
     angular.element(document.getElementById('riskMap')).scope().selectRegion(regionId);
 }

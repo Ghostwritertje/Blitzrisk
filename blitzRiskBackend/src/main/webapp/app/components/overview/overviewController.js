@@ -1,5 +1,5 @@
 /**
- * Created by jorandeboever on 18/02/15.
+ * controller controlling the overview page
  */
 'use strict';
 angular.module('blitzriskControllers').controller('OverviewController', ['$scope', '$http', '$location', '$interval', 'LoginService', 'GameService', 'FriendService',

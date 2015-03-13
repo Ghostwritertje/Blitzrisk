@@ -1,3 +1,6 @@
+/**
+ * controlling the login page.
+ */
 'use strict';
 angular.module('blitzriskControllers').controller('LoginController', ['$scope', '$rootScope',  '$http', '$location', '$log', 'LoginService',
     function ($scope, $rootScope, $http, $location, $log, LoginService) {
