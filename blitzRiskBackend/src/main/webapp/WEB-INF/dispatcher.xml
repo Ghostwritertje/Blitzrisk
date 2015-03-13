@@ -63,9 +63,7 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
-    <bean id="userDao" class="be.kdg.dao.UserDao">
 
-    </bean>
     <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
         <constructor-arg ref="userServiceImpl" />
     </bean>
