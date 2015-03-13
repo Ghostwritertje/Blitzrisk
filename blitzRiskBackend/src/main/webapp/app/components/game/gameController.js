@@ -51,7 +51,11 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 $log.log("new turn status: " + newValue);
                 scope.turnStatus = newValue;
                 if(newValue == "REINFORCE"){
+                    loadGameBoard();
                     TurnService.createTurn().then(function(data){
+                        $log.log(data);
+                        TurnService.setTurnId(data);
+                        $log.log("ik ga reinforcen");
                         TurnService.getNumberOfReinforcments().then(function(availableReinforcements){
                             numberOfUnassignedReinforcements = availableReinforcements;
                         });
@@ -105,17 +109,31 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     changeTerritoryText(territoryId, parseInt(calculatedMove.originNrOfUnits));
                     setNumberOfUnitsOnTerritory(territoryId, parseInt(calculatedMove.originNrOfUnits));
                 }else{
-                    var homeTerrId = getTerritoryIdFromDBId(calculatedMove.origin);
-                    var destTerrId = getTerritoryIdFromDBId(calculatedMove.destination);
+                    updateTerritory(getTerritoryIdFromDBId(calculatedMove.origin), calculatedMove.originPlayer, calculatedMove.originNrOfUnits);
+                    updateTerritory(getTerritoryIdFromDBId(calculatedMove.destination), calculatedMove.destinationPlayer, calculatedMove.destinationNrOfUnits);
+                }
+            }
 
-                    changeTerritoryText(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
-                    setNumberOfUnitsOnTerritory(homeTerrId, parseInt(calculatedMove.originNrOfUnits));
-                    changeTerritoryText(destTerrId, parseInt(calculatedMove.destinationNrOfUnits));
-                    setNumberOfUnitsOnTerritory(destTerrId, parseInt(calculatedMove.destinationNrOfUnits));
+            function updateTerritory(territoryId, playerId, numberOfUnits){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].key == territoryId){
+                        gameBoard.territories[i].playerId = playerId;
+                        var region = angular.element(element[0].getSVGDocument().getElementById(territoryId));
+                        var colorClass = "player".concat(getPlayer(playerId).color + 1).concat("color");
+                        region.attr("class", colorClass);
+                        gameBoard.territories[i].numberOfUnits = numberOfUnits;
+                        changeTerritoryText(territoryId, numberOfUnits);
+                        setNumberOfUnitsOnTerritory(territoryId, parseInt(numberOfUnits));
+                    }
                 }
             }
 
             scope.move = function(numberOfUnits){
+                if(selectedHomeRegion == selectedDestinationRegion){
+                    return;
+                }
+
                 var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
                 var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
                 if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
@@ -137,27 +155,12 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 sendMoves();
             };
 
-            /*scope.attack = function(numberOfUnits){
-                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
-                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
-                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
-                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
-                }
-                scope.hideArrows();
-                selectedHomeRegion = null;
-                selectedDestinationRegion = null;
-            };*/
-
             function clearMoves(){
                 moves = [];
             }
 
             function addMove(originRegion, destinationRegion, numberOfUnits){
-                moves.push({'turnId': 1, 'origin': getTerritoryDBId(originRegion), 'destination': getTerritoryDBId(destinationRegion), 'unitsToAttackOrReinforce': numberOfUnits});
+                moves.push({'turnId': TurnService.getTurnId(), 'origin': getTerritoryDBId(originRegion), 'destination': getTerritoryDBId(destinationRegion), 'unitsToAttackOrReinforce': numberOfUnits});
                 $log.log(moves);
             }
 
@@ -194,9 +197,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             function initializeBoard() {
-                //players = gameBoard.players;
                 scope.players = gameBoard.players;
-                $log.log(scope.players);
                 var length = scope.players.length;
                 for(var i = 0; i < length; i++){
                     if(scope.players[i].username == LoginService.getUserName()){
@@ -226,27 +227,35 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
 
             scope.selectRegion = function(territoryId){
                 var isMyTerr = isMyTerritory(territoryId);
+                $log.log(isMyTerr);
                 var status = TurnService.getTurnStatus();
+                $log.log((status == "MOVE" && isMyTerr) || (status == "ATTACK" && !isMyTerr) && selectedHomeRegion != null  && selectedDestinationRegion == null);
                 if(status == "REINFORCE" && selectedHomeRegion == null && isMyTerr){
+                    $log.log(1);
                     selectedHomeRegion = territoryId;
                     scope.reinforceNumberMax = numberOfUnassignedReinforcements;
                     scope.reinforceValue = 0;
                     scope.reinforcePopupVisible = true;
                     scope.$apply();
                 }else if(status == "REINFORCE" && selectedHomeRegion != null){
+                    $log.log(2);
                     selectedHomeRegion= null;
                     scope.reinforcePopupVisible = false;
                     scope.$apply();
-                }else if(status == "MOVE" || status == "ATTACK" && selectedHomeRegion == null && isMyTerr){
+                }else if((status == "MOVE" || status == "ATTACK") && selectedHomeRegion == null && isMyTerr){
+                    $log.log(3);
                     selectedHomeRegion = territoryId;
+                    selectedDestinationRegion = null;
                     changeTerritoryStyle(territoryId);
                     scope.moveForceMax = (parseInt(getNumberOfUnitsOnTerritory(territoryId)) - 1);
                     scope.moveValue = 0;
                 }else if((status == "MOVE" && isMyTerr) || (status == "ATTACK" && !isMyTerr) && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                    $log.log(selectedHomeRegion + " " + territoryId);
                     selectedDestinationRegion = territoryId;
                     scope.movePopupVisible = true;
                     scope.$apply();
                 }else if(status == "MOVE" || status == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
+                    $log.log(4);
                     selectedHomeRegion = null;
                     selectedDestinationRegion = null;
                     scope.movePopupVisible = false;

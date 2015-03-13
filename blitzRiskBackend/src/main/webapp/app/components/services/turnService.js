@@ -23,7 +23,7 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             var defer = $q.defer();
             $http.get('api/player/' + playerId + '/getPlayerStatus', {headers: {'X-Auth-Token': LoginService.getToken()}})
                 .success(function (data) {
-                    if (data != turnStatus && turnStatus != "MOVE")
+                    if (data != turnStatus)
                         turnStatus = data;
                     defer.resolve(data);
                     $log.log("status check");
@@ -81,8 +81,11 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
             setPlayerId: function (id) {
                 playerId = id;
             },
-            setTurnStatus: function(statusturn){
-                turnStatus = statusturn;
+            setTurnId: function(turn){
+                turnId = turn;
+            },
+            getTurnId: function(){
+                return turnId;
             },
             getTurnStatus: function() {
                 return turnStatus;

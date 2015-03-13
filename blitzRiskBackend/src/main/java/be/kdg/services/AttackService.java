@@ -45,7 +45,10 @@ public class AttackService {
     }
 
     private void checkAttack(Turn turn, Player player, List<Move> moves) throws IllegalTurnException, IllegalMoveException, GameAlreadyOverException{
-        if(player.getGame().isEnded()) throw new GameAlreadyOverException();
+        if(player.getGame().isEnded()) {
+            log.warn("game has already ended");
+            throw new GameAlreadyOverException();
+        }
         turnService.playerOnTurnCheck(turn, player);
         for (Move move : moves) {
             if (!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) {
@@ -55,10 +58,13 @@ public class AttackService {
             boolean isNeighbour = false;
             log.warn("Neighbour size: " + move.getOriginTerritory().getNeighbourTerritories().size());
             for(Territory territory: move.getOriginTerritory().getNeighbourTerritories()) {
-            if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
+                if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
-            if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");
+            if (!isNeighbour) {
+                log.warn("destination is not a neighbour");
+                throw new IllegalMoveException("Destination is not a neighbour");
+            }
 
             if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) {
                 log.warn("error: can't attack own territory");
@@ -137,6 +143,7 @@ public class AttackService {
 
                 calculatedMoves.add(move);
             } catch (Exception e) {
+                log.warn("something went wrong when calculating the attack:" + e.getCause());
                 throw new IllegalMoveException("invalid move was inserted");
             }
         }
