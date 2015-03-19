@@ -1,6 +1,5 @@
 package integration.web;
 
-import be.kdg.model.User;
 import be.kdg.services.UserService;
 import integration.MyServerConfiguration;
 import org.junit.*;
@@ -15,15 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Random;
-
-
 /**
  * Created by user jorandeboever
  * Date:9/02/15.
  */
 
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LogInIT {
     private final String URL = MyServerConfiguration.getURL();

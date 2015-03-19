@@ -1,12 +1,10 @@
 package be.kdg.services;
 
 import be.kdg.dao.*;
+import be.kdg.exceptions.GameAlreadyOverException;
 import be.kdg.exceptions.IllegalMoveException;
 import be.kdg.exceptions.IllegalTurnException;
-import be.kdg.model.Move;
-import be.kdg.model.Player;
-import be.kdg.model.PlayerStatus;
-import be.kdg.model.Turn;
+import be.kdg.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,15 +23,9 @@ public class AttackService {
     static Logger log = Logger.getLogger(TurnService.class);
 
     @Autowired
-    private MoveDao moveDao;
-
-    @Autowired
-    private TurnDao turnDao;
-
-    @Autowired
     private TurnService turnService;
 
-    public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException, IllegalTurnException {
+    public Turn attack(Turn turn,List<Move> moveList, Player player) throws IllegalMoveException, IllegalTurnException, GameAlreadyOverException {
         checkAttack(turn, player, moveList);
         List<Move> calculatedMoves = calculateAttack(moveList);
         turnService.setPlayerTurn(player, PlayerStatus.MOVE);
@@ -51,19 +43,27 @@ public class AttackService {
 
     }
 
-    private void checkAttack(Turn turn, Player player, List<Move> moves) throws IllegalTurnException, IllegalMoveException{
+    private void checkAttack(Turn turn, Player player, List<Move> moves) throws IllegalTurnException, IllegalMoveException, GameAlreadyOverException{
+        if(player.getGame().isEnded()) {
+            log.warn("game has already ended");
+            throw new GameAlreadyOverException();
+        }
         turnService.playerOnTurnCheck(turn, player);
         for (Move move : moves) {
             if (!move.getOriginTerritory().getPlayer().getId().equals(player.getId())) {
                 log.warn("error: illegal origin territory");
                 throw new IllegalMoveException("Illegal origin territory");
             }
-            /*boolean isNeighbour = false;
+            boolean isNeighbour = false;
+            log.warn("Neighbour size: " + move.getOriginTerritory().getNeighbourTerritories().size());
             for(Territory territory: move.getOriginTerritory().getNeighbourTerritories()) {
-            if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
+                if (territory.getId().equals(move.getDestinationTerritory().getId())) isNeighbour = true;
             }
 
-            if (!isNeighbour) throw new IllegalMoveException("Destination is not a neighbour");*/
+            if (!isNeighbour) {
+                log.warn("destination is not a neighbour");
+                throw new IllegalMoveException("Destination is not a neighbour");
+            }
 
             if (move.getDestinationTerritory().getPlayer().getId().equals(player.getId())) {
                 log.warn("error: can't attack own territory");
@@ -107,6 +107,11 @@ public class AttackService {
                     }
                 }
 
+                if(survivingAttacckers > survivingDefenders)  {
+                    survivingAttacckers -= survivingDefenders;
+                    survivingDefenders = 0;
+                }
+
 
                 //if attacker has won
                 if (survivingDefenders <= 0 && survivingAttacckers > 0) {
@@ -137,6 +142,7 @@ public class AttackService {
 
                 calculatedMoves.add(move);
             } catch (Exception e) {
+                log.warn("something went wrong when calculating the attack:" + e.getCause());
                 throw new IllegalMoveException("invalid move was inserted");
             }
         }

@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.*;
-
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
@@ -88,27 +87,6 @@ public class UserInfoController {
             userService.changeUsername(originalUser.getName(), updatedUser.getName());
     }
 
-
-/*
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<User> getUsers() {
-        return this.userService.findall();
-    }
-*/
-
- /*   @RequestMapping(value = "/secured/users", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public ResponseEntity getSecuredUsers() {
-        try {
-            return new ResponseEntity<>(this.userService.findall(), HttpStatus.OK);
-        } catch (Exception e){
-            logger.error(e.getMessage());
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-    }*/
-
     @RequestMapping(value = "/friends", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<UserWrapper> getFriends(@RequestHeader("X-Auth-Token") String token) {
@@ -133,7 +111,7 @@ public class UserInfoController {
         return friends;
     }
 
-    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFriend/{username:.+}", method = RequestMethod.POST)  //.+ zodat email-adressen ook altijd volledig worden opgenomen
     public ResponseEntity addFriend(@PathVariable("username") String username, @RequestHeader("X-Auth-Token") String token) {
         User requestingUser = userService.getUser(TokenUtils.getUserNameFromToken(token));
         logger.info("User " + TokenUtils.getUserNameFromToken(token) + " is adding " + username + " as a friend.");

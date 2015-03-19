@@ -1,5 +1,5 @@
 /**
- * Created by vman on 7/02/2015.
+ * responsible for the chat
  */
 
 //forwards everything to a separate service

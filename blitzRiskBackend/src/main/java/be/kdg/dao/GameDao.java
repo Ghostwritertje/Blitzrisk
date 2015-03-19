@@ -22,12 +22,7 @@ public class GameDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     public void saveGame(Game game) {
-        //sessionFactory.getCurrentSession().getTransaction().commit();
         try {
 
             sessionFactory.getCurrentSession().save(game);
@@ -37,7 +32,6 @@ public class GameDao {
     }
 
     public void updateGame(Game game) {
-        //sessionFactory.getCurrentSession().getTransaction().commit();
         try {
 
             sessionFactory.getCurrentSession().update(game);
@@ -51,7 +45,6 @@ public class GameDao {
         Query query = sessionFactory.getCurrentSession().createQuery("from Game where id = :id");
         query.setParameter("id", gameId);
         return (Game) query.uniqueResult();
-        //  return (Game) sessionFactory.getCurrentSession().get(Game.class, gameId);
     }
 
     public void removeGame(Game game) {

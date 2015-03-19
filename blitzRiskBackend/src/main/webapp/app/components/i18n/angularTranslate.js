@@ -1,4 +1,6 @@
-
+/**
+ * language file
+ */
 var angularTranslate = angular.module('angularTranslate', ['pascalprecht.translate']);
 
 angularTranslate.config(function ($translateProvider) {
@@ -25,7 +27,8 @@ angularTranslate.config(function ($translateProvider) {
         REGISTER_PAGE_BUSY: 'Registering..',
         REGISTER_PAGE_REGISTERED: 'You have been registered! Please',
         REGISTER_PAGE_LOGIN: 'Log In',
-        REGISTER_PAGE_USR_EXISTS: 'E-mail address already in use',
+        REGISTER_PAGE_USR_EXISTS: 'Username already in use',
+        REGISTER_PAGE_EMAIL_EXISTS: 'E-mail address already in use',
 
         OVERVIEW_FRIENDS: 'Friends',
         OVERVIEW_ADD_FRIEND: 'Add',
@@ -78,7 +81,9 @@ angularTranslate.config(function ($translateProvider) {
         REGISTER_PAGE_BUSY: 'Bezig met registreren..',
         REGISTER_PAGE_REGISTERED: 'U heeft zich geregistreerd! Gelieve',
         REGISTER_PAGE_LOGIN: 'in te loggen',
-        REGISTER_PAGE_USR_EXISTS: 'E-mail adres is reeds in gebruik',
+        REGISTER_PAGE_USR_EXISTS: 'Gebruikersnaam is reeds in gebruik',
+        REGISTER_PAGE_EMAIL_EXISTS: 'E-mail adres is reeds in gebruik',
+
 
         OVERVIEW_FRIENDS: 'Vrienden',
         OVERVIEW_ADD_FRIEND: 'Voeg speler toe',

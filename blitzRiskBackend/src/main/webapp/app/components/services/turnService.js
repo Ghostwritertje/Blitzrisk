@@ -5,25 +5,28 @@
 
 angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'LoginService', '$log', '$interval',
     function ($http, $q, LoginService, $log, $interval) {
-        var currentGameId = null;
         var turnId = null;
         var turnStatus = "WAITING";
         var playerId = null;
+        var statusPoller = null;
 
-
-        var statusPoller = $interval(function () {
-            $log.log("start status check");
-            if(playerId != null)
-                checkStatus();
-            else
+        function polling(){
+            statusPoller = $interval(function () {
+                $log.log("start status check");
+                if(playerId != null)
+                    checkStatus();
+                else
                 $log.log("No playerId available in the turnService.");
-        }, 5000);
+            }, 5000);
+        }
+
+        polling();
 
         function checkStatus() {
             var defer = $q.defer();
             $http.get('api/player/' + playerId + '/getPlayerStatus', {headers: {'X-Auth-Token': LoginService.getToken()}})
                 .success(function (data) {
-                    if (data != turnStatus && turnStatus != "MOVE")
+                    if (data != turnStatus)
                         turnStatus = data;
                     defer.resolve(data);
                     $log.log("status check");
@@ -36,6 +39,11 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
         }
 
         return {
+            startPolling: function(){
+                if(statusPoller != null){
+                    polling();
+                }
+            },
             createTurn: function(){
                 var defer = $q.defer();
                 $http.get('api/player/' + playerId + '/createTurn', {headers: {'X-Auth-Token': LoginService.getToken()}})
@@ -62,33 +70,21 @@ angular.module('blitzriskServices').factory('TurnService', ['$http', '$q', 'Logi
                     });
                 return defer.promise;
             },
-            getPlayerStatus: function (playerId) {
-                var defer = $q.defer();
-                $http.get('api/player/' + playerId + '/getPlayerStatus', {
-                    headers: {
-                        'X-Auth-Token': LoginService.getToken()
-                    }
-                })
-                    .success(function (data) {
-                        defer.resolve(data);
-                        $log.log(data);
-                    })
-                    .error(function (data, status) {
-                        defer.reject(status);
-                    });
-                return defer.promise;
-            },
             setPlayerId: function (id) {
                 playerId = id;
             },
-            setTurnStatus: function(statusturn){
-                turnStatus = statusturn;
+            setTurnId: function(turn){
+                turnId = turn;
+            },
+            getTurnId: function(){
+                return turnId;
             },
             getTurnStatus: function() {
                 return turnStatus;
             },
             clean: function(){
                 $interval.cancel(statusPoller);
+                statusPoller == null;
             },
             sendMoves: function(moves){
                if(turnStatus === 'REINFORCE'){

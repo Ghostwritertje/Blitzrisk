@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class FriendIT {
     private final String URL = MyServerConfiguration.getURL() + "api/";

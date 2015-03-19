@@ -1,12 +1,10 @@
 /**
- * Created by ermahgerd on 19/02/2015.
+ * service responsible for game calls to backend
  */
 'use strict';
 
 angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'LoginService',
     function ($http, $q, LoginService) {
-        var securityToken = null;
-        var currentGame = null;
         var currentGameId = null;
         var territoryLayout = null;
 
@@ -26,7 +24,7 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
                 return defer.promise;
             },
             getGamesList: function () {
-                var deferred = $q.defer();  //maak promise
+                var deferred = $q.defer();
 
                 var username = LoginService.getUserName();
 
@@ -47,9 +45,6 @@ angular.module('blitzriskServices').factory('GameService', ['$http', '$q', 'Logi
             },
             getCurrentGame: function () {
                 return $http.get('api/game/' + currentGameId, {headers: {'X-Auth-Token': LoginService.getToken()}})
-            },
-            getCurrentGameId: function () {
-                return currentGameId;
             },
             invitePlayerToGame: function (gameId, username) {
                 return $http.post('api/game/' + gameId + '/invite/' + username, null, {headers: {'X-Auth-Token': LoginService.getToken()}});

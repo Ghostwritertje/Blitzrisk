@@ -1,3 +1,6 @@
+/**
+ * controller en directive responsible for the game and svg map.
+ */
 'use strict';
 angular.module('blitzriskControllers').controller('GameController', ['$scope',
     function ($scope) {
@@ -26,6 +29,10 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             $scope.movePopupVisible = false;
             $scope.move($scope.moveValue);
         };
+
+        $scope.commitAttacks= function(){
+            $scope.commitAttack();
+        };
     }
 ]).directive('riskmap', ["GameService", "LoginService", "TurnService", "$log", function (GameService, LoginService, TurnService, $log) {
     return {
@@ -34,7 +41,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
         template: "<object type='image/svg+xml' data='assets/img/riskMap.svg'></object>",
         link: function (scope, element, attrs) {
             var gameBoard = "";
-            var players = null;
             var thisPlayer = null;
             var selectedHomeRegion = null;
             var selectedDestinationRegion = null;
@@ -47,7 +53,9 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 $log.log("new turn status: " + newValue);
                 scope.turnStatus = newValue;
                 if(newValue == "REINFORCE"){
+                    loadGameBoard();
                     TurnService.createTurn().then(function(data){
+                        TurnService.setTurnId(data);
                         TurnService.getNumberOfReinforcments().then(function(availableReinforcements){
                             numberOfUnassignedReinforcements = availableReinforcements;
                         });
@@ -63,8 +71,11 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             angular.element(document).ready(function () {
                 loadGameBoard();
                 loadTerritoryLayout();
+                TurnService.startPolling();
             });
 
+
+            //reinfoce and move
             scope.reinforce = function(numberOfUnits){
                 if(numberOfUnassignedReinforcements >= numberOfUnits){
                     numberOfUnassignedReinforcements -= numberOfUnits;
@@ -81,28 +92,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
 
                 selectedHomeRegion = null;
             };
-
-            function sendMoves(){
-                TurnService.sendMoves(moves).then(function(calculatedMoves){
-                    $log.log("calulated moves");
-                    $log.log(calculatedMoves);
-                    var length = calculatedMoves.data.length;
-                    for(var i = 0; i < length; i++){
-                        //TODO process calculated moves. waiting for turnservice methode to implement.
-                        $log.log(calculatedMoves.data[i]);
-                        updateCalculatedMoves(calculatedMoves.data[i]);
-                    }
-                    clearMoves();
-                });
-            }
-
-            function updateCalculatedMoves(calculatedMove){
-                if(calculatedMove.origin == calculatedMove.destination){
-                    var territoryId = getTerritoryIdFromDBId(calculatedMove.origin);
-                    changeTerritoryText(territoryId, parseInt(calculatedMove.originNrOfUnits));
-                    setNumberOfUnitsOnTerritory(territoryId, parseInt(calculatedMove.originNrOfUnits));
-                }
-            }
 
             scope.move = function(numberOfUnits){
                 var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
@@ -122,44 +111,56 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 selectedDestinationRegion = null;
             };
 
-            /*scope.attack = function(numberOfUnits){
-                var numberOfUnitsOnHomeRegion = parseInt(getNumberOfUnitsOnTerritory(selectedHomeRegion));
-                var numberOfUnitsOnDestinationRegion = parseInt(getNumberOfUnitsOnTerritory(selectedDestinationRegion));
-                if(numberOfUnits <= (numberOfUnitsOnHomeRegion - 1)){
-                    setNumberOfUnitsOnTerritory(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    setNumberOfUnitsOnTerritory(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    changeTerritoryText(selectedHomeRegion, (numberOfUnitsOnHomeRegion - numberOfUnits));
-                    changeTerritoryText(selectedDestinationRegion, (numberOfUnitsOnDestinationRegion + parseInt(numberOfUnits)));
-                    addMove(selectedHomeRegion, selectedDestinationRegion, numberOfUnits);
-                }
-                scope.hideArrows();
-                selectedHomeRegion = null;
-                selectedDestinationRegion = null;
-            };*/
+            scope.commitAttack = function(){
+                sendMoves();
+            };
+
+
+            //moves
+            function sendMoves(){
+                TurnService.sendMoves(moves).then(function(calculatedMoves){
+                    $log.log("calulated moves");
+                    $log.log(calculatedMoves);
+                    var length = calculatedMoves.data.length;
+                    for(var i = 0; i < length; i++){
+                        $log.log(calculatedMoves.data[i]);
+                        updateCalculatedMoves(calculatedMoves.data[i]);
+                    }
+                    clearMoves();
+                });
+            }
 
             function clearMoves(){
                 moves = [];
             }
 
             function addMove(originRegion, destinationRegion, numberOfUnits){
-                moves.push({'turnId': 1, 'origin': getTerritoryDBId(originRegion), 'destination': getTerritoryDBId(destinationRegion), 'unitsToAttackOrReinforce': numberOfUnits});
+                moves.push({'turnId': TurnService.getTurnId(), 'origin': getTerritoryDBId(originRegion), 'destination': getTerritoryDBId(destinationRegion), 'unitsToAttackOrReinforce': numberOfUnits});
                 $log.log(moves);
             }
 
-            function getTerritoryDBId(territoryId){
-                var length = gameBoard.territories.length;
-                for (var i = 0; i < length; i++) {
-                    if(gameBoard.territories[i].key == territoryId){
-                        return gameBoard.territories[i].id;
-                    }
+            function updateCalculatedMoves(calculatedMove){
+                if(calculatedMove.origin == calculatedMove.destination){
+                    var territoryId = getTerritoryIdFromDBId(calculatedMove.origin);
+                    changeTerritoryText(territoryId, parseInt(calculatedMove.originNrOfUnits));
+                    setNumberOfUnitsOnTerritory(territoryId, parseInt(calculatedMove.originNrOfUnits));
+                }else{
+                    updateTerritory(getTerritoryIdFromDBId(calculatedMove.origin), calculatedMove.originPlayer, calculatedMove.originNrOfUnits);
+                    updateTerritory(getTerritoryIdFromDBId(calculatedMove.destination), calculatedMove.destinationPlayer, calculatedMove.destinationNrOfUnits);
                 }
             }
 
-            function getTerritoryIdFromDBId(territoryDBId){
+            function updateTerritory(territoryId, playerId, numberOfUnits){
                 var length = gameBoard.territories.length;
                 for (var i = 0; i < length; i++) {
-                    if(gameBoard.territories[i].id == territoryDBId){
-                        return gameBoard.territories[i].key;
+                    if(gameBoard.territories[i].key == territoryId){
+                        gameBoard.territories[i].playerId = playerId;
+                        var region = angular.element(element[0].getSVGDocument().getElementById(territoryId));
+                        var colorClass = "player".concat(getPlayer(playerId).color + 1).concat("color");
+                        region.attr("class", colorClass);
+                        gameBoard.territories[i].numberOfUnits = numberOfUnits;
+                        changeTerritoryText(territoryId, numberOfUnits);
+                        setNumberOfUnitsOnTerritory(territoryId, parseInt(numberOfUnits));
                     }
                 }
             }
@@ -179,9 +180,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
             }
 
             function initializeBoard() {
-                //players = gameBoard.players;
                 scope.players = gameBoard.players;
-                $log.log(scope.players);
                 var length = scope.players.length;
                 for(var i = 0; i < length; i++){
                     if(scope.players[i].username == LoginService.getUserName()){
@@ -200,36 +199,37 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
             }
 
-            function getPlayer(playerId) {
-                var length = scope.players.length;
-                for (var i = 0; i < length; i++) {
-                    if (scope.players[i].id == playerId) {
-                        return scope.players[i];
-                    }
-                }
-            }
-
             scope.selectRegion = function(territoryId){
-                if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion == null && isMyTerritory(territoryId)){
+                var isMyTerr = isMyTerritory(territoryId);
+                var status = TurnService.getTurnStatus();
+                if(status == "WAITING"){
+                    $log.log("you have to wait for your turn.");
+                }else if(status == "REINFORCE" && selectedHomeRegion == null && isMyTerr){
+                    $log.log(1);
                     selectedHomeRegion = territoryId;
                     scope.reinforceNumberMax = numberOfUnassignedReinforcements;
                     scope.reinforceValue = 0;
                     scope.reinforcePopupVisible = true;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "REINFORCE" && selectedHomeRegion != null){
+                }else if(status == "REINFORCE" && selectedHomeRegion != null){
+                    $log.log(2);
                     selectedHomeRegion= null;
                     scope.reinforcePopupVisible = false;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion == null){
+                }else if((status == "MOVE" || status == "ATTACK") && selectedHomeRegion == null && isMyTerr){
+                    $log.log(3);
                     selectedHomeRegion = territoryId;
+                    selectedDestinationRegion = null;
                     changeTerritoryStyle(territoryId);
                     scope.moveForceMax = (parseInt(getNumberOfUnitsOnTerritory(territoryId)) - 1);
                     scope.moveValue = 0;
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                }else if((status == "MOVE" && isMyTerr) || (status == "ATTACK" && !isMyTerr) && selectedHomeRegion != null  && selectedDestinationRegion == null){
+                    $log.log(selectedHomeRegion + " " + territoryId);
                     selectedDestinationRegion = territoryId;
                     scope.movePopupVisible = true;
                     scope.$apply();
-                }else if(TurnService.getTurnStatus() == "MOVE" || TurnService.getTurnStatus() == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
+                }else if(status == "MOVE" || status == "ATTACK" && selectedHomeRegion != null && selectedDestinationRegion != null){
+                    $log.log(4);
                     selectedHomeRegion = null;
                     selectedDestinationRegion = null;
                     scope.movePopupVisible = false;
@@ -237,15 +237,6 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                     scope.$apply();
                 }
             };
-
-            function changeTerritoryStyle(territory) {
-                hideArrows();
-                if(isMyTerritory(territory)){
-                    GameService.getTerritoryLayout().then(function (layout) {
-                        showNeighbour(layout, territory);
-                    });
-                }
-            }
 
             function showNeighbour(layout, territoryId) {
                 var territoryLayout = layout;
@@ -293,6 +284,23 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
             }
 
+            function hideArrows() {
+                var i;
+                for (i = 1; i < 7; ++i) {
+                    var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i)));
+                    arrow.attr("class", "arrowhidden");
+                }
+            }
+
+            function changeTerritoryStyle(territory) {
+                hideArrows();
+                if(isMyTerritory(territory)){
+                    GameService.getTerritoryLayout().then(function (layout) {
+                        showNeighbour(layout, territory);
+                    });
+                }
+            }
+
             function isMyTerritory(territoryId){
                 var length = gameBoard.territories.length;
                 for (var i = 0; i < length; i++) {
@@ -303,11 +311,38 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 return false;
             }
 
+            function getPlayer(playerId) {
+                var length = scope.players.length;
+                for (var i = 0; i < length; i++) {
+                    if (scope.players[i].id == playerId) {
+                        return scope.players[i];
+                    }
+                }
+            }
+
             function getNumberOfUnitsOnTerritory(territory){
                 var length = gameBoard.territories.length;
                 for (var i = 0; i < length; i++) {
                     if(gameBoard.territories[i].key == territory){
                         return gameBoard.territories[i].numberOfUnits;
+                    }
+                }
+            }
+
+            function getTerritoryDBId(territoryId){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].key == territoryId){
+                        return gameBoard.territories[i].id;
+                    }
+                }
+            }
+
+            function getTerritoryIdFromDBId(territoryDBId){
+                var length = gameBoard.territories.length;
+                for (var i = 0; i < length; i++) {
+                    if(gameBoard.territories[i].id == territoryDBId){
+                        return gameBoard.territories[i].key;
                     }
                 }
             }
@@ -321,6 +356,7 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
             }
 
+            //svg user manipulation
             scope.mouseOver = function (territory) {
                 var land = angular.element(element[0].getSVGDocument().getElementById(territory));
                 var colorClass = land.attr("class");
@@ -337,19 +373,11 @@ angular.module('blitzriskControllers').controller('GameController', ['$scope',
                 }
             };
 
-            function hideArrows() {
-                var i;
-                for (i = 1; i < 7; ++i) {
-                    var arrow = angular.element(element[0].getSVGDocument().getElementById("arrow".concat(i)));
-                    arrow.attr("class", "arrowhidden");
-                }
-            }
-
             scope.voidClick = function () {
                 hideArrows();
                 scope.reinforcePopupVisible = false;
                 selectedHomeRegion = null;
-            }
+            };
         }
     }
 }]);

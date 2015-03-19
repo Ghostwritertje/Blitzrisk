@@ -1,6 +1,5 @@
 package integration.web;
 
-import be.kdg.model.User;
 import integration.MyServerConfiguration;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,7 +10,6 @@ import java.util.Random;
  * Service for tests to register and log in.
  */
 public class TestUserService {
-
     public static void registerUser(WebDriver driver, String username, String password, String email) {
         driver.get(MyServerConfiguration.getURL() + "#/register");
         (new WebDriverWait(driver, 15)).until((WebDriver d) -> d.findElement(By.id("username")));
@@ -31,7 +29,7 @@ public class TestUserService {
         WebElement usernameElement = driver.findElement(By.id("username"));
         try {
             usernameElement.sendKeys(username);
-        }catch (StaleElementReferenceException e){
+        }catch (StaleElementReferenceException|ElementNotVisibleException exception){
             usernameElement = driver.findElement(By.id("username"));
             usernameElement.sendKeys(username);
         }

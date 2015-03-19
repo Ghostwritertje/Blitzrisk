@@ -1,5 +1,5 @@
 /**
- * Created by jorandeboever on 7/03/15.
+ * calls for the friends service
  */
 'use strict';
 

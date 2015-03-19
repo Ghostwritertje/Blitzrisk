@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Created by user jorandeboever
  * Date:25/02/15.
  */
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/dispatcher.xml"})
+@ContextConfiguration(locations = {"/testcontext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CreateGameIT {
     private final String URL = MyServerConfiguration.getURL() + "api/";

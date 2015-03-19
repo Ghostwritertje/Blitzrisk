@@ -21,47 +21,6 @@
     <context:component-scan base-package="be.kdg"/>
     <context:annotation-config/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
-
-    <security:http
-            realm="Protected API"
-            use-expressions="true"
-            auto-config="false"
-            create-session="stateless"
-            entry-point-ref="unauthorizedEntryPoint"
-            authentication-manager-ref="authenticationManager">
-        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
-
-        <!--        Chatserver met Websocket ondersteunt geen custom header  -->
-        <security:intercept-url method="GET" pattern="/api/chat/**" access="permitAll"/>
-
-
-        <security:intercept-url method="PUT" pattern="/api/user/*" access="permitAll"/>
-        <security:intercept-url method="GET" pattern="/api/login" access="permitAll"/>
-        <security:intercept-url method="GET" pattern="/api/**" access="hasRole('user')"/>
-        <security:intercept-url method="PUT" pattern="/api/**" access="hasRole('user')"/>
-        <security:intercept-url method="POST" pattern="/api/**" access="hasRole('user')"/>
-        <security:intercept-url method="DELETE" pattern="/api/**" access="hasRole('user')"/>
-    </security:http>
-
-    <security:authentication-manager id="authenticationManager">
-        <security:authentication-provider user-service-ref="userServiceImpl">
-        </security:authentication-provider>
-    </security:authentication-manager>
-
-    <bean id="userDao" class="be.kdg.dao.UserDao">
-
-    </bean>
-
-
-    <bean class="be.kdg.security.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
-        <constructor-arg ref="userServiceImpl" />
-    </bean>
-    <bean id="unauthorizedEntryPoint" class="be.kdg.security.UnauthorizedEntryPoint"/>
-
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
@@ -71,7 +30,7 @@
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"></property>
+        <property name="dataSource" ref="dataSource"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
@@ -86,20 +45,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="userService" class="be.kdg.dao.UserDao">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <bean id="gameDao" class="be.kdg.dao.GameDao">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <!-- SMTP settings -->
         <property name="host" value="smtp.gmail.com" />
         <property name="port" value="587" />
-
         <property name="username" value="blitzriskapp@gmail.com" />
         <property name="password" value="q4y-xac-rPg-7aJ" />
 
