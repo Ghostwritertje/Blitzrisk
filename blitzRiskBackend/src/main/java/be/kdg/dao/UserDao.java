@@ -53,10 +53,12 @@ public class UserDao {
         user.setName(username);
         user.setEmail(email);
         user.setPassword(password);
+
         try {
             sessionFactory.getCurrentSession().save(user);
         } catch (ConstraintViolationException e) {
-            throw e;
+            //throw e;
+            logger.error("SQL error: "+e.getMessage());
         }
     }
 

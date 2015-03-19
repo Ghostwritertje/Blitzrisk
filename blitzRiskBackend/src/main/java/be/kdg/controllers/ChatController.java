@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Handles the websocket that is used for chatting in game
+ * Using Spring Messaging, handles the websocket that is used for chatting in game
  */
 @Controller
 @RequestMapping("/")

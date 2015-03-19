@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller that handles url-s about User.
+ * Controller that handles URLs about User.
  */
 
 @RestController

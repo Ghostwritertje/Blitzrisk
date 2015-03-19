@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Attack service provides a service for territories
+ * Territory service provides a service for various operations on territories
  */
 
 @Service("territoryService")

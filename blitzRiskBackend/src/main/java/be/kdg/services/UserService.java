@@ -6,7 +6,7 @@ import be.kdg.model.User;
 import java.util.List;
 
 /**
- * Interface that defines the responsabilities of a userservice.
+ * Interface that defines the responsibilities of a userservice.
  */
 public interface UserService {
     User checkLogin(String username, String password);

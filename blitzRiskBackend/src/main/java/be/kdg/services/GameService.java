@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 /**
- * Attack service provides a service for general methods about a game
+ * Game service provides a service for general methods about a game
  */
 @Service("gameService")
 public class GameService {

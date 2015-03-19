@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Attack service provides a service for moving units between territories
+ * MoveUnits service provides a service for moving units between territories
  */
 @Service("moveUnitsService")
 public class MoveUnitsService {

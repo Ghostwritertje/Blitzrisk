@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Attack service provides a service for reïnforcing territories with new units
+ * Reinforce service provides a service for reinforcing territories with new units
  */
 
 @Service("reinforceService")

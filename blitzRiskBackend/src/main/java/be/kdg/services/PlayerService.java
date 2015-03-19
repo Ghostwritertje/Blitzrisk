@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Attack service provides a service for saving and retrieving players
+ * Player service provides a service for saving and retrieving players
  */
 @Service("playerService")
 public class PlayerService {
